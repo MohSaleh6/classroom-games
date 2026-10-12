@@ -10,7 +10,7 @@ No build step, no framework. Keep the English simple: the players are 12–14 ye
 | --- | --- | --- | --- |
 | `crack-the-secret-code/` | Grade 8 Excel: LEFT, RIGHT, MID, SUBSTITUTE. 9 missions, about 10 minutes | https://crack-the-secret-code-moh-93f1.vercel.app | `crack-the-secret-code` (prj_Cjr5IpgxtqXhZNLXVUgay87yN1EL) |
 | `report-rescue/` | Grade 7 Word Unit 1, played in a pretend Word window (no real Word needed). 5 missions, 15 minutes, 200 points | https://report-rescue-moh-93f1.vercel.app | `report-rescue` (prj_6kSTKKVijFKbIbGpX64MIuYw746Q) |
-| `mystery-box/` | **Mystery Box: Word Challenge!** for Ms Rahaf's Grade 7 class. Students work in real Microsoft Word; the site guides them through 6 mystery boxes in 10 minutes and they build a robot | Not deployed yet | None yet. Needs its own Vercel project with `DATABASE_URL` and `TEACHER_PIN` |
+| `mystery-box/` | **Mystery Box: Word Challenge!** for Ms Rahaf's Grade 7 class. Students work in real Microsoft Word; the site guides them through 6 mystery boxes in 10 minutes and they build a robot | https://mystery-box-moh-93f1.vercel.app | `mystery-box` (prj_5oXnhsce7eaJENFPJm8RcoE0WMgp). Root Directory `mystery-box` |
 | `archive/report-rescue-real-word/` | First Report Rescue version, where students used real Word. Not deployed; kept for reference only | — | — |
 
 Vercel team: `moh-93f1` (team_dcnImgjOKecfTukD5B2Ebmvd).
@@ -20,6 +20,9 @@ To deploy, upload the contents of one game folder as a production deployment of 
 (for example `vercel deploy --prod` from inside that folder after `vercel link`), or connect the repo in
 Vercel with that folder as the Root Directory.
 
+Mystery Box was first deployed from a GitHub commit on `claude/mystery-box-word-challenge` (a one-off deployment, not a Git
+connection), so its project has Root Directory `mystery-box`. Vercel Authentication is off for it, as for Report Rescue.
+
 ## Database (Neon)
 
 - Neon project `misty-dream-98474453`, default branch and database.
@@ -27,7 +30,8 @@ Vercel with that folder as the Root Directory.
 - Table `mb_players` is used by Mystery Box (`mystery-box/`): id, name, name_key UNIQUE, boxes 0–63 (bit per box), colour 0–5,
   support, plan_b, confirmed, time_up, token, created_at, updated_at. `api/_db.js` creates it with CREATE TABLE IF NOT EXISTS on first use.
 - Table `rr_scores` is used by Report Rescue: id, name, name_key UNIQUE, points 0–200, seconds 0–900, finished, token, created_at.
-- The Crack the Secret Code and Report Rescue Vercel projects have the env vars `DATABASE_URL` and `TEACHER_PIN`. Never commit them. The PIN is in the
+- The Crack the Secret Code, Report Rescue and Mystery Box Vercel projects have the env vars `DATABASE_URL` and `TEACHER_PIN`
+  (Mystery Box uses the same values as Report Rescue, so the teacher PIN is the same). Never commit them. The PIN is in the
   teacher guide the teacher already has; don't print it in code or docs.
 
 ## How the leaderboard works (Crack the Secret Code and Report Rescue)
