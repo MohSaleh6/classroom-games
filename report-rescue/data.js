@@ -167,16 +167,17 @@ window.MB = (function () {
     { id: 'wiggle', name: 'Robot Wiggle', emoji: '🕺' }
   ];
 
-  // Suggested 45-minute lesson. Minutes add up to 45.
+  const TEACHER = 'Ms Rahaf';
+  const GAME_MINUTES = 10; // the boxes game ends after 10 minutes
+
+  // Suggested 45-minute lesson with Ms Rahaf. The game itself is the 10-minute block. Minutes add up to 45.
   const TIMINGS = [
-    { min: 5, what: 'Start: open Word, type your name in the game, copy and paste the starter text.' },
-    { min: 6, what: 'Box 1 🎨 Style it' },
-    { min: 6, what: 'Box 2 ✨ Organize it' },
-    { min: 7, what: 'Box 3 🖼️ Decorate it' },
-    { min: 5, what: 'Box 4 🤖 Make it 3D' },
-    { min: 9, what: 'Box 5 📊 Show the data' },
-    { min: 5, what: 'Box 6 🔍 Final check' },
-    { min: 2, what: 'Badges: check work, show the class robot wall (?board).' }
+    { min: 8, what: 'Ms Rahaf shows the six Word skills on the projector (quick demo).' },
+    { min: 5, what: 'Students open Word, type their name in the game, copy and paste the starter text.' },
+    { min: 10, what: 'Mystery Box game: 10-minute clock, 6 boxes. The game ends when the clock reaches 0.' },
+    { min: 10, what: 'Ms Rahaf checks Word files and confirms badges. Students who ran out of time finish the missing tasks in Word.' },
+    { min: 7, what: 'Robot wall on the projector (?board). Celebrate the Word Champions.' },
+    { min: 5, what: 'Save the Word file, Print Preview, tidy up.' }
   ];
 
   // What the teacher looks for in each student's Word file.
@@ -189,5 +190,5 @@ window.MB = (function () {
     { box: 6, items: ['friends, snacks, awesome are spelled right', 'Fits neatly on A4 portrait pages'] }
   ];
 
-  return { TITLE, PARA, HEADING, FEATURES, MISTAKES, plainText, readyHTML, CHART_DATA, BOXES, COLOURS, DANCES, TIMINGS, CHECKLIST };
+  return { TEACHER, GAME_MINUTES, TITLE, PARA, HEADING, FEATURES, MISTAKES, plainText, readyHTML, CHART_DATA, BOXES, COLOURS, DANCES, TIMINGS, CHECKLIST };
 })();
