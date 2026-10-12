@@ -1,0 +1,36 @@
+import { neon } from '@neondatabase/serverless';
+import { timingSafeEqual } from 'node:crypto';
+
+const sql = neon(process.env.DATABASE_URL);
+const readBody = b => (typeof b === 'string' ? JSON.parse(b || '{}') : (b || {}));
+function pinOk(p) {
+  const a = Buffer.from(String(p ?? '')), b = Buffer.from(String(process.env.TEACHER_PIN ?? ''));
+  return b.length > 0 && a.length === b.length && timingSafeEqual(a, b);
+}
+
+export default async function handler(req, res) {
+  res.setHeader('Cache-Control', 'no-store');
+  if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'method' }); }
+  try {
+    const b = readBody(req.body);
+    if (!pinOk(b.pin)) {
+      await new Promise(r => setTimeout(r, 900)); // slow down guessing
+      return res.status(401).json({ error: 'pin' });
+    }
+    if (b.action === 'check') return res.status(200).json({ ok: true });
+    if (b.action === 'remove') {
+      const id = Number(b.id);
+      if (!Number.isInteger(id)) return res.status(400).json({ error: 'invalid' });
+      await sql`DELETE FROM scores WHERE id = ${id}`;
+      return res.status(200).json({ ok: true });
+    }
+    if (b.action === 'clear') {
+      await sql`DELETE FROM scores`;
+      return res.status(200).json({ ok: true });
+    }
+    return res.status(400).json({ error: 'action' });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'server' });
+  }
+}

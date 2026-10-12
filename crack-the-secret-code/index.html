@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Crack the Secret Code! – Excel Agent Game</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=JetBrains+Mono:wght@500;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-grad:linear-gradient(135deg,#FFD9EC 0%,#FFF3C4 35%,#D6F5E3 65%,#D6E6FF 100%);
+  --paper:#FFFFFF; --ink:#24104F; --muted:#5A4A86; --line:#E1D9F5; --edge:#24104F;
+  --primary:#E8247A; --go:#138A47;
+  --ok:#138A47; --ok-soft:#DCF8E7; --bad:#D6264F; --bad-soft:#FFE1EA; --tip:#9A5B00; --tip-soft:#FFF2C7; --reveal-soft:#EFE7FF;
+  --sheet-head:#F1EEFA; --sheet-line:#CFC8E6; --cell:#FFFFFF; --excel:#1E7B45; --active-soft:#E9FBEF;
+  --scan:#2E7FF0; --scan-soft:#E3EEFF; --dots:rgba(36,16,79,.07);
+  --l1:#4FA3FF; --l2:#FF6FB0; --boss:#B47CFF; --sun:#FFC83D; --lime:#5BD982; --orange:#FF9A4D;
+  --dark-ink:#24104F;
+  --rainbow:linear-gradient(90deg,#FF5FA2,#FFB13D 25%,#3BD16F 50%,#3D8BFF 75%,#A259FF);
+  --display:'Bungee','Arial Black',Impact,system-ui,sans-serif;
+  --body:'Nunito','Segoe UI',system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg-grad:linear-gradient(135deg,#2B0F55 0%,#16245C 50%,#0D3B40 100%);
+    --paper:#20174A; --ink:#FFF7FF; --muted:#C9BDF0; --line:#3E3480; --edge:#C9B8FF;
+    --primary:#E8247A; --go:#138A47;
+    --ok:#5FE39A; --ok-soft:#163E33; --bad:#FF7E9A; --bad-soft:#4A1C3A; --tip:#FFD166; --tip-soft:#3E3320; --reveal-soft:#2E2468;
+    --sheet-head:#2D2466; --sheet-line:#4B4296; --cell:#1A1340; --excel:#5FE39A; --active-soft:#163C3A;
+    --scan:#6FB6FF; --scan-soft:#1A2B5E; --dots:rgba(255,255,255,.06);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg-grad:linear-gradient(135deg,#2B0F55 0%,#16245C 50%,#0D3B40 100%);
+  --paper:#20174A; --ink:#FFF7FF; --muted:#C9BDF0; --line:#3E3480; --edge:#C9B8FF;
+  --primary:#E8247A; --go:#138A47;
+  --ok:#5FE39A; --ok-soft:#163E33; --bad:#FF7E9A; --bad-soft:#4A1C3A; --tip:#FFD166; --tip-soft:#3E3320; --reveal-soft:#2E2468;
+  --sheet-head:#2D2466; --sheet-line:#4B4296; --cell:#1A1340; --excel:#5FE39A; --active-soft:#163C3A;
+  --scan:#6FB6FF; --scan-soft:#1A2B5E; --dots:rgba(255,255,255,.06);
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px); -webkit-text-size-adjust:100%}
+html,body{margin:0}
+body{
+  background-color:#FFF3C4;
+  background-image:radial-gradient(var(--dots) 1.3px, transparent 1.4px), var(--bg-grad);
+  background-size:18px 18px, 100% 100%;
+  background-attachment:fixed;
+  color:var(--ink); font-family:var(--body); font-size:17px; line-height:1.55;
+}
+code{font-family:var(--mono)}
+:focus-visible{outline:3px solid var(--scan); outline-offset:3px}
+p{margin:0 0 .7em}
+
+/* ---------- Top bar ---------- */
+.topbar{
+  position:sticky; top:env(safe-area-inset-top,0px); z-index:10;
+  background:var(--rainbow); border-bottom:3px solid var(--dark-ink);
+  padding:10px 16px 12px; color:var(--dark-ink);
+}
+.topbar-inner{max-width:820px; margin:0 auto; display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.brand{font-family:var(--display); font-size:1.05rem; flex:1 1 190px; line-height:1.2; color:#fff; text-shadow:2px 2px 0 var(--dark-ink)}
+.pill,.tbtn{
+  display:inline-flex; align-items:center; gap:5px; white-space:nowrap;
+  background:#fff; color:var(--dark-ink); border:2.5px solid var(--dark-ink); border-radius:999px;
+  padding:3px 11px; font-weight:900; font-size:.9rem; box-shadow:2px 2px 0 var(--dark-ink);
+}
+.pill[hidden]{display:none}
+.pill b{font-size:1.05rem}
+.tbtn{font-family:inherit; cursor:pointer; min-height:36px}
+.tbtn[hidden]{display:none}
+.tbtn:active{transform:translate(2px,2px); box-shadow:none}
+.pill.warn{background:#FF3D57; color:#fff; animation:pulse 1s ease-in-out infinite}
+.pill.fire{background:var(--sun)}
+@keyframes pulse{50%{transform:scale(1.08)}}
+.progress{flex-basis:100%; display:flex; align-items:center; gap:10px}
+.track{flex:1; height:16px; border:2.5px solid var(--dark-ink); border-radius:999px; background:#fff; overflow:hidden}
+.fill{
+  height:100%; width:0;
+  background-image:repeating-linear-gradient(-45deg, rgba(255,255,255,.35) 0 8px, transparent 8px 16px), linear-gradient(90deg,#FF3D8B,#FFB13D,#3BD16F,#3D8BFF);
+  transition:width .5s ease;
+}
+.prog-text{font-size:.82rem; font-weight:900; white-space:nowrap; background:#fff; border-radius:999px; padding:0 8px; border:2px solid var(--dark-ink)}
+
+main{max-width:820px; margin:0 auto; padding:22px 16px 56px}
+
+/* ---------- Card ---------- */
+.dossier{
+  position:relative; margin-top:36px;
+  background:var(--paper); border:3px solid var(--edge);
+  border-radius:4px 18px 18px 18px; box-shadow:8px 8px 0 var(--lvl, var(--edge));
+  padding:24px 22px 22px;
+}
+.tab{
+  position:absolute; top:-34px; left:-3px; height:34px;
+  display:flex; align-items:center; gap:6px;
+  background:var(--lvl, var(--sun)); color:var(--dark-ink);
+  border:3px solid var(--edge); border-bottom:0; border-radius:12px 12px 0 0;
+  padding:0 16px; font-weight:900; font-size:.95rem; white-space:nowrap;
+}
+
+/* ---------- Buttons ---------- */
+.btn{
+  font:inherit; font-weight:900; font-size:1.05rem; cursor:pointer;
+  border:3px solid var(--edge); border-radius:14px; padding:11px 22px; min-height:52px;
+  box-shadow:4px 4px 0 var(--edge); background:var(--paper); color:var(--ink);
+  transition:transform .08s ease, box-shadow .08s ease;
+}
+.btn:hover{transform:translate(-1px,-1px); box-shadow:5px 5px 0 var(--edge)}
+.btn:active{transform:translate(4px,4px); box-shadow:0 0 0 var(--edge)}
+.btn.primary{background:var(--primary); color:#fff}
+.btn.go{background:var(--go); color:#fff}
+.btn.danger{background:#D6264F; color:#fff}
+.btn[hidden]{display:none}
+
+/* ---------- Start ---------- */
+.hero{text-align:center; padding:6px 0 0}
+.ts-stamp{
+  display:inline-block; font-family:var(--display); font-size:.95rem; letter-spacing:.06em;
+  color:#E0213F; border:3px solid #E0213F; border-radius:6px; padding:2px 12px;
+  transform:rotate(-4deg); margin-bottom:8px; background:#fff;
+}
+.hero h1{
+  font-family:var(--display); font-weight:400; margin:0 auto 12px; color:var(--ink);
+  font-size:clamp(2rem, 7.6vw, 3.8rem); line-height:1.05; max-width:13ch; min-height:2.1em;
+  text-shadow:3px 3px 0 #FF5FA2, 6px 6px 0 #4FA3FF;
+}
+.lead{font-size:1.12rem; max-width:32em; margin:0 auto; font-weight:700}
+.steps{list-style:none; padding:0; margin:6px 0 18px; display:grid; gap:10px}
+.steps li{display:flex; gap:12px; align-items:flex-start; font-weight:700}
+.steps .n{flex:0 0 36px; height:36px; border-radius:50%; display:grid; place-items:center; color:var(--dark-ink); border:2.5px solid var(--edge); font-weight:900}
+.steps li:nth-child(1) .n{background:#FF6FB0} .steps li:nth-child(2) .n{background:#FFC83D}
+.steps li:nth-child(3) .n{background:#5BD982} .steps li:nth-child(4) .n{background:#4FA3FF}
+.steps li:nth-child(5) .n{background:#B47CFF}
+.steps li span:last-child{padding-top:5px}
+.map{list-style:none; padding:0; margin:8px 0 18px; display:flex; flex-wrap:wrap; gap:10px}
+.map li{flex:1 1 160px; border:3px solid var(--edge); border-radius:14px; padding:10px 14px; background:var(--c); color:var(--dark-ink); box-shadow:3px 3px 0 var(--edge)}
+.map li b{display:block; font-weight:900; font-size:1.05rem}
+.map li span{font-size:.88rem; font-weight:800}
+h2.sec{font-family:var(--display); font-weight:400; font-size:1.25rem; margin:0 0 10px}
+.rules{background:var(--tip-soft); border:2.5px dashed var(--tip); border-radius:12px; padding:10px 14px; margin:0 0 18px; font-weight:600}
+.name-row{display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end}
+.name-row label{flex:1 1 220px; font-weight:900}
+.name-row input{
+  display:block; width:100%; margin-top:6px; font:700 16px var(--body); color:var(--ink);
+  background:var(--cell); border:3px solid var(--edge); border-radius:12px; padding:11px 12px;
+}
+
+/* ---------- Intro ---------- */
+.recap{background:var(--ok-soft); border:2.5px solid var(--ok); border-radius:12px; padding:10px 14px; margin-bottom:16px; font-weight:800}
+.level-title{font-family:var(--display); font-weight:400; font-size:clamp(1.6rem, 5.4vw, 2.3rem); margin:0 0 8px; line-height:1.15}
+.brief{font-size:1.08rem; max-width:40em; font-weight:600}
+.sub{font-size:1rem; font-weight:900; margin:18px 0 8px}
+.tools{display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:16px}
+.tool{border:3px solid var(--edge); border-radius:14px; padding:12px 14px; background:var(--cell); box-shadow:3px 3px 0 var(--tc, var(--lvl))}
+.tool-name{display:inline-block; font-family:var(--display); font-size:1.05rem; margin-bottom:6px; background:var(--tc, var(--lvl)); color:var(--dark-ink); padding:0 10px; border-radius:8px}
+.syntax{display:block; font-weight:700; font-size:.9rem; margin-bottom:6px; overflow-wrap:anywhere}
+.tool p{margin:0 0 6px; font-size:.95rem}
+.tool .ex{font-size:.9rem; color:var(--muted); margin:0}
+.tool .ex code{color:var(--ink); font-size:.85rem}
+.out{background:var(--ok-soft); padding:0 5px; border-radius:4px}
+.tip{background:var(--scan-soft); border:2.5px dashed var(--scan); border-radius:12px; padding:10px 14px; margin-bottom:18px; font-weight:600}
+.tip code{font-size:.88rem; overflow-wrap:anywhere}
+
+/* ---------- Mission ---------- */
+.mission-head{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px}
+.lvl-chip{font-weight:900; font-size:.95rem; color:var(--muted)}
+.tries{display:flex; align-items:center; gap:6px; font-weight:900; font-size:.85rem; color:var(--muted)}
+.tries .d{width:16px; height:16px; border-radius:50%; border:2.5px solid var(--edge); background:#FF5FA2}
+.tries .d.used{background:transparent}
+.task{font-size:clamp(1.2rem, 3.8vw, 1.45rem); font-weight:900; line-height:1.35; margin:0 0 12px}
+.goal-row{display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center; margin-bottom:16px}
+.goal,.choose{display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-weight:900; font-size:.95rem}
+.goal code{font-weight:700; font-size:1.05rem; background:var(--sun); color:var(--dark-ink); border:2.5px solid var(--edge); border-radius:8px; padding:1px 10px; white-space:pre}
+.fn{font-family:var(--mono); font-weight:700; font-size:.82rem; color:var(--dark-ink); border:2px solid var(--edge); border-radius:7px; padding:1px 8px}
+.fn.LEFT{background:#4FA3FF} .fn.RIGHT{background:#FF9A4D} .fn.MID{background:#5BD982} .fn.SUBSTITUTE{background:#FF6FB0}
+
+.sheet{border:3px solid var(--edge); border-radius:14px; overflow:hidden; background:var(--cell)}
+.fbar{display:flex; align-items:stretch; border-bottom:1.5px solid var(--sheet-line)}
+.fbar:focus-within{box-shadow:inset 0 0 0 3px var(--excel)}
+.namebox{flex:0 0 52px; display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:.85rem; color:var(--muted); border-right:1.5px solid var(--sheet-line)}
+.fx{flex:0 0 auto; padding:0 10px; display:flex; align-items:center; font-family:Georgia,'Times New Roman',serif; font-style:italic; font-weight:700; color:var(--excel); border-right:1.5px solid var(--sheet-line)}
+.fbar input{flex:1; min-width:0; border:0; background:transparent; color:var(--ink); font:600 16px var(--mono); padding:13px 10px}
+.fbar input:focus-visible{outline:none}
+.fbar input::placeholder{color:var(--muted); font-family:var(--body); font-weight:700}
+.grid-scroll{overflow-x:auto}
+.grid{border-collapse:collapse; width:100%; min-width:330px}
+.grid th{background:var(--sheet-head); color:var(--muted); font-weight:700; font-size:.78rem; border:1px solid var(--sheet-line); padding:3px 8px}
+.grid th.corner,.grid tbody th{width:34px}
+.grid td{border:1px solid var(--sheet-line); padding:10px; font-family:var(--mono); white-space:pre; width:50%}
+.grid td.hdr{font-family:var(--body); font-weight:900; color:var(--muted); white-space:nowrap}
+.grid td.code-cell{font-weight:700; font-size:1.05rem}
+.grid td.active{outline:3px solid var(--excel); outline-offset:-3px; background:var(--active-soft); font-weight:700}
+.grid td.active.ok{color:var(--ok)}
+.grid td.active.bad{color:var(--bad); background:var(--bad-soft); outline-color:var(--bad)}
+.ph{color:var(--muted); font-family:var(--body); font-weight:800}
+
+.scanner{margin-top:14px; background:var(--scan-soft); border:2.5px dashed var(--scan); border-radius:14px; padding:10px 12px}
+.scan-title{display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; font-weight:900; font-size:.92rem; margin-bottom:8px}
+.scan-title small{font-weight:800; color:var(--muted); font-size:.85rem}
+.chars{display:flex; flex-wrap:wrap; gap:4px}
+.ch{display:flex; flex-direction:column; align-items:center; min-width:28px; background:var(--cell); border:2px solid var(--scan); border-radius:7px; padding:2px 3px 1px; cursor:pointer; user-select:none; font:inherit; color:var(--ink)}
+.ch b{font-family:var(--mono); font-size:1rem; line-height:1.3}
+.ch i{font-style:normal; font-size:.7rem; color:var(--muted); font-weight:900}
+.ch.dash{background:var(--tip-soft)}
+.ch.marked{background:var(--sun); color:var(--dark-ink); border-color:var(--dark-ink)}
+.ch.marked i{color:var(--dark-ink)}
+.scan-help{font-size:.8rem; color:var(--muted); margin:6px 0 0; font-weight:600}
+
+.actions{display:flex; flex-wrap:wrap; gap:10px; margin-top:16px}
+
+.feedback{margin-top:16px; border:3px solid; border-radius:14px; padding:14px 16px; font-weight:600}
+.feedback:empty{display:none}
+.feedback p:last-child{margin-bottom:0}
+.feedback.ok{border-color:var(--ok); background:var(--ok-soft)}
+.feedback.bad{border-color:var(--bad); background:var(--bad-soft)}
+.feedback.fix{border-color:var(--tip); background:var(--tip-soft)}
+.feedback.reveal{border-color:#9B5CF6; background:var(--reveal-soft)}
+.feedback code{font-size:.92rem; background:var(--cell); padding:1px 6px; border-radius:5px; white-space:pre-wrap; overflow-wrap:anywhere}
+.hint{margin:10px 0; padding:8px 12px; background:var(--paper); border-left:6px solid var(--sun); border-radius:8px; font-weight:800}
+.left{font-weight:900; color:var(--muted); font-size:.92rem}
+.plus{display:inline-block; background:var(--go); color:#fff; font-weight:900; border-radius:999px; padding:1px 11px; margin-left:4px; white-space:nowrap}
+.streak{display:inline-block; background:var(--sun); color:var(--dark-ink); font-weight:900; border-radius:999px; padding:1px 11px; margin-left:4px; white-space:nowrap; border:2px solid var(--dark-ink)}
+.answer code{font-size:1.05rem; font-weight:700}
+.stampx{
+  display:inline-block; font-family:var(--display); font-size:1.35rem; line-height:1.2;
+  color:var(--sc, var(--ok)); border:4px double var(--sc, var(--ok)); border-radius:8px; padding:6px 14px;
+  margin:2px 0 12px; transform:rotate(-5deg); background:var(--paper);
+  animation:slam .45s cubic-bezier(.2,1.5,.4,1) both;
+}
+@keyframes slam{0%{opacity:0; transform:rotate(-5deg) scale(2.4)} 100%{opacity:1; transform:rotate(-5deg) scale(1)}}
+.shake{animation:shake .35s ease}
+@keyframes shake{20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)}}
+
+.toolkit{margin-top:18px; border-top:2.5px dashed var(--line); padding-top:12px}
+.toolkit summary{cursor:pointer; font-weight:900; padding:4px 0}
+.toolkit .tools{margin-top:10px}
+.toolkit .remember{font-size:.92rem; color:var(--muted); margin:0; font-weight:600}
+
+/* ---------- Report ---------- */
+.agent-line{font-weight:900; font-size:1.05rem}
+.rank-card{display:flex; align-items:center; gap:16px; flex-wrap:wrap; background:var(--rainbow); color:var(--dark-ink); border:3px solid var(--edge); border-radius:16px; padding:14px 18px; margin:6px 0 14px; box-shadow:4px 4px 0 var(--edge)}
+.rank-emoji{font-size:3.4rem; line-height:1; background:#fff; border-radius:50%; width:78px; height:78px; display:grid; place-items:center; border:3px solid var(--dark-ink)}
+.rank-card .txt{background:rgba(255,255,255,.88); border-radius:12px; padding:6px 12px}
+.rank-label{margin:0; font-weight:900; font-size:.9rem}
+.rank-name{margin:0; font-family:var(--display); font-size:clamp(1.35rem, 5vw, 2rem); line-height:1.15}
+.score-line{margin:2px 0 0; font-weight:900}
+.score-line b{font-size:1.3rem}
+.breakdown{display:grid; gap:8px; margin:14px 0}
+.brow{display:grid; grid-template-columns:minmax(130px, 180px) 1fr auto; align-items:center; gap:10px; font-weight:900; font-size:.95rem}
+.mini{height:14px; border:2.5px solid var(--edge); border-radius:999px; overflow:hidden; background:var(--cell)}
+.mini i{display:block; height:100%}
+.stats{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px}
+.stat{border:2.5px solid var(--edge); border-radius:12px; padding:6px 12px; font-weight:900; background:var(--cell)}
+.ranks{list-style:none; padding:0; margin:12px 0 20px; display:grid; gap:6px}
+.ranks li{display:flex; gap:10px; align-items:center; border:2.5px solid var(--line); border-radius:12px; padding:6px 12px; font-weight:800}
+.ranks li .r{flex:0 0 46px; font-family:var(--mono); font-size:.85rem; color:var(--muted)}
+.ranks li.me{border-color:var(--edge); background:var(--sun); color:var(--dark-ink); font-weight:900}
+.ranks li.me .r{color:var(--dark-ink)}
+.ranks li.me::after{content:"You"; margin-left:auto; font-size:.8rem; background:var(--dark-ink); color:#fff; border-radius:999px; padding:0 9px}
+
+/* ---------- Confetti + modal ---------- */
+.confetti{position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:40}
+.confetti i{position:absolute; top:-16px; width:10px; height:15px; border-radius:2px; animation:fall linear forwards}
+@keyframes fall{to{transform:translate(var(--dx), 108vh) rotate(var(--rot))}}
+.modal{position:fixed; inset:0; z-index:50; background:rgba(20,8,50,.6); display:flex; align-items:center; justify-content:center; padding:20px}
+.modal[hidden]{display:none}
+.modal-card{background:var(--paper); border:3px solid var(--edge); border-radius:18px; box-shadow:7px 7px 0 #FF5FA2; padding:22px; max-width:380px; width:100%}
+.modal-card h3{margin:0 0 6px; font-family:var(--display); font-weight:400; font-size:1.3rem}
+.modal-card .row{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px}
+
+/* ---------- Prizes + leaderboard ---------- */
+.prize{background:linear-gradient(135deg,#FFF1B8,#FFD6EC 60%,#D9E8FF); color:var(--dark-ink); border:3px solid var(--dark-ink); border-radius:16px; padding:14px 16px; margin:0 0 16px; box-shadow:4px 4px 0 var(--dark-ink)}
+.prize h3{margin:0 0 8px; font-family:var(--display); font-weight:400; font-size:1.15rem; line-height:1.25}
+.prize ul{list-style:none; padding:0; margin:0 0 10px; display:flex; flex-wrap:wrap; gap:8px}
+.prize li{background:#fff; border:2.5px solid var(--dark-ink); border-radius:999px; padding:3px 12px; font-weight:900}
+.prize p{margin:0; font-weight:700}
+.prize-rows{display:grid; gap:8px; margin-bottom:10px}
+.prow{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.prow ul{margin:0}
+.pm{font-weight:900; min-width:66px; font-size:1.05rem}
+.board-wrap{overflow-x:auto; border:3px solid var(--edge); border-radius:14px; background:var(--cell)}
+.board{border-collapse:collapse; width:100%; min-width:430px; font-weight:700}
+.board th{background:var(--sheet-head); text-align:left; font-size:.8rem; padding:8px 10px; color:var(--muted); white-space:nowrap}
+.board td{padding:9px 10px; border-top:1.5px solid var(--sheet-line)}
+.board td.num{font-family:var(--mono); white-space:nowrap}
+.board td.place{font-size:1.25rem; width:56px; text-align:center}
+.board tr.p1 td{background:#FFE27A; color:var(--dark-ink)}
+.board tr.p2 td{background:#E3E8F2; color:var(--dark-ink)}
+.board tr.p3 td{background:#F7CBA4; color:var(--dark-ink)}
+.board tr.playing td{color:var(--muted); font-style:italic}
+.gift,.you{display:inline-block; font-size:.72rem; font-weight:900; border-radius:999px; padding:0 8px; margin-left:6px; white-space:nowrap; font-family:var(--body)}
+.gift{background:var(--dark-ink); color:#fff}
+.you{background:var(--primary); color:#fff}
+.board-empty{padding:18px; text-align:center; color:var(--muted); font-weight:800; margin:0}
+.board-note{font-size:.85rem; color:var(--muted); margin:8px 0 0; font-weight:700}
+.place-line{font-weight:900; font-size:1.05rem; margin:0 0 10px}
+.place-line:empty{display:none}
+.modal-card.wide{max-width:700px; max-height:calc(100% - 20px); overflow:auto}
+.board-head{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px}
+.board-head h3{margin:0}
+.name-err{color:var(--bad); font-weight:900; margin:6px 0 0; font-size:.9rem}
+.name-err:empty{display:none}
+.start-actions{display:flex; flex-wrap:wrap; gap:10px}
+.teacher-add{margin:0 0 14px; border:3px solid var(--edge); border-radius:14px; padding:10px 14px; background:var(--scan-soft)}
+.teacher-add summary{cursor:pointer; font-weight:900}
+.add-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+.add-row input{flex:1 1 150px; min-width:0; font:700 16px var(--body); color:var(--ink); background:var(--cell); border:2.5px solid var(--edge); border-radius:10px; padding:10px 12px}
+.add-msg{margin:8px 0 0; font-weight:800}
+.add-msg:empty{display:none}
+.add-msg.ok{color:var(--ok)} .add-msg.bad{color:var(--bad)}
+.save-status{font-weight:900; border:3px solid var(--edge); border-radius:14px; padding:10px 14px; margin:6px 0 14px; background:var(--cell)}
+.save-status:empty{display:none}
+.save-status.ok{background:var(--ok-soft); border-color:var(--ok)}
+.save-status.bad{background:var(--bad-soft); border-color:var(--bad)}
+.save-status .btn{margin-top:8px; min-height:44px; padding:6px 16px; font-size:.95rem}
+.rm{font:inherit; font-size:.75rem; font-weight:900; cursor:pointer; margin-left:8px; border:2px solid #D6264F; color:#D6264F; background:#fff; border-radius:999px; padding:0 9px; min-height:26px}
+.btn:disabled{opacity:.6; cursor:wait}
+
+@media (max-width:520px){
+  .dossier{padding:20px 15px 18px; box-shadow:5px 5px 0 var(--lvl, var(--edge))}
+  .brow{grid-template-columns:1fr auto}
+  .brow .mini{grid-column:1 / -1; grid-row:2}
+  .btn{flex:1 1 auto}
+  .brand{font-size:.95rem}
+}
+@media (prefers-reduced-motion: reduce){
+  .stampx,.shake,.pill.warn{animation:none}
+  .fill{transition:none}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">🕵️ Crack the Secret Code!</div>
+    <span class="pill" id="timerPill" title="Time left">⏱ <b id="timer">10:00</b></span>
+    <span class="pill" title="Points">⭐ <b id="score">0</b>/9</span>
+    <span class="pill fire" id="streakPill" hidden title="Missions in a row">🔥 <b id="streak">0</b></span>
+    <button class="tbtn" id="soundBtn" type="button" aria-label="Sound on">🔊</button>
+    <button class="tbtn" id="boardBtn" type="button">🏆 Board</button>
+    <button class="tbtn" id="restartBtn" type="button">⏹ End</button>
+    <div class="progress">
+      <div class="track" id="track" role="progressbar" aria-label="Game progress" aria-valuemin="0" aria-valuemax="9" aria-valuenow="0"><div class="fill" id="fill"></div></div>
+      <span class="prog-text" id="progText">0 of 9</span>
+    </div>
+  </div>
+</header>
+
+<main id="app"><noscript>Please turn on JavaScript to play this game.</noscript></main>
+
+<div class="modal" id="modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <h3 id="modalTitle">End the game now?</h3>
+    <p>Your score so far will be saved to the class board. Each student plays one time, so you cannot start again.</p>
+    <div class="row">
+      <button class="btn" id="modalCancel" type="button">Keep playing</button>
+      <button class="btn danger" id="modalOk" type="button">End game</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="boardModal" hidden>
+  <div class="modal-card wide" role="dialog" aria-modal="true" aria-labelledby="boardTitle">
+    <div class="board-head"><h3 id="boardTitle">🏆 Leaderboard</h3><button class="tbtn" id="boardClose" type="button" aria-label="Close leaderboard">✕ Close</button></div>
+    <details class="teacher-add" id="teacherPanel">
+      <summary>👩‍🏫 Teacher tools</summary>
+      <div class="add-row">
+        <input id="pinInput" type="password" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="Teacher PIN" aria-label="Teacher PIN">
+        <button class="btn go" id="pinBtn" type="button">Unlock</button>
+      </div>
+      <p class="add-msg" id="pinMsg" role="status"></p>
+    </details>
+    <div data-board></div>
+    <div class="row"><button class="btn danger" id="boardClear" type="button" hidden>Clear leaderboard</button></div>
+  </div>
+</div>
+
+<script>
+// ENGINE START
+/* A tiny Excel formula engine: LEFT, RIGHT, MID, SUBSTITUTE (+ a few helpers). */
+class XLError extends Error { constructor(code){ super(code); this.code = code; } }
+class FormulaError extends Error { constructor(code){ super(code); this.code = code; } }
+
+function toText(v){
+  if (typeof v === 'number') return Number.isInteger(v) ? String(v) : String(+v.toFixed(10));
+  if (typeof v === 'boolean') return v ? 'TRUE' : 'FALSE';
+  return String(v);
+}
+function toNum(v){
+  if (typeof v === 'number') return v;
+  if (typeof v === 'boolean') return v ? 1 : 0;
+  if (v === '') return 0;
+  const s = String(v).trim();
+  if (/^-?\d+(\.\d+)?$/.test(s)) return parseFloat(s);
+  throw new XLError('#VALUE!');
+}
+
+function tokenize(s){
+  const t = []; let i = 0;
+  while (i < s.length){
+    const c = s[i];
+    if (/\s/.test(c)) { i++; continue; }
+    if (c === '"'){
+      let j = i + 1, str = '';
+      for (;;){
+        if (j >= s.length) throw new FormulaError('quote');
+        if (s[j] === '"'){ if (s[j+1] === '"'){ str += '"'; j += 2; continue; } break; }
+        str += s[j++];
+      }
+      t.push({type:'str', v:str}); i = j + 1; continue;
+    }
+    if (/[0-9.]/.test(c)){
+      const m = s.slice(i).match(/^\d*\.?\d+/);
+      if (!m) throw new FormulaError('syntax');
+      t.push({type:'num', v:parseFloat(m[0])}); i += m[0].length; continue;
+    }
+    if (/[A-Za-z$_]/.test(c)){
+      const m = s.slice(i).match(/^[A-Za-z$_][A-Za-z0-9$_.]*/);
+      t.push({type:'id', v:m[0]}); i += m[0].length; continue;
+    }
+    if ('(),;&+-*/'.includes(c)){ t.push({type: c === ';' ? ',' : c}); i++; continue; }
+    throw new FormulaError('char:' + c);
+  }
+  return t;
+}
+
+const ARG_RULES = {
+  LEFT:[1,2,'=LEFT(text, how_many)'], RIGHT:[1,2,'=RIGHT(text, how_many)'],
+  MID:[3,3,'=MID(text, start, how_many)'], SUBSTITUTE:[3,4,'=SUBSTITUTE(text, old, new)'],
+  LEN:[1,1,'=LEN(text)'], UPPER:[1,1,'=UPPER(text)'], LOWER:[1,1,'=LOWER(text)'], TRIM:[1,1,'=TRIM(text)'],
+  CONCAT:[1,255,'=CONCAT(text1, text2, ...)'], CONCATENATE:[1,255,'=CONCATENATE(text1, text2, ...)'],
+  FIND:[2,3,'=FIND(find, text)'], SEARCH:[2,3,'=SEARCH(find, text)']
+};
+
+function callFn(name, args, used){
+  const rule = ARG_RULES[name];
+  if (!rule) throw new FormulaError('fn:' + name);
+  used.funcs.add(name);
+  if (args.length < rule[0] || args.length > rule[1]) throw new FormulaError('args:' + name);
+  const T = i => toText(args[i]);
+  const N = i => Math.trunc(toNum(args[i]));
+  switch (name){
+    case 'LEFT': { const s = T(0), n = args.length > 1 ? N(1) : 1; if (n < 0) throw new XLError('#VALUE!'); return s.slice(0, n); }
+    case 'RIGHT': { const s = T(0), n = args.length > 1 ? N(1) : 1; if (n < 0) throw new XLError('#VALUE!'); return n === 0 ? '' : s.slice(Math.max(0, s.length - n)); }
+    case 'MID': { const s = T(0), st = N(1), n = N(2); if (st < 1 || n < 0) throw new XLError('#VALUE!'); return s.substr(st - 1, n); }
+    case 'SUBSTITUTE': {
+      const s = T(0), oldT = T(1), newT = T(2);
+      if (oldT === '') return s;
+      if (args.length < 4) return s.split(oldT).join(newT);
+      const k = N(3); if (k < 1) throw new XLError('#VALUE!');
+      let idx = -1, from = 0;
+      for (let c = 0; c < k; c++){ idx = s.indexOf(oldT, from); if (idx < 0) return s; from = idx + oldT.length; }
+      return s.slice(0, idx) + newT + s.slice(idx + oldT.length);
+    }
+    case 'LEN': return T(0).length;
+    case 'UPPER': return T(0).toUpperCase();
+    case 'LOWER': return T(0).toLowerCase();
+    case 'TRIM': return T(0).replace(/ +/g, ' ').trim();
+    case 'CONCAT': case 'CONCATENATE': return args.map(toText).join('');
+    case 'FIND': case 'SEARCH': {
+      let f = T(0), s = T(1); const st = args.length > 2 ? N(2) : 1;
+      if (name === 'SEARCH'){ f = f.toLowerCase(); s = s.toLowerCase(); }
+      if (st < 1 || st > s.length + 1) throw new XLError('#VALUE!');
+      const i = s.indexOf(f, st - 1); if (i < 0) throw new XLError('#VALUE!');
+      return i + 1;
+    }
+  }
+}
+
+function runFormula(body, cells, selfCell){
+  const used = { funcs:new Set(), refs:new Set() };
+  const toks = tokenize(body); let p = 0;
+  const peek = () => toks[p];
+  const is = type => toks[p] && toks[p].type === type;
+  const eat = type => { if (!is(type)) throw new FormulaError('syntax'); return toks[p++]; };
+
+  function expr(){ let v = add(); while (is('&')){ p++; const r = add(); v = toText(v) + toText(r); } return v; }
+  function add(){ let v = mul(); while (is('+') || is('-')){ const op = toks[p++].type; const r = mul(); v = op === '+' ? toNum(v) + toNum(r) : toNum(v) - toNum(r); } return v; }
+  function mul(){ let v = unary(); while (is('*') || is('/')){ const op = toks[p++].type; const r = unary(); if (op === '/' && toNum(r) === 0) throw new XLError('#DIV/0!'); v = op === '*' ? toNum(v) * toNum(r) : toNum(v) / toNum(r); } return v; }
+  function unary(){ if (is('-')){ p++; return -toNum(unary()); } if (is('+')){ p++; return unary(); } return primary(); }
+  function primary(){
+    const t = peek();
+    if (!t) throw new FormulaError('syntax');
+    if (t.type === 'num' || t.type === 'str'){ p++; return t.v; }
+    if (t.type === '('){ p++; const v = expr(); eat(')'); return v; }
+    if (t.type === 'id'){
+      p++;
+      const name = t.v.toUpperCase();
+      if (is('(')){
+        p++;
+        if (!ARG_RULES[name]) throw new FormulaError('fn:' + name);
+        const args = [];
+        if (is(')')) p++;
+        else { for (;;){ args.push(expr()); if (is(',')){ p++; continue; } eat(')'); break; } }
+        return callFn(name, args, used);
+      }
+      if (/^\$?[A-Z]{1,3}\$?\d+$/.test(name)){
+        const ref = name.replace(/\$/g, '');
+        used.refs.add(ref);
+        if (ref === selfCell) throw new FormulaError('circular');
+        return Object.prototype.hasOwnProperty.call(cells, ref) ? cells[ref] : '';
+      }
+      if (ARG_RULES[name]) throw new FormulaError('noparen:' + name);
+      throw new FormulaError('name:' + t.v);
+    }
+    throw new FormulaError('syntax');
+  }
+
+  const value = expr();
+  if (p < toks.length) throw new FormulaError('syntax');
+  return { value, used };
+}
+// ENGINE END
+
+// DATA START
+const TOOL_INFO = {
+  LEFT:{c:'#4FA3FF', syntax:'=LEFT(text, how_many)', does:'Takes characters from the start (the left side).', ex:'=LEFT("SPYCAT", 3)', out:'SPY'},
+  RIGHT:{c:'#FF9A4D', syntax:'=RIGHT(text, how_many)', does:'Takes characters from the end (the right side).', ex:'=RIGHT("SPYCAT", 3)', out:'CAT'},
+  MID:{c:'#5BD982', syntax:'=MID(text, start, how_many)', does:'Takes characters from the middle. You choose the start position.', ex:'=MID("TOPSECRET", 4, 6)', out:'SECRET'},
+  SUBSTITUTE:{c:'#FF6FB0', syntax:'=SUBSTITUTE(text, old, new)', does:'Swaps old text for new text, everywhere in the text.', ex:'=SUBSTITUTE("A.B.C", ".", "+")', out:'A+B+C'}
+};
+const ALL4 = ['LEFT','RIGHT','MID','SUBSTITUTE'];
+
+const LEVELS = [
+  { num:1, title:'Level 1: Code Breaker', short:'Code Breaker', tab:'Level 1', emoji:'🔵', color:'var(--l1)',
+    tools:['LEFT','RIGHT','MID'], newTools:['LEFT','RIGHT','MID'],
+    brief:'Secret codes hide information at the start, the end, or the middle. The code is always in cell A2. You type your formula for cell B2. Pick the right tool for each mission!',
+    tip:'Text in a formula goes inside "quotes". Cell names like A2 do not. The dash - counts as a character too!',
+    missions:[
+      {code:'AMM458', task:'This code hides a city. Get the city code from the start.', goal:'AMM', need:['LEFT'],
+        hints:['The city code is at the start of the code. Which function takes characters from the left?','Use LEFT. How many letters are in the city code?'], answer:'=LEFT(A2,3)'},
+      {code:'PETRA2026', task:'When is the mission? Get the year from the end.', goal:'2026', need:['RIGHT'],
+        hints:['The year is at the end of the code. Which function takes characters from the right?','Use RIGHT. How many digits are in a year?'], answer:'=RIGHT(A2,4)'},
+      {code:'AMM-ICT-458', task:'Get the Subject Code from the middle.', goal:'ICT', need:['MID'],
+        hints:['The subject is in the middle. Use MID: =MID(text, start, how_many).','Look at the scanner: on which number does I start? The dash counts too!'], answer:'=MID(A2,5,3)'},
+      {code:'AQB-MATH-209', task:'Get the Subject Code. This one has 4 letters!', goal:'MATH', need:['MID'],
+        hints:['The subject is in the middle, so use MID.','Use the scanner to find where M starts. You need 4 letters.'], answer:'=MID(A2,5,4)'}
+    ]},
+  { num:2, title:'Level 2: Master Agent', short:'Master Agent', tab:'Level 2', emoji:'🩷', color:'var(--l2)',
+    tools:ALL4, newTools:['SUBSTITUTE'],
+    brief:'HQ wants codes in new formats. Swap characters with SUBSTITUTE. For the last mission, put one function inside another!',
+    tip:'Functions can work together, like a box inside a box: =LEFT(SUBSTITUTE("A.B.C", ".", "+"), 3) gives A+B',
+    missions:[
+      {code:'JOR-AMM-ICT-2026', task:'HQ wants slashes. Change every - into /.', goal:'JOR/AMM/ICT/2026', need:['SUBSTITUTE'],
+        hints:['SUBSTITUTE swaps old text for new text: =SUBSTITUTE(text, old, new).','Text in a formula needs quotes, like "-" and "/".'], answer:'=SUBSTITUTE(A2,"-","/")'},
+      {code:'JOR-AMM-ICT-2026', task:'Make the code easy to read. Change every - into a space.', goal:'JOR AMM ICT 2026', need:['SUBSTITUTE'],
+        hints:['Use SUBSTITUTE again. This time the new text is a space.','A space in quotes looks like this: " "'], answer:'=SUBSTITUTE(A2,"-"," ")'},
+      {code:'JOR-IRB-SCI-2025', task:'Get the city and subject, with / between them.', goal:'IRB/SCI', need:['MID','SUBSTITUTE'],
+        hints:['Two steps: first cut out IRB-SCI with MID, then swap - for / with SUBSTITUTE.','Put MID inside SUBSTITUTE: =SUBSTITUTE(MID(A2, ?, ?), "-", "/")'], answer:'=SUBSTITUTE(MID(A2,5,7),"-","/")'}
+    ]},
+  { num:3, title:'Final Boss Mission', short:'Final Boss', tab:'Final Boss', emoji:'👑', color:'var(--boss)', boss:true,
+    tools:ALL4, newTools:[],
+    brief:'This is the master code from HQ. It has 2 locks. Open both locks to defeat the boss!',
+    tip:'Use the Character Scanner. Tap characters to mark them while you count.',
+    missions:[
+      {code:'HQ-JOR-AMM-ICT-2026', task:'Lock 1 needs RIGHT. Get the year at the end.', goal:'2026', need:['RIGHT'],
+        hints:['The year is the last part of the code.','A year has 4 digits.'], answer:'=RIGHT(A2,4)'},
+      {code:'HQ-JOR-AMM-ICT-2026', task:'Final lock needs MID and SUBSTITUTE. Get JOR AMM ICT with spaces. No HQ and no year!', goal:'JOR AMM ICT', need:['MID','SUBSTITUTE'],
+        hints:['First cut out JOR-AMM-ICT with MID. Then swap - for a space with SUBSTITUTE.','=SUBSTITUTE(MID(A2, ?, ?), "-", " "). Where does J start? How many characters until the last T?'], answer:'=SUBSTITUTE(MID(A2,4,11),"-"," ")'}
+    ]}
+];
+
+const RANKS = [
+  {min:0, max:3, name:'Rookie Agent', emoji:'🐣', msg:'Good start! Practice LEFT, RIGHT and MID, then play again to level up.'},
+  {min:4, max:5, name:'Code Breaker', emoji:'🔐', msg:'Nice work! You can break codes. Keep practicing SUBSTITUTE.'},
+  {min:6, max:8, name:'Special Agent', emoji:'🕶️', msg:'Great job! You are very close to the top rank.'},
+  {min:9, max:9, name:'Excel Master Agent', emoji:'🏆', msg:'Perfect score! HQ is proud of you, Master Agent.'}
+];
+// DATA END
+
+/* ---------- Game ---------- */
+const $ = (s, el = document) => el.querySelector(s);
+const app = $('#app');
+const TOTAL = LEVELS.reduce((n, L) => n + L.missions.length, 0);
+const MAX_TRIES = 3;
+const GAME_SECONDS = 600;
+const PRAISE = [['Code Cracked! 🔓','#E8247A'], ['Excellent, Agent! 🕵️','#2E7FF0'], ['Mission Complete! 🎯','#138A47']];
+const CONFETTI = ['#FF5FA2','#FFC83D','#5BD982','#4FA3FF','#B47CFF','#FF9A4D'];
+const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const state = {};
+let timerId = null;
+
+function resetState(){
+  stopTimer();
+  Object.assign(state, {name:'', level:0, idx:0, score:0, levelScores:[0,0,0], firstTry:0, tries:0,
+    solved:false, revealed:false, done:0, started:false, praiseI:0, streak:0, bestStreak:0,
+    timeLeft:GAME_SECONDS, timeUp:false, screen:'start', saved:false, saveStatus:'', finalSeconds:0, entry:null});
+}
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function displayName(){ return state.name ? 'Agent ' + state.name : 'Agent'; }
+function listWords(a){ return a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]; }
+function orWords(a){ return a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' or ' + a[a.length - 1]; }
+function mmss(s){ s = Math.max(0, s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
+
+/* ----- Sound (tiny beeps, no files) ----- */
+let soundOn = true, audioCtx = null;
+try { soundOn = localStorage.getItem('cscSound') !== 'off'; } catch (e) {}
+function updateSoundBtn(){ const b = $('#soundBtn'); b.textContent = soundOn ? '🔊' : '🔇'; b.setAttribute('aria-label', soundOn ? 'Sound on' : 'Sound off'); }
+function tone(freq, start, dur, type, vol){
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = type; o.frequency.value = freq;
+  const t = audioCtx.currentTime + start;
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(t); o.stop(t + dur + 0.05);
+}
+function sfx(kind){
+  if (!soundOn) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (kind === 'win') [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.08, 0.18, 'triangle', 0.12));
+    if (kind === 'wrong') { tone(220, 0, 0.15, 'square', 0.05); tone(165, 0.13, 0.22, 'square', 0.05); }
+    if (kind === 'level') [392, 523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.1, 0.22, 'triangle', 0.1));
+    if (kind === 'tick') tone(880, 0, 0.06, 'sine', 0.05);
+    if (kind === 'end') [784, 659, 523, 392].forEach((f, i) => tone(f, i * 0.14, 0.25, 'triangle', 0.1));
+  } catch (e) {}
+}
+
+function confetti(){
+  if (reducedMotion) return;
+  const box = document.createElement('div');
+  box.className = 'confetti';
+  for (let i = 0; i < 46; i++){
+    const p = document.createElement('i');
+    p.style.left = Math.random() * 100 + '%';
+    p.style.background = CONFETTI[i % CONFETTI.length];
+    p.style.setProperty('--dx', (Math.random() * 160 - 80) + 'px');
+    p.style.setProperty('--rot', (Math.random() * 900 - 450) + 'deg');
+    p.style.animationDuration = (1.1 + Math.random() * 0.9) + 's';
+    p.style.animationDelay = (Math.random() * 0.25) + 's';
+    if (i % 3 === 0) p.style.borderRadius = '50%';
+    box.appendChild(p);
+  }
+  document.body.appendChild(box);
+  setTimeout(() => box.remove(), 2600);
+}
+
+/* ----- HUD + timer ----- */
+function updateHud(){
+  $('#score').textContent = state.score;
+  $('#streak').textContent = state.streak;
+  $('#streakPill').hidden = state.streak < 2;
+  $('#fill').style.width = (state.done / TOTAL * 100) + '%';
+  $('#progText').textContent = `${state.done} of ${TOTAL}`;
+  $('#track').setAttribute('aria-valuenow', state.done);
+  renderTimer();
+  $('#restartBtn').hidden = !state.started;
+  $('#restartBtn').textContent = state.screen === 'results' ? '↺ Next student' : '⏹ End';
+}
+function renderTimer(){
+  $('#timer').textContent = mmss(state.timeLeft);
+  $('#timerPill').classList.toggle('warn', state.started && state.timeLeft <= 60 && !state.timeUp && state.screen !== 'results');
+}
+function startTimer(){ if (!timerId) timerId = setInterval(tick, 1000); }
+function stopTimer(){ clearInterval(timerId); timerId = null; }
+function tick(){
+  // The clock only runs while a mission is open and not yet finished.
+  if (document.querySelector('.modal:not([hidden])') || state.screen !== 'mission' || state.solved || state.revealed) return;
+  state.timeLeft--;
+  if (state.timeLeft <= 10 && state.timeLeft > 0) sfx('tick');
+  renderTimer();
+  if (state.timeLeft <= 0){ state.timeUp = true; stopTimer(); sfx('end'); renderResults(); }
+}
+
+function scramble(el, text){
+  if (reducedMotion){ el.textContent = text; return; }
+  const pool = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&';
+  let frame = 0;
+  const t = setInterval(() => {
+    frame++;
+    let out = '';
+    for (let i = 0; i < text.length; i++){
+      const c = text[i];
+      out += (c === ' ' || c === '!' || i < frame / 2) ? c : pool[Math.floor(Math.random() * pool.length)];
+    }
+    el.textContent = out;
+    if (frame / 2 >= text.length){ clearInterval(t); el.textContent = text; }
+  }, 32);
+}
+
+function toolCard(t){
+  const i = TOOL_INFO[t];
+  return `<div class="tool" style="--tc:${i.c}"><div class="tool-name">${t}</div><code class="syntax">${esc(i.syntax)}</code><p>${i.does}</p><p class="ex">Example: <code>${esc(i.ex)}</code> gives <code class="out">${esc(i.out)}</code></p></div>`;
+}
+
+/* ----- Start ----- */
+function renderStart(){
+  state.screen = 'start';
+  app.innerHTML = `
+  <section class="hero">
+    <div class="ts-stamp">TOP SECRET</div>
+    <h1 aria-label="Crack the Secret Code!"><span id="scr" aria-hidden="true">CRACK THE SECRET CODE!</span></h1>
+    <p class="lead">Agent, HQ needs you! Secret codes are hidden in a spreadsheet. Crack them with Excel formulas before the clock runs out.</p>
+  </section>
+  <section class="dossier" style="--lvl:var(--sun)">
+    <div class="tab">📁 Your mission file</div>
+    <h2 class="sec">How to play</h2>
+    <ol class="steps">
+      <li><span class="n">1</span><span>Read the mission.</span></li>
+      <li><span class="n">2</span><span>Decide which Excel function to use.</span></li>
+      <li><span class="n">3</span><span>Type your formula in the formula bar.</span></li>
+      <li><span class="n">4</span><span>Press <b>Check formula</b>.</span></li>
+      <li><span class="n">5</span><span>Read the feedback. Wrong? Use the hint and try again!</span></li>
+    </ol>
+    <h2 class="sec">Your missions</h2>
+    <ol class="map">
+      <li style="--c:var(--l1)"><b>🔵 Code Breaker</b><span>4 missions: LEFT, RIGHT, MID</span></li>
+      <li style="--c:var(--l2)"><b>🩷 Master Agent</b><span>3 missions: + SUBSTITUTE</span></li>
+      <li style="--c:var(--boss)"><b>👑 Final Boss</b><span>2 locks</span></li>
+    </ol>
+    <p class="rules">⏱ You have <b>10 minutes</b> for <b>9 missions</b>. Each mission is worth <b>1 point</b>. You get <b>3 tries</b> per mission and a hint after each wrong try. Crack missions in a row to build a 🔥 streak! The clock stops while you read the level pages. Each student plays <b>one time</b>, and your score goes to the class board automatically.</p>
+    ${prizeHTML()}
+    <div class="name-row">
+      <label for="agentName">Your agent name (for the leaderboard)
+        <input id="agentName" maxlength="20" autocomplete="off" placeholder="First and last name">
+        <p class="name-err" id="nameErr" role="alert"></p>
+      </label>
+      <div class="start-actions">
+        <button class="btn primary" id="startBtn" type="button">Start mission 🚀</button>
+        <button class="btn" id="startBoardBtn" type="button">🏆 Leaderboard</button>
+      </div>
+    </div>
+  </section>`;
+  scramble($('#scr'), 'CRACK THE SECRET CODE!');
+  const name = $('#agentName');
+  $('#startBtn').onclick = async () => {
+    const n = name.value.trim().replace(/\s+/g, ' ').slice(0, 20);
+    const err = $('#nameErr'), btn = $('#startBtn');
+    if (!n){ err.textContent = 'Type your full name first, so you can join the class leaderboard.'; name.focus(); return; }
+    btn.disabled = true; btn.textContent = 'Checking…';
+    try {
+      const d = await api('/api/scores', { method:'POST', body:JSON.stringify({ name:n }) });
+      state.entry = { id:d.id, token:d.token };
+    } catch (e) {
+      if (e.status === 409){
+        err.textContent = 'This name already played. Each student plays one time. If this is a mistake, ask Ms Rahaf.';
+        btn.disabled = false; btn.textContent = 'Start mission 🚀'; name.focus(); return;
+      }
+      /* no internet: let them play, the score is sent at the end */
+    }
+    state.name = n; state.started = true; startTimer(); sfx('level'); renderIntro();
+  };
+  $('#startBoardBtn').onclick = openBoard;
+  name.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); $('#startBtn').click(); } });
+  updateHud();
+  window.scrollTo(0, 0);
+}
+
+/* ----- Level intro ----- */
+function renderIntro(){
+  state.screen = 'intro';
+  const L = LEVELS[state.level];
+  const prev = state.level > 0 ? LEVELS[state.level - 1] : null;
+  const recap = prev ? `<div class="recap">✅ ${prev.short} complete! You got <b>${state.levelScores[state.level - 1]} of ${prev.missions.length}</b> points.</div>` : '';
+  const shown = L.newTools.length ? L.newTools : L.tools;
+  app.innerHTML = `
+  <section class="dossier" style="--lvl:${L.color}">
+    <div class="tab">${L.emoji} ${L.tab}</div>
+    ${recap}
+    <h2 class="level-title">${L.title}</h2>
+    <p class="brief">${L.brief}</p>
+    <h3 class="sub">${L.newTools.length ? 'New tools unlocked' : 'Your four tools'}</h3>
+    <div class="tools">${shown.map(toolCard).join('')}</div>
+    ${L.tip ? `<p class="tip">💡 ${esc(L.tip)}</p>` : ''}
+    <button class="btn primary" id="goBtn" type="button">${L.boss ? 'Face the Final Boss 👑' : 'Start ' + L.tab + ' 🚀'}</button>
+  </section>`;
+  $('#goBtn').onclick = renderMission;
+  updateHud();
+  window.scrollTo(0, 0);
+  $('#goBtn').focus({preventScroll:true});
+}
+
+/* ----- Mission ----- */
+function renderMission(){
+  state.screen = 'mission';
+  const L = LEVELS[state.level], m = L.missions[state.idx];
+  state.tries = 0; state.solved = false; state.revealed = false;
+  const unlocked = LEVELS.slice(0, state.level + 1).reduce((a, lv) => a.concat(lv.newTools), []);
+  app.innerHTML = `
+  <section class="dossier" style="--lvl:${L.color}">
+    <div class="tab">${L.emoji} ${L.boss ? 'Lock' : 'Mission'} ${state.idx + 1} of ${L.missions.length}</div>
+    <div class="mission-head">
+      <span class="lvl-chip">${L.title}</span>
+      <span class="tries" id="tries"></span>
+    </div>
+    <h2 class="task">${esc(m.task)}</h2>
+    <div class="goal-row">
+      <div class="goal">🎯 Goal: <code>${esc(m.goal)}</code></div>
+      <div class="choose">🧰 Choose from: ${L.tools.map(t => `<span class="fn ${t}">${t}</span>`).join(' ')}</div>
+    </div>
+    <div class="sheet" id="sheet">
+      <div class="fbar">
+        <span class="namebox">B2</span><span class="fx">fx</span>
+        <input id="formula" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          aria-label="Formula for cell B2" placeholder="Type your formula here, starting with =">
+      </div>
+      <div class="grid-scroll">
+        <table class="grid">
+          <thead><tr><th class="corner"></th><th>A</th><th>B</th></tr></thead>
+          <tbody>
+            <tr><th>1</th><td class="hdr">Secret Code</td><td class="hdr">Your Answer</td></tr>
+            <tr><th>2</th><td class="code-cell">${esc(m.code)}</td><td class="active" id="b2"><span class="ph">?</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="scanner">
+      <div class="scan-title"><span>🔍 Character scanner</span><small>Length: ${m.code.length} characters</small></div>
+      <div class="chars">${[...m.code].map((c, i) => `<button type="button" class="ch${c === '-' ? ' dash' : ''}" aria-label="Character ${i + 1}: ${c === '-' ? 'dash' : c}"><b>${esc(c)}</b><i>${i + 1}</i></button>`).join('')}</div>
+      <p class="scan-help">The small number shows each character's position. Tap characters to mark them while you count.</p>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="checkBtn" type="button">Check formula</button>
+      <button class="btn go" id="nextBtn" type="button" hidden></button>
+    </div>
+    <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+    <details class="toolkit">
+      <summary>🧰 Agent toolkit: how the functions work</summary>
+      <div class="tools">${unlocked.map(toolCard).join('')}</div>
+      <p class="remember">Remember: every formula starts with = . Text goes inside "quotes". The code is in cell A2.</p>
+    </details>
+  </section>`;
+  updateTries();
+  const input = $('#formula');
+  $('#checkBtn').onclick = check;
+  $('#nextBtn').onclick = next;
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter'){ e.preventDefault(); (state.solved || state.revealed) ? next() : check(); }
+  });
+  app.querySelectorAll('.ch').forEach(b => b.addEventListener('click', () => b.classList.toggle('marked')));
+  updateHud();
+  window.scrollTo(0, 0);
+  input.focus({preventScroll:true});
+}
+
+function updateTries(){
+  const left = MAX_TRIES - state.tries;
+  let html = 'Tries ';
+  for (let i = 0; i < MAX_TRIES; i++) html += `<span class="d${i < left ? '' : ' used'}"></span>`;
+  const el = $('#tries');
+  el.innerHTML = html;
+  el.setAttribute('aria-label', `${left} ${left === 1 ? 'try' : 'tries'} left`);
+}
+
+function normalize(s){
+  return s.replace(/[“”„‟″＂]/g, '"').replace(/[،]/g, ',').replace(/[؛]/g, ';').replace(/＝/g, '=')
+          .replace(/[٠-٩]/g, d => String(d.charCodeAt(0) - 1632));
+}
+
+function formulaErrorMsg(code){
+  const [kind, extra] = code.split(':');
+  switch (kind){
+    case 'quote': return 'A quote mark " is missing. Text in a formula goes inside two quotes, like "-".';
+    case 'fn': return `Excel does not know a function called <code>${esc(extra)}</code>. Check your spelling!`;
+    case 'noparen': return `<code>${esc(extra)}</code> needs brackets after it, like <code>${esc(extra)}( ... )</code>.`;
+    case 'name': return `Excel does not understand <code>${esc(extra)}</code>. If it is text, put it in "quotes". If it is a cell, check the name (the code is in A2).`;
+    case 'args': return `<code>${esc(extra)}</code> has the wrong number of inputs. It looks like this: <code>${esc(ARG_RULES[extra][2])}</code>`;
+    case 'circular': return 'Your formula is inside cell B2, so it cannot use B2. Use A2 — that is where the code is.';
+    case 'char': return `Excel does not understand the character <code>${esc(extra)}</code>. Check your formula.`;
+    default: return 'Something is wrong with the brackets ( ) or commas. Check your formula carefully.';
+  }
+}
+
+function feedback(kind, html){ const fb = $('#feedback'); fb.className = 'feedback ' + kind; fb.innerHTML = html; }
+function shake(){ const s = $('#sheet'); s.classList.remove('shake'); void s.offsetWidth; s.classList.add('shake'); }
+function fix(msg){
+  feedback('fix', `<p><b>Fix needed:</b> ${msg}</p><p class="left">This did not use up a try.</p>`);
+  shake();
+  $('#formula').focus();
+}
+function setB2(text, cls){ const b2 = $('#b2'); b2.className = 'active ' + cls; b2.textContent = text; }
+
+function check(){
+  if (state.solved || state.revealed || state.timeUp) return;
+  const L = LEVELS[state.level], m = L.missions[state.idx];
+  const raw = normalize($('#formula').value).trim();
+  if (!raw) return fix('Type a formula first. Every formula starts with = .');
+  if (raw[0] !== '='){
+    if (raw.toUpperCase() === m.goal.toUpperCase()) return fix('That is the right code, but agents use formulas! Start with = and use a function with cell A2.');
+    return fix('Every Excel formula starts with = . Add it at the beginning!');
+  }
+  let res, used, isErr = false;
+  try {
+    const r = runFormula(raw.slice(1), {A1:'Secret Code', B1:'Your Answer', A2:m.code}, 'B2');
+    res = toText(r.value); used = r.used;
+  } catch (e){
+    if (e instanceof FormulaError) return fix(formulaErrorMsg(e.code));
+    if (e instanceof XLError){ res = e.code; isErr = true; }
+    else return fix('Something is wrong with that formula. Check it and try again.');
+  }
+  if (!isErr && res === m.goal){
+    if (!used.refs.has('A2')) return fix('Your result is right, but you typed the code yourself! Use cell <code>A2</code> so your formula works for any code.');
+    const missing = m.need.filter(f => !used.funcs.has(f));
+    if (missing.length) return fix(`Your result is right, but this mission needs ${listWords(missing)}. Try again using ${missing.length > 1 ? 'them' : 'it'}!`);
+    if (!L.tools.some(f => used.funcs.has(f))) return fix(`Use one of your agent tools: ${orWords(L.tools)}.`);
+    return success(res, raw);
+  }
+  wrong(res, isErr, m);
+}
+
+function success(res, raw){
+  const first = state.tries === 0;
+  state.solved = true;
+  state.score++;
+  state.levelScores[state.level]++;
+  if (first) state.firstTry++;
+  state.streak++;
+  state.bestStreak = Math.max(state.bestStreak, state.streak);
+  state.done++;
+  setB2(res, 'ok');
+  $('#formula').readOnly = true;
+  $('#checkBtn').hidden = true;
+  const [praise, color] = PRAISE[state.praiseI++ % PRAISE.length];
+  const streakTag = state.streak >= 2 ? `<span class="streak">🔥 ${state.streak} in a row!</span>` : '';
+  feedback('ok', `<div class="stampx" style="--sc:${color}">${praise}</div>
+    <p>${first ? `${esc(displayName())}, you cracked it on the first try!` : `You did not give up, ${esc(displayName())}. That is what agents do!`}
+    <span class="plus">+1 point</span> ${streakTag}</p>
+    <p>Your formula: <code>${esc(raw)}</code></p>`);
+  sfx('win');
+  confetti();
+  showNext();
+  updateHud();
+}
+
+function smartTip(res, isErr, m){
+  const g = m.goal;
+  if (isErr) return res === '#VALUE!' ? '<code>#VALUE!</code> means a number in your formula cannot work. Start positions must be 1 or more.' : '';
+  if (res === m.code && g !== m.code) return m.need.includes('SUBSTITUTE') ? 'Nothing changed! Check the old text: it should be exactly "-".' : 'That is the whole code. You only need one part of it.';
+  if (res && g.startsWith(res)) return 'Good start! You need more characters.';
+  if (res && g.endsWith(res)) return 'Close! You need more characters.';
+  if (res && res.includes(g)) return 'Too many characters! Your answer has extra ones.';
+  if (m.need.includes('SUBSTITUTE') && res.length === g.length) return 'Almost! Check the new text you put in quotes.';
+  if (res.length === g.length) return 'Right number of characters, but not the right ones. Check where you start.';
+  return '';
+}
+
+function wrong(res, isErr, m){
+  state.tries++;
+  state.streak = 0;
+  updateTries();
+  setB2(res === '' ? '(empty)' : res, 'bad');
+  sfx('wrong');
+  if (state.tries >= MAX_TRIES){
+    state.revealed = true;
+    state.done++;
+    $('#formula').readOnly = true;
+    $('#checkBtn').hidden = true;
+    feedback('reveal', `<p><b>Mission closed.</b> No point this time, but now you know the secret formula:</p>
+      <p class="answer"><code>${esc(m.answer)}</code></p>
+      <p>Read it carefully. Which function did the job? What do the numbers mean? You will be ready for the next one!</p>`);
+    showNext();
+    updateHud();
+    return;
+  }
+  const left = MAX_TRIES - state.tries;
+  const shown = res === '' ? 'an empty cell' : `<code>${esc(res)}</code>`;
+  feedback('bad', `<p><b>Not yet!</b> Your formula gave ${shown}. ${smartTip(res, isErr, m)}</p>
+    <div class="hint">💡 Hint: ${esc(m.hints[state.tries - 1])}</div>
+    <p class="left">${left} ${left === 1 ? 'try' : 'tries'} left. Change your formula and check again.</p>`);
+  shake();
+  updateHud();
+  $('#formula').focus();
+}
+
+function nextLabel(){
+  const L = LEVELS[state.level];
+  if (state.idx < L.missions.length - 1) return L.boss ? 'Next lock' : 'Next mission';
+  if (state.level < LEVELS.length - 1) return LEVELS[state.level + 1].boss ? 'Go to the Final Boss 👑' : 'Finish level 🎉';
+  return 'See my mission report 🏆';
+}
+function showNext(){ const b = $('#nextBtn'); b.textContent = nextLabel(); b.hidden = false; b.focus({preventScroll:true}); }
+function next(){
+  if (state.timeUp) return;
+  const L = LEVELS[state.level];
+  state.idx++;
+  if (state.idx < L.missions.length) return renderMission();
+  state.level++; state.idx = 0;
+  if (state.level < LEVELS.length){ sfx('level'); return renderIntro(); }
+  renderResults();
+}
+
+/* ----- Results ----- */
+function rankFor(s){ return RANKS.find(r => s >= r.min && s <= r.max); }
+function renderResults(){
+  state.screen = 'results';
+  stopTimer();
+  const s = state.score, r = rankFor(s);
+  state.finalSeconds = state.timeUp ? GAME_SECONDS : Math.min(GAME_SECONDS, GAME_SECONDS - state.timeLeft);
+  if (!state.timeUp) { sfx('level'); confetti(); }
+  const rows = LEVELS.map((L, i) => {
+    const pct = state.levelScores[i] / L.missions.length * 100;
+    return `<div class="brow"><span>${L.emoji} ${L.short}</span><div class="mini"><i style="width:${pct}%;background:${L.color}"></i></div><span>${state.levelScores[i]}/${L.missions.length}</span></div>`;
+  }).join('');
+  const bossWin = state.levelScores[2] === LEVELS[2].missions.length;
+  app.innerHTML = `
+  <section class="dossier" style="--lvl:var(--sun)">
+    <div class="tab">🗂️ Mission report</div>
+    ${state.timeUp ? `<div class="stampx" style="--sc:#D6264F">Time's Up! ⏰</div>` : `<div class="stampx" style="--sc:#138A47">Mission Complete! 🎯</div>`}
+    <p class="agent-line">${esc(displayName())}, here is your result.</p>
+    <div class="rank-card">
+      <div class="rank-emoji" aria-hidden="true">${r.emoji}</div>
+      <div class="txt">
+        <p class="rank-label">Your Agent Rank</p>
+        <p class="rank-name">${r.name}</p>
+        <p class="score-line"><b>${s}</b> of ${TOTAL} points</p>
+      </div>
+    </div>
+    <p>${r.msg}</p>
+    <div class="breakdown">${rows}</div>
+    <div class="stats">
+      <span class="stat">⏱ Time used: ${mmss(GAME_SECONDS - state.timeLeft)}</span>
+      <span class="stat">🔥 Best streak: ${state.bestStreak}</span>
+      <span class="stat">⚡ First-try cracks: ${state.firstTry}</span>
+      ${bossWin ? '<span class="stat">👑 Boss defeated!</span>' : ''}
+    </div>
+    <p class="save-status" id="saveStatus"></p>
+    <h2 class="sec">🏆 Class leaderboard</h2>
+    <p class="place-line" id="placeLine"></p>
+    <div data-board></div>
+    <h2 class="sec" style="margin-top:20px">Agent ranks</h2>
+    <ul class="ranks">
+      ${RANKS.map(x => `<li class="${x === r ? 'me' : ''}"><span class="r">${x.min === x.max ? x.min : x.min + '–' + x.max}</span><span>${x.emoji} ${x.name}</span></li>`).join('')}
+    </ul>
+    <button class="btn primary" id="againBtn" type="button">Next student 🔁</button>
+  </section>`;
+  $('#againBtn').onclick = () => { resetState(); renderStart(); };
+  updateHud();
+  renderBoards();
+  saveRun();
+  refreshBoard();
+  window.scrollTo(0, 0);
+}
+
+
+/* ---------- Leaderboard (one shared class board) ---------- */
+const MEDALS = ['🥇','🥈','🥉'];
+const GIFTS = ['🎁 +5 marks, treat, 10 min', '🎁 +3 marks, 10 min', '🎁 10 min free time'];
+const PRIZE_TEXT = ['+5 bonus marks, a sweet treat and 10 minutes free time', '+3 bonus marks and 10 minutes free time', '10 minutes free time'];
+const Board = { rows:[], loaded:false, error:'', pin:'' };
+let pollId = null;
+
+function prizeHTML(){
+  return `<div class="prize">
+    <h3>🏆 Top 3 agents win prizes!</h3>
+    <div class="prize-rows">
+      <div class="prow"><span class="pm">🥇 1st</span><ul><li>⭐ +5 Bonus Marks</li><li>🍬 A Sweet Treat</li><li>🎮 10 Minutes FREE TIME</li></ul></div>
+      <div class="prow"><span class="pm">🥈 2nd</span><ul><li>⭐ +3 Bonus Marks</li><li>🎮 10 Minutes FREE TIME</li></ul></div>
+      <div class="prow"><span class="pm">🥉 3rd</span><ul><li>🎮 10 Minutes FREE TIME</li></ul></div>
+    </div>
+    <p>The prizes will be given by <b>Ms Rahaf</b> to the first 3 participants on the leaderboard.</p>
+  </div>`;
+}
+async function api(path, opts = {}){
+  const r = await fetch(path, { cache:'no-store', headers:{'Content-Type':'application/json'}, ...opts });
+  let data = {};
+  try { data = await r.json(); } catch (e) {}
+  if (!r.ok){ const e = new Error(data.error || ('http_' + r.status)); e.status = r.status; throw e; }
+  return data;
+}
+function cleanEntry(d){
+  if (!d || typeof d !== 'object' || typeof d.name !== 'string') return null;
+  const points = Number(d.points), seconds = Number(d.seconds);
+  if (!Number.isFinite(points) || !Number.isFinite(seconds)) return null;
+  return { id:d.id, name:d.name.slice(0, 20), points, seconds, ts:Number(d.ts) || 0, finished:d.finished !== false };
+}
+async function refreshBoard(){
+  try {
+    const d = await api('/api/scores');
+    Board.rows = (d.scores || []).map(cleanEntry).filter(Boolean);
+    Board.loaded = true; Board.error = '';
+  } catch (e){
+    Board.error = 'Could not load the class board. Check the internet connection.';
+  }
+  renderBoards();
+}
+function rankedRows(){ return Board.rows.filter(r => r.finished).sort((a, b) => b.points - a.points || a.seconds - b.seconds || a.ts - b.ts); }
+function playingRows(){ return Board.rows.filter(r => !r.finished).sort((a, b) => a.ts - b.ts); }
+function speed(r){ return r.seconds > 0 ? (r.points / (r.seconds / 60)).toFixed(1) : '–'; }
+function nameKey(n){ return String(n || '').toLowerCase().replace(/\s+/g, ' ').trim(); }
+function isMe(r){ return state.saveStatus === 'saved' && nameKey(r.name) === nameKey(state.name); }
+
+function boardHTML(){
+  const rows = rankedRows(), playing = playingRows();
+  const rmBtn = r => Board.pin ? `<button type="button" class="rm" data-id="${esc(r.id)}" aria-label="Remove ${esc(r.name)}">✕ Remove</button>` : '';
+  let table;
+  if (!Board.loaded && !Board.error) table = `<div class="board-wrap"><p class="board-empty">Loading the class board…</p></div>`;
+  else if (!rows.length && !playing.length) table = `<div class="board-wrap"><p class="board-empty">No scores yet. Finish the game to be the first agent on the board!</p></div>`;
+  else table = `<div class="board-wrap"><table class="board">
+      <thead><tr><th>Place</th><th>Agent</th><th>Points</th><th>Time</th><th>Speed</th></tr></thead>
+      <tbody>${rows.map((r, i) => `<tr class="${i < 3 ? 'p' + (i + 1) : ''}">
+        <td class="place">${MEDALS[i] || i + 1}</td>
+        <td>${esc(r.name)}${isMe(r) ? '<span class="you">You</span>' : ''}${i < 3 ? `<span class="gift">${GIFTS[i]}</span>` : ''}${rmBtn(r)}</td>
+        <td class="num">${r.points}/${TOTAL}</td><td class="num">${mmss(r.seconds)}</td><td class="num">${speed(r)}/min</td>
+      </tr>`).join('')}${playing.map(r => `<tr class="playing">
+        <td class="place">🕵️</td><td>${esc(r.name)}${rmBtn(r)}</td><td class="num">–</td><td class="num" colspan="2">playing…</td>
+      </tr>`).join('')}</tbody></table></div>`;
+  return prizeHTML() + table +
+    `<p class="board-note">Ranking: the most points wins. If points are equal, the faster time wins. Speed shows points per minute. Each student plays one time. 🕵️ means the student is still playing. The board updates by itself. ${esc(Board.error)}</p>`;
+}
+function renderBoards(){
+  document.querySelectorAll('[data-board]').forEach(el => { el.innerHTML = boardHTML(); });
+  const line = $('#placeLine');
+  if (line){
+    const rows = rankedRows();
+    const i = rows.findIndex(isMe);
+    line.textContent = i < 0 ? '' : i < 3
+      ? `🎉 You are number ${i + 1} on the class leaderboard right now! Your prize from Ms Rahaf: ${PRIZE_TEXT[i]}.`
+      : `You are number ${i + 1} on the class leaderboard. Well done, Agent!`;
+  }
+  $('#boardClear').hidden = !Board.pin;
+}
+function boardVisible(){ return !$('#boardModal').hidden || state.screen === 'results'; }
+function startPolling(){ if (!pollId) pollId = setInterval(() => { if (boardVisible() && !document.hidden) refreshBoard(); }, 8000); }
+
+function renderSaveStatus(){
+  const el = $('#saveStatus');
+  if (!el) return;
+  const st = state.saveStatus;
+  el.className = 'save-status' + (st === 'saved' ? ' ok' : (st === 'error' || st === 'taken') ? ' bad' : '');
+  el.innerHTML =
+    st === 'saving' ? '⏳ Saving your score to the class board…' :
+    st === 'saved'  ? `✅ Saved! ${esc(state.name)}: ${state.score}/${TOTAL} points in ${mmss(state.finalSeconds)} is on the class board.` :
+    st === 'taken'  ? 'This name already has a score on the class board, so this game was not saved. Ask Ms Rahaf if this is a mistake.' :
+    st === 'error'  ? 'Your score could not be saved. Check the internet connection, then try again.<br><button class="btn go" id="retrySave" type="button">Try again</button>' : '';
+  const b = $('#retrySave');
+  if (b) b.onclick = () => { state.saved = false; saveRun(); };
+}
+async function saveRun(){
+  if (state.saved) return;
+  state.saved = true; state.saveStatus = 'saving'; renderSaveStatus();
+  const result = { points:state.score, seconds:state.finalSeconds };
+  for (let attempt = 0; attempt < 3; attempt++){
+    try {
+      if (state.entry){
+        try { await api('/api/scores', { method:'PUT', body:JSON.stringify({ ...state.entry, ...result }) }); }
+        catch (e){ if (e.status !== 404) throw e; state.entry = null; continue; } // removed by teacher: save as new
+      } else {
+        await api('/api/scores', { method:'POST', body:JSON.stringify({ name:state.name, ...result }) });
+      }
+      state.saveStatus = 'saved'; break;
+    } catch (e){
+      if (e.status === 409){ state.saveStatus = 'taken'; break; }
+      state.saveStatus = 'error';
+      await new Promise(r => setTimeout(r, 1500));
+    }
+  }
+  renderSaveStatus();
+  await refreshBoard();
+}
+
+/* Teacher tools */
+async function teacher(action, extra = {}){
+  return api('/api/teacher', { method:'POST', body:JSON.stringify({ pin:Board.pin || $('#pinInput').value.trim(), action, ...extra }) });
+}
+async function unlockTeacher(){
+  const msg = $('#pinMsg'), input = $('#pinInput'), pin = input.value.trim();
+  if (!pin){ msg.className = 'add-msg bad'; msg.textContent = 'Type the teacher PIN.'; input.focus(); return; }
+  try {
+    await api('/api/teacher', { method:'POST', body:JSON.stringify({ pin, action:'check' }) });
+    Board.pin = pin; input.value = '';
+    msg.className = 'add-msg ok'; msg.textContent = 'Unlocked. Remove a name to let that student play again, or clear the whole board for a new class.';
+    renderBoards();
+  } catch (e){
+    msg.className = 'add-msg bad';
+    msg.textContent = e.status === 401 ? 'Wrong PIN. Try again.' : 'Could not connect. Check the internet connection.';
+  }
+}
+async function removeScore(id){
+  if (!Board.pin) return;
+  try { await teacher('remove', { id:Number(id) }); } catch (e){ $('#pinMsg').className = 'add-msg bad'; $('#pinMsg').textContent = 'Could not remove that score.'; }
+  refreshBoard();
+}
+let clearArmed = null;
+async function clearBoard(){
+  const b = $('#boardClear');
+  if (!Board.pin) return;
+  if (!clearArmed){
+    b.textContent = 'Tap again to clear ALL scores';
+    clearArmed = setTimeout(() => { clearArmed = null; b.textContent = 'Clear leaderboard'; }, 3000);
+    return;
+  }
+  clearTimeout(clearArmed); clearArmed = null; b.textContent = 'Clear leaderboard';
+  try { await teacher('clear'); $('#pinMsg').className = 'add-msg ok'; $('#pinMsg').textContent = 'The board is clear. Ready for a new class!'; }
+  catch (e){ $('#pinMsg').className = 'add-msg bad'; $('#pinMsg').textContent = 'Could not clear the board.'; }
+  refreshBoard();
+}
+function openBoard(){
+  renderBoards();
+  refreshBoard();
+  $('#boardModal').hidden = false;
+  $('#boardClose').focus();
+}
+function closeBoard(){ $('#boardModal').hidden = true; }
+
+/* ----- Buttons ----- */
+const modal = $('#modal');
+$('#restartBtn').onclick = () => {
+  if (!state.started){ return; }
+  if (state.screen === 'results'){ resetState(); renderStart(); return; }
+  modal.hidden = false; $('#modalCancel').focus();
+};
+$('#modalCancel').onclick = () => { modal.hidden = true; $('#restartBtn').focus(); };
+$('#modalOk').onclick = () => { modal.hidden = true; renderResults(); };
+modal.addEventListener('click', e => { if (e.target === modal) modal.hidden = true; });
+$('#boardBtn').onclick = openBoard;
+$('#boardClose').onclick = closeBoard;
+$('#boardClear').onclick = clearBoard;
+$('#pinBtn').onclick = unlockTeacher;
+$('#pinInput').addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); unlockTeacher(); } });
+document.addEventListener('click', e => { const b = e.target.closest('.rm'); if (b) removeScore(b.dataset.id); });
+$('#boardModal').addEventListener('click', e => { if (e.target.id === 'boardModal') closeBoard(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape'){ modal.hidden = true; closeBoard(); } });
+$('#soundBtn').onclick = () => {
+  soundOn = !soundOn;
+  try { localStorage.setItem('cscSound', soundOn ? 'on' : 'off'); } catch (e) {}
+  updateSoundBtn();
+  if (soundOn) sfx('tick');
+};
+
+updateSoundBtn();
+resetState();
+renderStart();
+renderBoards();
+refreshBoard();
+startPolling();
+</script>
+</body>
+</html>

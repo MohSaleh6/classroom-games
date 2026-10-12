@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Teacher Guide · Report Rescue</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👩‍🏫</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=JetBrains+Mono:wght@500;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="tb-row">
+    <span class="logo"><span class="mark">👩‍🏫</span> Report Rescue · Teacher Guide</span>
+    <a class="tbtn" href="./" target="_blank" rel="noopener" style="text-decoration:none">Open student game ↗</a>
+    <button class="tbtn" type="button" onclick="window.print()">🖨️ Print guide</button>
+  </div>
+</header>
+
+<main>
+  <section class="card" style="--accent:var(--pink)">
+    <span class="kicker">Grade 7 · Unit 1: Creating a document · 45 minutes</span>
+    <h2>Report Rescue: Save the School Magazine!</h2>
+    <p>Students are magazine editors. They copy a messy starter report into <b>Microsoft Word</b> and fix it in 5 missions, one for each lesson in Unit 1. The game guides the work; <b>every task is done in Word</b>. Each student finishes with one complete, saved report.</p>
+    <p><b>Important:</b> the game cannot read Word files. Students tick tasks to <i>claim</i> points. You confirm the real score by checking the Word file and stamping their badge with your teacher code (see <a href="#scoring">Scoring</a>). The only thing the game checks itself is the 5 spelling words students type in Mission 5.</p>
+    <nav class="t-nav no-print" aria-label="Guide sections">
+      <a href="#plan">⏱ Lesson plan</a><a href="#prep">✅ Before class</a><a href="#scoring">⭐ Scoring</a><a href="#class">⚙️ Class link</a>
+      <a href="#key">🔑 Answer key</a><a href="#check">📋 Teacher checklist</a><a href="#final">🧾 Student checklist</a><a href="#support">🛟 Support route</a>
+    </nav>
+    <div class="row no-print">
+      <span class="small"><b>Student link:</b></span><span class="out-link" id="studentLink"></span>
+      <button class="btn sm" type="button" data-copylink="studentLink">Copy</button>
+    </div>
+  </section>
+
+  <section class="card" id="plan" style="--accent:var(--yellow)">
+    <span class="kicker">Timings</span>
+    <h2>⏱ 45-minute lesson plan</h2>
+    <div class="scroll"><table class="ttable" id="planTable"></table></div>
+    <p class="small muted" style="margin-top:10px">Pacing tip: call out the time at minutes 11, 19, 30 and 37. If the class is behind at minute 30, tell students to skip the optional “extra” tasks and use the Support Route task list.</p>
+  </section>
+
+  <section class="card" id="prep" style="--accent:var(--teal)">
+    <span class="kicker">Preparation</span>
+    <h2>✅ Before class (5 minutes)</h2>
+    <ul class="check-sheet">
+      <li>Test the student link on one class computer. Make sure Word opens.</li>
+      <li>Create a shared class folder for saving files (students save as <b>ReportRescue_TheirName</b>).</li>
+      <li>Stock Images and 3D Models need Microsoft 365 and internet. No internet? Put 3–4 topic pictures in the class folder. Students use Insert → Pictures → This Device.</li>
+      <li>Older Word with no 3D Models button: students use the alternative (Picture Effects → 3-D Rotation). It earns full points.</li>
+      <li>Optional: set your own report layout and teacher code below, then share the class link instead of the plain link.</li>
+      <li>Decide if students will print today. The game tells them to stop at Print Preview.</li>
+    </ul>
+  </section>
+
+  <section class="card" id="scoring" style="--accent:var(--blue)">
+    <span class="kicker">Points and badges</span>
+    <h2>⭐ Scoring</h2>
+    <div class="scroll"><table class="ttable" id="scoreTable"></table></div>
+    <h3 style="margin-top:18px">How points work</h3>
+    <ul class="check-sheet">
+      <li>Students tap <b>I did it in Word</b> to claim each task’s points. These are claimed points, not final.</li>
+      <li>The <b>Ready to Publish</b> badge unlocks when every task on the student’s route is claimed.</li>
+      <li>On the 🏁 screen, tap <b>Teacher: verify this report</b>. Open the student’s Word file, untick anything you cannot see, set how many spelling mistakes are really fixed, and enter your teacher code.</li>
+      <li>The stamp shows the verified score and a rank. Ranks use a percentage, so both routes can earn every rank.</li>
+      <li>Bonus points (up to +10) are shown separately and do not change the rank.</li>
+    </ul>
+    <div class="scroll"><table class="ttable" id="rankTable" style="margin-top:12px"></table></div>
+    <p class="small" style="margin-top:12px">Default teacher code: <b id="defCode"></b>. Set your own in the Class link section below. It is safer, because the default code is in the game files.</p>
+  </section>
+
+  <section class="card no-print" id="class" style="--accent:var(--purple)">
+    <span class="kicker">Optional</span>
+    <h2>⚙️ Class link: your layout and teacher code</h2>
+    <p>Mission 2 asks students to follow a report layout. Replace it with your class’s own format here. Then share the class link. The settings travel inside the link, so nothing is stored online.</p>
+    <div class="grid2">
+      <div class="field"><label for="cName">Class name (optional)</label><input class="tin" id="cName" maxlength="40" placeholder="Grade 7B"></div>
+      <div class="field"><label for="cCode">Your teacher code</label><input class="tin" id="cCode" maxlength="20" placeholder="Leave empty to keep the default code"></div>
+    </div>
+    <div class="field" style="margin-top:12px"><label for="cItems">Report layout (one part per line, top to bottom)</label><textarea id="cItems"></textarea>
+      <p class="small muted">You can use {h1}, {h2} and {h3}. They become each topic’s heading names (for example, {h1} becomes “Main Attractions”).</p></div>
+    <div class="grid2">
+      <div class="field"><label for="cLine">Line spacing</label><input class="tin" id="cLine" maxlength="10"></div>
+      <div class="field"><label for="cAfter">Spacing after paragraphs</label><input class="tin" id="cAfter" maxlength="10"></div>
+      <div class="field"><label for="cBorder">Page border</label><input class="tin" id="cBorder" maxlength="40"></div>
+      <div class="field"><label for="cList">List type</label><select class="tin" id="cList"><option value="bulleted">Bulleted</option><option value="numbered">Numbered</option></select></div>
+    </div>
+    <div class="row" style="margin-top:14px"><button class="btn pink" type="button" id="makeLink">Make class link</button><button class="btn sm" type="button" id="resetLayout">Reset to default</button></div>
+    <div id="linkOut" hidden style="margin-top:14px">
+      <p class="small"><b>Share this link with students</b> (a QR code generator or your class page works well):</p>
+      <div class="out-link" id="classLink"></div>
+      <div class="row" style="margin-top:8px"><button class="btn sm" type="button" data-copylink="classLink">Copy class link</button><a class="btn sm" id="tryLink" target="_blank" rel="noopener">Try it ↗</a></div>
+      <p class="small muted" id="codeNote"></p>
+    </div>
+  </section>
+
+  <section class="card" id="key" style="--accent:var(--coral)">
+    <span class="kicker">Answer key</span>
+    <h2>🔑 Starter reports, spelling corrections and data</h2>
+    <div class="tabs no-print" role="tablist" id="keyTabs"></div>
+    <div id="keyBody"></div>
+  </section>
+
+  <section class="card" id="check" style="--accent:var(--amber)">
+    <span class="kicker">Use when you verify a Word file</span>
+    <h2>📋 Teacher checklist: expected results</h2>
+    <p class="small">Topic shown: <b id="checkTopic"></b> (change it with the tabs in the Answer key). ★ = Support Route task.</p>
+    <div id="checkBody"></div>
+  </section>
+
+  <section class="card" id="final" style="--accent:var(--teal)">
+    <span class="kicker">Print for students if you like</span>
+    <h2>🧾 Final student checklist</h2>
+    <ul class="check-sheet" id="finalList"></ul>
+    <p class="small muted" style="margin-top:8px">Support Route students skip the shape and 3D model lines.</p>
+  </section>
+
+  <section class="card" id="support" style="--accent:#7EE0C3">
+    <span class="kicker">Differentiation</span>
+    <h2>🛟 Support Route</h2>
+    <ul class="check-sheet">
+      <li>Students choose it on the start screen. It is never labelled as “easier” to classmates; it shows as a route choice.</li>
+      <li>19 key tasks instead of 26 (73 points). Skipped: byline, bold-italic name, spacing, shape, 3D model, borders and shading, column widths, layout review.</li>
+      <li>Step-by-step instructions are open on every task. No need to tap the hint.</li>
+      <li>They still produce a full report: formatted text, styles, list, border, picture, chart, table, spelling fixed, Print Preview, saved.</li>
+      <li>More support: pair the student with a buddy for Missions 3 and 4, and check in with them at minutes 11 and 30.</li>
+      <li>Fast finishers on either route: the ⚡ Bonus challenge (drop cap and magazine footer, +10).</li>
+    </ul>
+  </section>
+</main>
+
+<div class="toast" id="tt" hidden></div>
+<script src="data.js"></script>
+<script>
+(function () {
+  const R = window.RR, $ = s => document.querySelector(s);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const base = location.origin + location.pathname.replace(/[^/]*$/, '');
+  $('#studentLink').textContent = base;
+  $('#defCode').textContent = R.STAMP;
+  let topic = R.TOPICS.park;
+  let layout = R.DEFAULT_LAYOUT;
+
+  /* Lesson plan */
+  $('#planTable').innerHTML = '<thead><tr><th>Minutes</th><th>Stage</th><th>What students do</th></tr></thead><tbody>' +
+    R.LESSON_PLAN.map(r => `<tr><td class="num">${r[0]}</td><td><b>${esc(r[1])}</b></td><td>${esc(r[2])}</td></tr>`).join('') + '</tbody>';
+
+  /* Scoring table */
+  const sum = (ts, core) => ts.filter(t => !core || t.core).reduce((a, t) => a + t.pts, 0);
+  $('#scoreTable').innerHTML = '<thead><tr><th>Mission</th><th>Lesson</th><th>Tasks (points)</th><th>Editor</th><th>Support</th></tr></thead><tbody>' +
+    R.MISSIONS.map(m => `<tr><td><b>${m.icon} ${m.num}. ${esc(m.title)}</b></td><td>${esc(m.lesson)}</td><td>${m.tasks.map(t => `${esc(R.fill(t.title, null, layout))} (${t.pts})${t.core ? ' ★' : ''}`).join('<br>')}</td><td class="num">${sum(m.tasks)}</td><td class="num">${sum(m.tasks, true)}</td></tr>`).join('') +
+    `<tr><td><b>⚡ Bonus</b></td><td>Extra</td><td>${R.BONUS.tasks.map(t => `${esc(t.title)} (${t.pts})`).join('<br>')}</td><td class="num">+10</td><td class="num">+10</td></tr>` +
+    `<tr><td colspan="3"><b>Total</b></td><td class="num"><b>${R.routeMax('standard')}</b></td><td class="num"><b>${R.routeMax('support')}</b></td></tr></tbody>`;
+  $('#rankTable').innerHTML = '<thead><tr><th>Verified score</th><th>Rank</th></tr></thead><tbody>' +
+    R.RANKS.map((r, i) => `<tr><td>${i ? r.min + '–' + (R.RANKS[i - 1].min - 1) + '%' : r.min + '–100%'}</td><td>${r.emoji} ${r.name}</td></tr>`).join('') + '</tbody>';
+
+  /* Answer key */
+  function renderKey() {
+    $('#keyTabs').innerHTML = Object.values(R.TOPICS).map(t => `<button type="button" role="tab" style="--c:${t.color}" aria-selected="${t === topic}" data-t="${t.id}">${t.emoji} ${esc(t.name)}</button>`).join('');
+    document.querySelectorAll('#keyTabs [data-t]').forEach(b => b.onclick = () => { topic = R.TOPICS[b.dataset.t]; renderKey(); renderCheck(); });
+    const marked = esc(R.reportText(topic)).replace(new RegExp('\\b(' + topic.mistakes.map(m => m.wrong).join('|') + ')\\b', 'g'), '<mark>$1</mark>');
+    $('#keyBody').innerHTML = `
+      <h3>${topic.emoji} ${esc(topic.name)}</h3>
+      <div class="grid2">
+        <div><p class="small"><b>Starter report</b> (mistakes highlighted for you; students see plain text). The parts are in the wrong order on purpose: Conclusion is second and the byline is last.</p>
+          <div class="report" style="max-height:none">${marked}</div></div>
+        <div>
+          <p class="small"><b>Spelling corrections</b></p>
+          <div class="scroll"><table class="ttable"><thead><tr><th>#</th><th>Wrong</th><th>Correct</th><th>Where</th></tr></thead><tbody>
+            ${topic.mistakes.map((m, i) => `<tr><td>${i + 1}</td><td style="color:var(--bad)">${esc(m.wrong)}</td><td style="color:var(--ok)"><b>${esc(m.right)}</b></td><td>${esc(m.where)}</td></tr>`).join('')}</tbody></table></div>
+          <p class="small" style="margin-top:12px"><b>Expected order after Mission 2</b></p>
+          <ol class="small">${layout.items.map(x => `<li>${esc(R.fill(x, topic, layout))}</li>`).join('')}</ol>
+          <p class="small" style="margin-top:12px"><b>Table data (Mission 4)</b>: ${esc(topic.table.caption)}</p>
+          <div class="scroll"><table class="ttable"><thead><tr>${topic.table.headers.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${topic.table.rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+          <p class="small" style="margin-top:12px"><b>Chart data (Mission 3)</b>: Clustered Column, title “${esc(topic.chart.title)}”</p>
+          <div class="scroll"><table class="ttable"><thead><tr><th>Category</th><th>${esc(topic.chart.series)}</th></tr></thead><tbody>${topic.chart.labels.map((l, i) => `<tr><td>${esc(l)}</td><td>${topic.chart.values[i]}</td></tr>`).join('')}</tbody></table></div>
+          <p class="small" style="margin-top:12px"><b>Topic details</b>: name to bold+italic “${esc(topic.keyword)}”; picture search “${esc(topic.img)}”; shape “${esc(topic.shapeName)}” with “${esc(topic.shapeText)}”; 3D model ${esc(topic.model)}.</p>
+        </div>
+      </div>`;
+  }
+
+  /* Teacher checklist */
+  function renderCheck() {
+    $('#checkTopic').textContent = topic.emoji + ' ' + topic.name;
+    $('#checkBody').innerHTML = R.MISSIONS.concat([R.BONUS]).map(m => `
+      <h3 style="margin-top:14px;color:${m.color}">${m.icon} ${m.num ? 'Mission ' + m.num + ': ' : ''}${esc(m.title)}</h3>
+      <ul class="check-sheet">${m.tasks.map(t => `<li><span><b>${t.pts} pts${t.core ? ' ★' : ''}</b> · ${esc(R.fill(t.title, topic, layout))}: ${esc(R.fill(t.check, topic, layout))}</span></li>`).join('')}</ul>`).join('') +
+      `<h3 style="margin-top:14px">Exact formatting at a glance</h3>
+      <ul class="check-sheet">
+        <li>Title: Arial Black, 28, bold, Dark Blue, centred.</li>
+        <li>Headings: Arial, 16, bold, underlined, Orange, left; Heading 1 style applied (Navigation Pane shows them).</li>
+        <li>Body: Calibri, 12, black, justified. Byline: italic, right-aligned, real name.</li>
+        <li>Spacing: line ${esc(layout.line)}, after ${esc(layout.after)}. Page border: ${esc(layout.border)}. ${esc(layout.list)} list under ${esc(topic.headings[0])}.</li>
+        <li>Picture ~6 cm wide, Square wrap, right of the introduction. Chart: Clustered Column, 4 values above.</li>
+        <li>Table 3 × 5, caption above, header row dark + bold + white + centred, all borders 1½ pt, light shading rows 2–5, AutoFit Contents, centred.</li>
+        <li>Page setup: A4, Portrait, Normal margins (2.54 cm). File name ReportRescue_StudentName.</li>
+      </ul>`;
+    $('#finalList').innerHTML = R.FINAL_CHECKLIST.map(c => `<li>${esc(R.fill(c.t, topic, layout))}${c.core ? '' : ' <span class="muted">(Editor Route)</span>'}</li>`).join('');
+  }
+
+  /* Class link builder */
+  function fillForm(L) { $('#cItems').value = L.items.join('\n'); $('#cLine').value = L.line; $('#cAfter').value = L.after; $('#cBorder').value = L.border; $('#cList').value = L.list; }
+  fillForm(R.DEFAULT_LAYOUT);
+  $('#resetLayout').onclick = () => { fillForm(R.DEFAULT_LAYOUT); $('#cName').value = ''; $('#cCode').value = ''; $('#linkOut').hidden = true; layout = R.DEFAULT_LAYOUT; renderKey(); renderCheck(); };
+  $('#makeLink').onclick = () => {
+    const items = $('#cItems').value.split('\n').map(s => s.trim()).filter(Boolean).slice(0, 12);
+    const code = $('#cCode').value.trim();
+    const cfg = { name: $('#cName').value.trim(), items: items.length ? items : R.DEFAULT_LAYOUT.items, line: $('#cLine').value.trim() || R.DEFAULT_LAYOUT.line,
+      after: $('#cAfter').value.trim() || R.DEFAULT_LAYOUT.after, border: $('#cBorder').value.trim() || R.DEFAULT_LAYOUT.border, list: $('#cList').value };
+    if (code) cfg.code = R.hash(code);
+    const link = base + '?class=' + R.encodeClass(cfg);
+    layout = R.decodeClass(R.encodeClass(cfg)) || R.DEFAULT_LAYOUT;
+    $('#classLink').textContent = link; $('#tryLink').href = link; $('#linkOut').hidden = false;
+    $('#codeNote').textContent = code ? 'Your teacher code is "' + code + '". It is saved in the link as a scrambled hash, so students cannot read it.' : 'No code set, so the default code ' + R.STAMP + ' works.';
+    renderKey(); renderCheck();
+  };
+
+  /* Copy helpers */
+  document.addEventListener('click', async e => {
+    const b = e.target.closest('[data-copylink]'); if (!b) return;
+    const txt = document.getElementById(b.dataset.copylink).textContent;
+    let ok = false; try { await navigator.clipboard.writeText(txt); ok = true; } catch (err) {}
+    const t = $('#tt'); t.textContent = ok ? 'Link copied!' : 'Select the link and copy it.'; t.hidden = false; setTimeout(() => t.hidden = true, 1800);
+  });
+
+  renderKey(); renderCheck();
+})();
+</script>
+</body>
+</html>
