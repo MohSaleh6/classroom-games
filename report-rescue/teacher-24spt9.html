@@ -4,109 +4,135 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Teacher Guide · Report Rescue</title>
+<title>Teacher Guide · Mystery Box: Word Challenge</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👩‍🏫</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --ink: #1B1145; --muted: #5E5786; --line: #E3DFF5; --soft: #F6F4FF; --violet: #6A3BE8; --pink: #E0368A; --ok: #138A4B; --bad: #C8264D; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #EFECFB; color: var(--ink); font: 400 15px/1.55 'Lexend', system-ui, sans-serif; }
+  header { background: linear-gradient(135deg, #2A1279, #7B4DFF 60%, #E0368A); color: #fff; padding: 22px 16px; }
+  header .in, main { max-width: 980px; margin: 0 auto; }
+  header h1 { font: 800 clamp(1.6rem, 4vw, 2.4rem)/1.05 'Bricolage Grotesque', sans-serif; margin: 4px 0 12px; }
+  .kick { font-size: .74rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; opacity: .85; }
+  .links { display: flex; flex-wrap: wrap; gap: 8px; }
+  .links a, .links button { display: inline-flex; gap: 6px; align-items: center; padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.35); color: #fff; text-decoration: none; font: 600 .88rem 'Lexend', sans-serif; cursor: pointer; }
+  main { padding: 20px 16px 40px; display: grid; gap: 16px; }
+  section { background: #fff; border-radius: 18px; padding: 22px; border: 1px solid var(--line); box-shadow: 0 10px 30px -22px rgba(42,18,121,.5); }
+  h2 { font: 800 1.35rem/1.1 'Bricolage Grotesque', sans-serif; margin: 0 0 12px; }
+  h3 { font-size: 1rem; margin: 16px 0 6px; }
+  p { margin: 0 0 10px; }
+  .muted { color: var(--muted); }
+  .scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  tfoot td { font-weight: 700; border-bottom: 0; }
+  .paper { background: var(--soft); border-radius: 12px; padding: 16px 18px; font-family: Calibri, Carlito, 'Segoe UI', sans-serif; font-size: 15px; }
+  .paper p { margin: 0 0 8px; }
+  .spell { display: flex; flex-wrap: wrap; gap: 8px; }
+  .spell span { padding: 8px 14px; border-radius: 10px; background: var(--soft); font-weight: 600; }
+  .spell s { color: var(--bad); font-weight: 400; } .spell b { color: var(--ok); }
+  .boxes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .box { border: 1px solid var(--line); border-left: 6px solid var(--c); border-radius: 12px; padding: 12px 14px; }
+  .box h3 { margin: 0 0 6px; }
+  .box ul { margin: 0; padding-left: 0; list-style: none; }
+  .box li::before { content: '☐ '; color: var(--muted); }
+  .grid-sheet th, .grid-sheet td { border: 1px solid #CFC8EE; text-align: center; padding: 6px 4px; }
+  .grid-sheet td:first-child, .grid-sheet th:first-child { text-align: left; width: 34%; }
+  .grid-sheet tbody td { height: 30px; }
+  ul.tips { margin: 0; padding-left: 20px; }
+  ul.tips li { margin-bottom: 6px; }
+  @media print {
+    body { background: #fff; font-size: 12px; }
+    header { background: none; color: var(--ink); padding: 0 0 8px; border-bottom: 2px solid var(--ink); }
+    .links { display: none; }
+    main { padding: 10px 0; gap: 10px; }
+    section { box-shadow: none; padding: 12px 0; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; break-inside: avoid; }
+    .sheet-section { break-before: page; }
+  }
+</style>
 </head>
 <body>
-<header class="hud">
-  <div class="hud-row">
-    <div class="brand">👩‍🏫 Report Rescue · Teacher Guide</div>
-    <a class="hbtn" href="./" target="_blank" rel="noopener" style="text-decoration:none">🎮 Student game</a>
-    <a class="hbtn" href="./?board" target="_blank" rel="noopener" style="text-decoration:none">📺 Big-screen board</a>
-    <button class="hbtn no-print" type="button" onclick="window.print()">🖨️ Print</button>
+<header><div class="in">
+  <span class="kick">Grade 7 · Microsoft Word · Teacher guide</span>
+  <h1>🎁 Mystery Box: Word Challenge!</h1>
+  <div class="links">
+    <a href="./" target="_blank" rel="noopener">🎮 Student game</a>
+    <a href="./?board" target="_blank" rel="noopener">📺 Big-screen robot wall</a>
+    <button type="button" onclick="window.print()">🖨️ Print this guide</button>
   </div>
-</header>
+</div></header>
 <main>
-  <section class="card" style="--accent:var(--pink)">
-    <span class="kicker">Grade 7 · Unit 1: Creating a document</span>
-    <h2>Report Rescue: Save the School Magazine!</h2>
-    <p>Students fix a messy magazine report inside a <b>pretend Word window</b> in the browser. No Microsoft Word is needed. The buttons and tab names match real Word, so the skills transfer. The game checks every answer itself and sends each student’s score to <b>one class leaderboard</b> automatically.</p>
-    <p><b>Student link:</b> <span id="studentLink" style="word-break:break-all"></span></p>
-    <p><b>Big-screen leaderboard</b> (for the projector): <span id="boardLink" style="word-break:break-all"></span></p>
-    <p><b>Teacher PIN:</b> open 🏆 Board → 👩‍🏫 Teacher tools. With the PIN you can remove one name (that student can play again) or clear the whole board before a new class.</p>
+  <section>
+    <h2>How it works</h2>
+    <p>Students make <b>one short Word report</b> about <b>“My Dream Gaming Room”</b> in real Microsoft Word. The website guides them through <b>6 mystery boxes</b>, one task at a time. Each box they finish gives a <b>star</b> and a <b>robot part</b>. After 6 boxes their robot is complete and they get a <b>Word Champion</b> badge.</p>
+    <ul class="tips">
+      <li><b>No timer and no penalties.</b> Boxes open in order. Students can open finished boxes again.</li>
+      <li><b>“I’ve finished” is the student’s own report.</b> The website cannot see their Word file. Use the checklist below to check the real work.</li>
+      <li>Surprises: after Box 2 they pick their robot’s colour; after Box 4 they pick a celebration dance.</li>
+      <li><b>Support mode</b> (🤝 button): bigger text, hints open, extra tips, and a <b>ready-formatted</b> starter text. Boxes 1–2 become quick “just check it” boxes, so these students spend their time on pictures, the table, the chart and checking.</li>
+      <li><b>Box 4 Plan B:</b> if Word has no 3D Models, students insert an <b>icon</b> instead. The class list shows a “Plan B icon” tag.</li>
+      <li>Progress is saved on the device. A refresh carries on where the student was.</li>
+    </ul>
+    <p><b>Student link:</b> <span id="studentLink" style="word-break:break-all"></span><br><b>Big-screen wall:</b> <span id="boardLink" style="word-break:break-all"></span></p>
   </section>
 
-  <section class="card" style="--accent:var(--yellow)">
-    <span class="kicker">45-minute lesson</span>
-    <h2>⏱ Lesson plan</h2>
-    <div class="scroll"><table class="ttable">
-      <tr><th>Minutes</th><th>What happens</th></tr>
-      <tr><td>0–5</td><td>Show the big-screen board and the prizes. Explain: 15 minutes, 5 missions, one play each. Most points wins; same points, faster time wins.</td></tr>
-      <tr><td>5–22</td><td>Students play (15-minute timer inside the game, plus 2 minutes to start).</td></tr>
-      <tr><td>22–30</td><td>Big-screen board: celebrate the top 3. Ms Rahaf gives the prizes.</td></tr>
-      <tr><td>30–45</td><td>Discuss: which mission was hardest? Optional: open real Word and repeat one mission (e.g. Wrap Text: Square, or Insert → Table).</td></tr>
-    </table></div>
+  <section>
+    <h2>⏱ 45-minute plan</h2>
+    <div class="scroll"><table id="timings"></table></div>
   </section>
 
-  <section class="card" style="--accent:var(--blue)">
-    <span class="kicker">Missions and points</span>
-    <h2>⭐ Scoring</h2>
-    <div class="scroll"><table class="ttable">
-      <tr><th>Mission</th><th>Lesson</th><th>Tasks</th><th>Points</th></tr>
-      <tr><td>🖋️ 1. Text Studio</td><td>Formatting text</td><td>Title, headings, paragraphs, bold + italic name</td><td>40</td></tr>
-      <tr><td>📐 2. Layout Lab</td><td>Advanced formatting</td><td>Heading 1 style, fix the order, bullets, line spacing 1.5, page border</td><td>50</td></tr>
-      <tr><td>🖼️ 3. Picture Party</td><td>Images and graphics</td><td>Insert picture, resize to 6 cm, Square wrap, shape with text, 3D model spun to match</td><td>50</td></tr>
-      <tr><td>📊 4. Table Builder</td><td>Working with tables</td><td>Insert 3 × 5 table, fill 3 gaps from fact cards, style header row, All Borders</td><td>40</td></tr>
-      <tr><td>🔍 5. Spell &amp; Print</td><td>Check and print</td><td>Find and fix 5 spelling mistakes, Print Preview: A4, Portrait, Normal</td><td>20</td></tr>
-      <tr><td colspan="3"><b>Total</b></td><td><b>200</b></td></tr>
-    </table></div>
-    <ul>
-      <li>Each task: <b>10 points</b> if right on the first Check with no hint, <b>5 points</b> after a wrong Check or a hint.</li>
-      <li>Spelling: <b>2 points</b> per word found alone; <b>1 point</b> if the student used the Spelling Check button or chose a wrong spelling first.</li>
-      <li>Goals turn green as students work, so they always know what is left.</li>
-      <li>Ranks: 180+ 🏆 Chief Editor · 140+ 🌟 Senior Editor · 100+ ✏️ Junior Editor · below 100 📰 Trainee Editor.</li>
-      <li>Leaderboard: most points first; equal points → faster time first. Top 3: 🥇 +5 marks, sweet treat, 10 min free time · 🥈 +3 marks, 10 min · 🥉 10 min.</li>
-      <li>One play per name. If the page is closed by accident, opening it again on the same device continues the game.</li>
+  <section>
+    <h2>📋 Starter text</h2>
+    <p class="muted">About 70 words: a title, a short paragraph and three room features. It has exactly three spelling mistakes. Students copy it with the <b>Copy starter text</b> button or download it as a Word file.</p>
+    <div class="paper" id="starter"></div>
+    <h3>Spelling corrections</h3>
+    <div class="spell" id="spell"></div>
+  </section>
+
+  <section>
+    <h2>✅ What to check in each Word file</h2>
+    <div class="boxes" id="checklist"></div>
+  </section>
+
+  <section>
+    <h2>👩‍🏫 Teacher panel in the game</h2>
+    <ul class="tips">
+      <li>On the student page, click <b>👩‍🏫 Teacher</b> at the bottom and type the teacher PIN.</li>
+      <li><b>Class:</b> every student, the boxes they say they finished, Support / Plan B tags. When all six are ticked and you have checked the Word file, press <b>Confirm badge</b>. The student’s badge screen then shows <b>“Checked by Ms Rahaf”</b> and the wall shows ✅.</li>
+      <li><b>Reset</b> next to a name removes that student; their game starts again. Use it if a student typed the wrong name or changed computers.</li>
+      <li><b>Reset tab:</b> reset the whole class (before a new lesson) or reset only the device you are using.</li>
+      <li>The tabs also show this 45-minute plan, the spelling corrections and the checklist.</li>
     </ul>
   </section>
 
-  <section class="card" style="--accent:var(--coral)">
-    <span class="kicker">Answer key</span>
-    <h2>🔑 Answers for each topic</h2>
-    <div class="tabs" id="tabs"></div>
-    <div id="key"></div>
+  <section class="sheet-section">
+    <h2>🖨️ Class checklist</h2>
+    <p class="muted">Tick each box after you check it in the student’s Word file. Badge = all six correct and badge confirmed.</p>
+    <div class="scroll"><table class="grid-sheet" id="sheet"></table></div>
   </section>
 </main>
 <script src="data.js"></script>
 <script>
 (function () {
-  const R = window.RR, $ = s => document.querySelector(s);
+  const M = window.MB, $ = s => document.querySelector(s);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const base = location.origin + location.pathname.replace(/[^/]*$/, '');
   $('#studentLink').textContent = base; $('#boardLink').textContent = base + '?board';
-  let topic = 'park';
-  function render() {
-    $('#tabs').innerHTML = Object.values(R.TOPICS).map(t => `<button type="button" style="--c:${t.color}" aria-selected="${t.id === topic}" data-t="${t.id}">${t.emoji} ${esc(t.name)}</button>`).join('');
-    document.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { topic = b.dataset.t; render(); });
-    const t = R.TOPICS[topic], tb = t.table;
-    $('#key').innerHTML = `
-      <div class="scroll"><table class="ttable">
-        <tr><th>Task</th><th>Correct answer</th></tr>
-        <tr><td>Title</td><td>Arial Black, 28, Bold, Dark Blue, Centre</td></tr>
-        <tr><td>3 headings</td><td>Arial, 16, Bold, Underline, Orange</td></tr>
-        <tr><td>Paragraphs</td><td>Calibri, 12, Justify</td></tr>
-        <tr><td>Name to stand out</td><td>Tap “${esc(t.keyword)}”, then Bold + Italic</td></tr>
-        <tr><td>Heading style</td><td>Heading 1</td></tr>
-        <tr><td>Section order</td><td>Byline, Introduction, ${esc(t.headings[0])}, ${esc(t.headings[1])}, Conclusion</td></tr>
-        <tr><td>List / spacing / border</td><td>Bullets · line spacing 1.5 · any page border</td></tr>
-        <tr><td>Picture</td><td>${esc(R.PICS[t.pic].em + ' ' + R.PICS[t.pic].label)} · width 5.5–6.5 cm · Wrap: Square</td></tr>
-        <tr><td>Shape</td><td>${esc(R.SHAPES[t.shape].label)} · any fill colour · text “${esc(t.shapeText)}”</td></tr>
-        <tr><td>3D model</td><td>${esc(R.MODELS[t.model].em + ' ' + R.MODELS[t.model].label)} · Turn 30°–60° · Tilt −35° to −5°</td></tr>
-        <tr><td>Table</td><td>3 columns × 5 rows · header: Navy, Dark Green or Dark Purple + Bold + White · All Borders</td></tr>
-        <tr><td>Print Preview</td><td>A4 · Portrait · Normal</td></tr>
-      </table></div>
-      <h3 style="margin-top:16px">Spelling mistakes</h3>
-      <div class="scroll"><table class="ttable"><tr><th>#</th><th>Wrong</th><th>Correct</th></tr>
-        ${t.mistakes.map((m, i) => `<tr><td>${i + 1}</td><td style="color:var(--bad)">${esc(m.wrong)}</td><td style="color:var(--ok)"><b>${esc(m.right)}</b></td></tr>`).join('')}</table></div>
-      <h3 style="margin-top:16px">Table: ${esc(tb.caption)} (gaps highlighted)</h3>
-      <div class="scroll"><table class="ttable"><tr>${tb.headers.map(h => `<th>${esc(h)}</th>`).join('')}</tr>
-        ${tb.rows.map((r, ri) => `<tr>${r.map((c, ci) => tb.blanks.some(([a, b]) => a === ri && b === ci) ? `<td style="background:#FFF3B0;color:#241B4B"><b>${esc(c)}</b></td>` : `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</table></div>`;
-  }
-  render();
+  let t0 = 0; const total = M.TIMINGS.reduce((a, t) => a + t.min, 0);
+  $('#timings').innerHTML = '<thead><tr><th>Minutes</th><th>What happens</th></tr></thead><tbody>' +
+    M.TIMINGS.map(t => { const r = `<tr><td>${t0}–${t0 + t.min}</td><td>${esc(t.what)}</td></tr>`; t0 += t.min; return r; }).join('') +
+    `</tbody><tfoot><tr><td>${total} min</td><td>Total</td></tr></tfoot>`;
+  $('#starter').innerHTML = [M.TITLE, M.PARA, M.HEADING, ...M.FEATURES].map(l => `<p>${esc(l)}</p>`).join('');
+  $('#spell').innerHTML = M.MISTAKES.map(m => `<span><s>${esc(m.wrong)}</s> → <b>${esc(m.right)}</b></span>`).join('');
+  $('#checklist').innerHTML = M.CHECKLIST.map(c => { const b = M.BOXES[c.box - 1];
+    return `<div class="box" style="--c:${b.color}"><h3>${b.emoji} Box ${c.box}: ${esc(b.name)}</h3><ul>${c.items.map(i => `<li>${esc(i)}</li>`).join('')}</ul></div>`; }).join('') +
+    '<div class="box" style="--c:#FFC93C"><h3>🏅 Word Champion badge</h3><ul><li>All six boxes look right in the Word file</li><li>Badge seen on screen and <b>Confirm badge</b> pressed</li></ul></div>';
+  $('#sheet').innerHTML = `<thead><tr><th>Student</th>${M.BOXES.map(b => `<th title="${esc(b.name)}">${b.emoji} ${b.n}</th>`).join('')}<th>🏅</th></tr></thead><tbody>` +
+    Array.from({ length: 30 }, () => `<tr><td></td>${'<td></td>'.repeat(7)}</tr>`).join('') + '</tbody>';
 })();
 </script>
 </body>

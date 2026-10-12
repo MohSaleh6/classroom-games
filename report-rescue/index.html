@@ -3,29 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Report Rescue! Save the School Magazine</title>
-<meta name="description" content="A fun Grade 7 game: fix the school magazine report in a pretend Word window. Format text, add pictures, shapes, 3D models and tables!">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📰</text></svg>">
+<meta name="theme-color" content="#0B0820">
+<title>Mystery Box: Word Challenge!</title>
+<meta name="description" content="Grade 7 Word challenge: open 6 mystery boxes, do each task in Microsoft Word and build your robot.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎁</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@700;800;900&family=Archivo+Black&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<header class="hud">
-  <div class="hud-row">
-    <div class="brand">📰 Report Rescue!</div>
-    <span class="pill" id="timerPill" title="Time left" hidden>⏱ <b id="timer">15:00</b></span>
-    <span class="pill" id="scorePill" title="Points" hidden>⭐ <b id="score">0</b></span>
-    <span class="pill fire" id="streakPill" hidden title="Right first time, in a row">🔥 <b id="streak">0</b></span>
-    <button class="hbtn" id="soundBtn" type="button" aria-label="Sound on">🔊</button>
-    <button class="hbtn" id="boardBtn" type="button">🏆 Board</button>
-    <button class="hbtn" id="endBtn" type="button" hidden>⏹ End</button>
+<div class="bg" aria-hidden="true"><i class="glow g1"></i><i class="glow g2"></i><i class="glow g3"></i><i class="floor"></i></div>
+<header class="top" id="top">
+  <div class="brand"><span class="brand-box" aria-hidden="true"></span><span><b>Mystery Box</b><small>Word Challenge!</small></span></div>
+  <div class="top-tools">
+    <span class="pill stars" id="starPill" hidden aria-live="polite">⭐ <b id="starCount">0</b>/6</span>
+    <button class="tbtn" id="starterBtn" type="button" hidden>📋 <span>Starter text</span></button>
+    <button class="tbtn" id="supportBtn" type="button" aria-pressed="false">🤝 <span>Support</span></button>
+    <button class="tbtn icon" id="soundBtn" type="button" aria-pressed="true" aria-label="Sound">🔊</button>
   </div>
-  <div class="mdots" id="mdots" hidden></div>
 </header>
-<main id="app"><noscript>Please turn on JavaScript to play Report Rescue.</noscript></main>
-<div class="modal" id="modal" hidden><div class="modal-card" role="dialog" aria-modal="true" id="modalCard"></div></div>
+<main id="app"><noscript>Please turn on JavaScript to play Mystery Box: Word Challenge!</noscript></main>
+<footer class="foot" id="foot"><button class="linkbtn" id="teacherBtn" type="button">👩‍🏫 Teacher</button></footer>
+<div class="layer" id="layer" hidden></div>
+<div class="toast" id="toast" role="status" hidden></div>
 <script src="data.js"></script>
 <script src="app.js"></script>
 </body>
