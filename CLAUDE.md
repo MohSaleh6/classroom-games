@@ -10,7 +10,7 @@ No build step, no framework. Keep the English simple: the players are 12–14 ye
 | --- | --- | --- | --- |
 | `crack-the-secret-code/` | Grade 8 Excel: LEFT, RIGHT, MID, SUBSTITUTE. 9 missions, about 10 minutes | https://crack-the-secret-code-moh-93f1.vercel.app | `crack-the-secret-code` (prj_Cjr5IpgxtqXhZNLXVUgay87yN1EL) |
 | `report-rescue/` | Grade 7 Word Unit 1, played in a pretend Word window (no real Word needed). 5 missions, 15 minutes, 200 points | https://report-rescue-moh-93f1.vercel.app | `report-rescue` (prj_6kSTKKVijFKbIbGpX64MIuYw746Q) |
-| `mystery-box/` | **Mystery Box: Word Challenge!** for Ms Rahaf's Grade 7 class. 6 mystery boxes in 10 minutes, played in a pretend Word window: insert pictures, shapes and 3D models (no chart, no real Word) and build a robot | https://mystery-box-moh-93f1.vercel.app | `mystery-box` (prj_5oXnhsce7eaJENFPJm8RcoE0WMgp). Root Directory `mystery-box` |
+| `mystery-box/` | **Mystery Box: Word Challenge!** for Ms Rahaf's Grade 7 class. 6 mystery boxes in 10 minutes, played in a pretend Word window: insert pictures, shapes and 3D models (no chart, no real Word) and build a robot | https://mystery-box-moh-93f1.vercel.app | `mystery-box` (prj_5oXnhsce7eaJENFPJm8RcoE0WMgp) |
 | `archive/report-rescue-real-word/` | First Report Rescue version, where students used real Word. Not deployed; kept for reference only | — | — |
 
 Vercel team: `moh-93f1` (team_dcnImgjOKecfTukD5B2Ebmvd).
@@ -21,7 +21,8 @@ To deploy, upload the contents of one game folder as a production deployment of 
 Vercel with that folder as the Root Directory.
 
 Mystery Box was first deployed from a GitHub commit on `claude/mystery-box-word-challenge` (a one-off deployment, not a Git
-connection), so its project has Root Directory `mystery-box`. Vercel Authentication is off for it, as for Report Rescue.
+connection). Vercel Authentication is off for it, as for Report Rescue. When you deploy it again from a GitHub commit,
+always pass `projectSettings.rootDirectory: "mystery-box"` with the deployment: without it Vercel builds the repo root and the site 404s.
 
 ## Database (Neon)
 
