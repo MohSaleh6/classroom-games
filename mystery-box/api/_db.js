@@ -15,6 +15,7 @@ export function ensureTable() {
     support boolean NOT NULL DEFAULT false,
     plan_b boolean NOT NULL DEFAULT false,
     confirmed boolean NOT NULL DEFAULT false,
+    time_up boolean NOT NULL DEFAULT false,
     token text NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now()

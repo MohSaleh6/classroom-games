@@ -1,7 +1,7 @@
-"""Build the two starter Word files for Mystery Box: Word Challenge (report-rescue/).
+"""Build the two starter Word files for Mystery Box: Word Challenge (mystery-box/).
 
 Run from the repo root:  python3 scripts/make_starter_docx.py
-The text must match TITLE, PARA, HEADING and FEATURES in report-rescue/data.js.
+The text must match TITLE, PARA, HEADING and FEATURES in mystery-box/data.js.
 """
 from docx import Document
 from docx.enum.section import WD_ORIENT
@@ -48,6 +48,6 @@ def ready(path):
     d.save(path)
 
 
-plain('report-rescue/dream-gaming-room.docx')
-ready('report-rescue/dream-gaming-room-ready.docx')
+plain('mystery-box/dream-gaming-room.docx')
+ready('mystery-box/dream-gaming-room-ready.docx')
 print('done')
