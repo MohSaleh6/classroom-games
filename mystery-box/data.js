@@ -1,152 +1,97 @@
-/* Mystery Box: Word Challenge! Content for the six boxes, the starter text and the robot. */
+/* Mystery Box: Word Challenge! Content for the six boxes, the pretend Word page and the robot. */
 window.MB = (function () {
+  // The short page that sits in the pretend Word window. Students do not type it; they add pictures, shapes and 3D models.
   const TITLE = 'My Dream Gaming Room';
-  const PARA = 'My dream gaming room is the best place to play and relax with my freinds. The walls are dark blue, and bright lights glow purple and green. There is a soft sofa, a mini fridge full of snaks and a big shelf of games. It is an awsome room!';
-  const HEADING = 'Room Features';
-  const FEATURES = ['A huge curved screen for racing games', 'Two loud speakers for music', 'A gaming chair that glows in the dark'];
+  const PARA = 'My dream gaming room is the best place to play and relax with my friends. The walls are dark blue, and bright lights glow purple and green. There is a soft sofa, a mini fridge full of snacks and a big shelf of games.';
+  const PARA2 = 'It has a huge curved screen for racing games, two loud speakers for music and a gaming chair that glows in the dark. It is an awesome room!';
 
-  // The three spelling mistakes. Word's spelling checker underlines all three.
-  const MISTAKES = [
-    { wrong: 'freinds', right: 'friends' },
-    { wrong: 'snaks', right: 'snacks' },
-    { wrong: 'awsome', right: 'awesome' }
-  ];
+  // Insert > Pictures. One is about gaming; the others are silly.
+  const PICS = {
+    controller: { em: '🎮', label: 'Game controller', bg: '#E5D6FF' },
+    broccoli: { em: '🥦', label: 'Broccoli', bg: '#D6F5D6' },
+    sock: { em: '🧦', label: 'Sock', bg: '#FFD6EA' },
+    tractor: { em: '🚜', label: 'Tractor', bg: '#FFF1BF' },
+    fish: { em: '🐟', label: 'Goldfish', bg: '#CDEBFF' },
+    toothbrush: { em: '🪥', label: 'Toothbrush', bg: '#D7F3F1' }
+  };
+  const PIC_CHOICES = ['broccoli', 'sock', 'controller', 'fish', 'tractor', 'toothbrush'];
 
-  const plainText = [TITLE, '', PARA, '', HEADING, ...FEATURES].join('\r\n');
+  // Insert > Shapes
+  const SHAPES = {
+    star: { label: 'Star', path: 'M50 4 L61 37 L96 37 L68 58 L79 92 L50 71 L21 92 L32 58 L4 37 L39 37 Z' },
+    heart: { label: 'Heart', path: 'M50 90 C20 68 4 50 4 31 C4 16 16 6 29 6 C39 6 46 12 50 20 C54 12 61 6 71 6 C84 6 96 16 96 31 C96 50 80 68 50 90 Z' },
+    arrow: { label: 'Arrow', path: 'M4 36 H58 V14 L96 50 L58 86 V64 H4 Z' },
+    explosion: { label: 'Explosion', path: 'M50 2 L58 28 L82 10 L74 38 L99 40 L77 55 L95 76 L68 70 L66 98 L50 76 L33 97 L32 70 L5 78 L24 56 L1 42 L27 37 L18 10 L42 27 Z' },
+    rounded: { label: 'Rounded box', path: 'M18 14 H82 Q96 14 96 28 V72 Q96 86 82 86 H18 Q4 86 4 72 V28 Q4 14 18 14 Z' }
+  };
+  const FILLS = { Yellow: '#FFD23F', Pink: '#FF8FC7', Mint: '#7EE0C3', Sky: '#8EC5FF', Orange: '#FFB067', Purple: '#B79BFF' };
 
-  // Ready-formatted version for Support mode: Word keeps these styles when it is pasted.
-  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
-  const readyHTML = `<html><body>
-<p style="text-align:center;font-family:Calibri,sans-serif;font-size:20pt;font-weight:bold;margin:0 0 12pt">${esc(TITLE)}</p>
-<p style="font-family:Calibri,sans-serif;font-size:12pt;line-height:150%;margin:0 0 8pt">${esc(PARA)}</p>
-<h1>${esc(HEADING)}</h1>
-<ul style="font-family:Calibri,sans-serif;font-size:12pt;line-height:150%">${FEATURES.map(f => `<li>${esc(f)}</li>`).join('')}</ul>
-</body></html>`;
+  // Insert > 3D Models (spinnable CSS cubes)
+  const MODELS = {
+    robot: { em: '🤖', label: 'Robot', c1: '#8EC5FF', c2: '#CFE5FF' },
+    carrot: { em: '🥕', label: 'Carrot', c1: '#FFB86B', c2: '#FFDDB5' },
+    cow: { em: '🐄', label: 'Cow', c1: '#9EE6A8', c2: '#D2F5D7' },
+    cactus: { em: '🌵', label: 'Cactus', c1: '#B6E36B', c2: '#E0F5BF' }
+  };
+  const MODEL_CHOICES = ['carrot', 'robot', 'cactus', 'cow'];
 
-  const CHART_DATA = [['Activity', 'Hours'], ['Gaming', '2'], ['Reading', '1'], ['Exercise', '1']];
+  // What each box asks for. The game checks these itself.
+  const TARGET = { pic: 'controller', width: 6, wrap: 'square', shape: 'star', fill: 'Yellow', text: 'GAME ON!', model: 'robot', ry: 45, rx: -20 };
 
-  /* Each box: steps are 2–4 short lines. path = the Word menu path shown as chips in "Show me how". */
+  /* Each box: tab = the Word tab that opens, task = what to do (short), hints = the real Word menu path shown as chips. */
   const BOXES = [
     {
-      id: 'style', n: 1, emoji: '🎨', name: 'STYLE IT', color: '#FF4FA3', color2: '#B620E0',
-      part: 'head', partName: 'Robot Head', partEmoji: '🤖',
-      steps: [
-        'Select the title. Click <b>Bold</b>.',
-        'Make the title size <b>20</b>.',
-        'Click <b>Center</b>.',
-        'Select the other text. Make it size <b>12</b>.'
-      ],
-      supportSteps: [
-        'Look at your title. Is it <b>bold</b>, size <b>20</b> and in the <b>centre</b>?',
-        'Click in the paragraph. Is the size <b>12</b>?'
-      ],
-      hints: [
-        { path: ['Home', 'Font', 'B'], tip: 'Bold. Shortcut: <kbd>Ctrl</kbd> + <kbd>B</kbd>' },
-        { path: ['Home', 'Font', 'Font Size'], tip: 'Type <b>20</b> in the box, then press <kbd>Enter</kbd>.' },
-        { path: ['Home', 'Paragraph', 'Center'], tip: 'Shortcut: <kbd>Ctrl</kbd> + <kbd>E</kbd>' }
-      ],
-      extra: 'Select = drag your mouse over the words so they turn grey.',
-      say: 'My head! Now I can see your awesome title. 👀'
+      id: 'picture', n: 1, emoji: '🖼️', name: 'PICTURE IT', color: '#FF4FA3', color2: '#B620E0',
+      part: 'head', partName: 'Robot Head', partEmoji: '🤖', tab: 'Insert',
+      task: 'Insert a <b>picture</b> about gaming.',
+      hints: [{ path: ['Insert', 'Pictures'], tip: 'Pick the picture that matches a <b>gaming</b> room. Not the sock!' }],
+      extra: 'Look for the 🎮 game controller.',
+      say: 'My head! Now I can see your gaming picture. 👀'
     },
     {
-      id: 'organize', n: 2, emoji: '✨', name: 'ORGANIZE IT', color: '#FFB020', color2: '#FF5E3A',
-      part: 'body', partName: 'Robot Body', partEmoji: '🦾',
-      steps: [
-        'Click on <b>Room Features</b>. Choose <b>Heading 1</b>.',
-        'Select the 3 features. Click <b>Bullets</b>.',
-        'Select the paragraph. Set <b>Line Spacing</b> to <b>1.5</b>.'
-      ],
-      supportSteps: [
-        'Is <b>Room Features</b> a blue <b>Heading 1</b>?',
-        'Do the 3 features have <b>bullets</b> (•)?'
-      ],
+      id: 'size', n: 2, emoji: '📐', name: 'SIZE IT', color: '#FFB020', color2: '#FF5E3A',
+      part: 'body', partName: 'Robot Body', partEmoji: '🦾', tab: 'Picture Format',
+      task: 'Make the picture <b>6 cm</b> wide. Set <b>Wrap Text</b> to <b>Square</b>.',
       hints: [
-        { path: ['Home', 'Styles', 'Heading 1'], tip: 'Click anywhere in the words first.' },
-        { path: ['Home', 'Paragraph', 'Bullets'], tip: 'The button with dots: •≡' },
-        { path: ['Home', 'Paragraph', 'Line and Paragraph Spacing', '1.5'], tip: 'The button with up and down arrows: ↕≡' }
+        { path: ['Picture Format', 'Size', 'Width'], tip: 'Drag the slider until it says <b>6 cm</b>.' },
+        { path: ['Picture Format', 'Wrap Text', 'Square'], tip: 'Square lets the words go around the picture.' }
       ],
-      extra: 'Heading 1 makes the words bigger and blue. That is how you know it worked!',
-      say: 'A body! I feel so organised. ✨'
+      extra: 'Try each Wrap Text button and watch the page. You need Square ▣.',
+      say: 'A body! The words wrap around your picture now. ✨'
     },
     {
-      id: 'decorate', n: 3, emoji: '🖼️', name: 'DECORATE IT', color: '#18D2FF', color2: '#2D6BFF',
-      part: 'arms', partName: 'Robot Arms', partEmoji: '💪',
-      steps: [
-        'Insert one <b>gaming picture</b>.',
-        'Drag a corner to make it <b>smaller</b>.',
-        'Set <b>Wrap Text</b> to <b>Square</b>.',
-        'Insert one <b>shape</b>. Give it a <b>colour</b>.'
-      ],
-      hints: [
-        { path: ['Insert', 'Pictures', 'Online Pictures'], tip: 'Search <b>game controller</b>. Or use <b>Stock Images</b>.' },
-        { path: ['Picture Format', 'Wrap Text', 'Square'], tip: 'Click the picture first, so the Picture Format tab appears.' },
-        { path: ['Insert', 'Shapes'], tip: 'Pick a shape, then drag on the page to draw it.' },
-        { path: ['Shape Format', 'Shape Fill'], tip: 'Pick any colour you like.' }
-      ],
-      extra: 'Use a <b>corner</b> circle to resize, so the picture does not stretch.',
+      id: 'shape', n: 3, emoji: '⭐', name: 'SHAPE IT', color: '#18D2FF', color2: '#2D6BFF',
+      part: 'arms', partName: 'Robot Arms', partEmoji: '💪', tab: 'Insert',
+      task: 'Insert a <b>Star</b> shape.',
+      hints: [{ path: ['Insert', 'Shapes', 'Star'], tip: 'In real Word, you click the shape and then drag on the page to draw it.' }],
+      extra: 'The star has 5 points. ⭐',
       say: 'Arms! Now I can high-five you. 🙌'
     },
     {
-      id: 'model', n: 4, emoji: '🤖', name: 'MAKE IT 3D', color: '#A66BFF', color2: '#5B2BE0',
-      part: 'legs', partName: 'Rocket Legs', partEmoji: '🚀',
-      steps: [
-        'Insert one <b>3D model</b>.',
-        'Pick a gaming or robot model.',
-        'Drag the <b>3D control</b> in the middle to <b>rotate</b> it.'
-      ],
-      planB: {
-        label: 'Plan B: No 3D Models? Insert an icon',
-        note: 'Use Plan B only if your Word has no 3D Models button.',
-        steps: [
-          'Click <b>Insert</b>, then <b>Icons</b>.',
-          'Search <b>game</b>. Pick one icon and click <b>Insert</b>.',
-          'Drag the round arrow on top to <b>rotate</b> it a little.'
-        ],
-        hints: [
-          { path: ['Insert', 'Icons'], tip: 'Type <b>game</b> or <b>robot</b> in the search box.' },
-          { path: ['Graphics Format', 'Graphics Fill'], tip: 'Optional: give your icon a colour.' }
-        ]
-      },
+      id: 'colour', n: 4, emoji: '🎨', name: 'COLOUR IT', color: '#A66BFF', color2: '#5B2BE0',
+      part: 'legs', partName: 'Rocket Legs', partEmoji: '🚀', tab: 'Shape Format',
+      task: 'Fill the star with <b>Yellow</b>. Type <b>GAME ON!</b> inside it.',
       hints: [
-        { path: ['Insert', '3D Models', 'Stock 3D Models'], tip: 'Search <b>robot</b> or <b>controller</b>, then click <b>Insert</b>.' },
-        { path: ['3D Model', 'Drag the middle circle'], tip: 'Hold the mouse on the 3D control and move it to spin the model.' }
+        { path: ['Shape Format', 'Shape Fill', 'Yellow'], tip: 'Click the yellow circle.' },
+        { path: ['Right-click the shape', 'Add Text'], tip: 'Then type <b>GAME ON!</b> in the box.' }
       ],
-      extra: 'The 3D control is the round arrow in the middle of the model.',
+      extra: 'Type the words in the white box: GAME ON!',
       say: 'Rocket legs! I can fly! 🚀'
     },
     {
-      id: 'data', n: 5, emoji: '📊', name: 'SHOW THE DATA', color: '#7CFF6B', color2: '#00B37A',
-      part: 'screen', partName: 'Chart Screen', partEmoji: '📟',
-      steps: [
-        'Insert a table: <b>2</b> columns, <b>4</b> rows. Type the data.',
-        'Select the header row. Add <b>Shading</b>.',
-        'Insert a <b>Column</b> chart. Type the same data.',
-        'Change the chart title to <b>My Daily Activities</b>.'
-      ],
-      hints: [
-        { path: ['Insert', 'Table', '2×4'], tip: 'Move your mouse over the squares: 2 across, 4 down. Click.' },
-        { path: ['Table Design', 'Shading'], tip: 'Select the top row first. Pick any colour.' },
-        { path: ['Insert', 'Chart', 'Column', 'OK'], tip: 'A small sheet opens. Paste the data in cell <b>A1</b>, then close the sheet.' },
-        { path: ['Click Chart Title', 'Type'], tip: 'Click on the words <b>Chart Title</b> and type the new title.' }
-      ],
-      extra: 'In the chart sheet, delete the extra columns (C and D) so only your data is left.',
-      say: 'A chart screen! Look at my bars go. 📊'
+      id: 'model', n: 5, emoji: '🧊', name: 'MAKE IT 3D', color: '#7CFF6B', color2: '#00B37A',
+      part: 'screen', partName: 'Chest Screen', partEmoji: '📟', tab: 'Insert',
+      task: 'Insert the <b>Robot</b> 3D model.',
+      hints: [{ path: ['Insert', '3D Models', 'Stock 3D Models'], tip: 'Pick the 🤖 robot model.' }],
+      extra: 'A 3D model is like a toy you can turn around.',
+      say: 'A chest screen! Look at me glow. 📟'
     },
     {
-      id: 'check', n: 6, emoji: '🔍', name: 'FINAL CHECK', color: '#FF7A45', color2: '#FF2E63',
-      part: 'power', partName: 'Power Core', partEmoji: '⚡',
-      steps: [
-        'Run <b>Spelling & Grammar</b>. Fix the <b>3</b> mistakes.',
-        'Open <b>Print Preview</b>.',
-        'Check: <b>A4</b>, <b>Portrait</b>, and it all fits neatly.',
-        'Print only if Ms Rahaf says so.'
-      ],
-      hints: [
-        { path: ['Review', 'Spelling & Grammar'], tip: 'Shortcut: <kbd>F7</kbd>. Red wavy lines show spelling mistakes.' },
-        { path: ['File', 'Print'], tip: 'Shortcut: <kbd>Ctrl</kbd> + <kbd>P</kbd>. The preview is on the right.' },
-        { path: ['Layout', 'Size', 'A4'], tip: 'And <b>Layout → Orientation → Portrait</b>.' }
-      ],
-      extra: 'Right-click a word with a red line to see the right spelling.',
+      id: 'spin', n: 6, emoji: '🔄', name: 'SPIN IT', color: '#FF7A45', color2: '#FF2E63',
+      part: 'power', partName: 'Power Core', partEmoji: '⚡', tab: '3D Model',
+      task: 'Spin the 3D model to match the <b>blue dotted cube</b>.',
+      hints: [{ path: ['3D Model', 'Drag the 3D control'], tip: 'Drag the model with your mouse or finger. Or use the sliders: <b>Turn 45°</b> and <b>Tilt -20°</b>.' }],
+      extra: 'Sliders: Turn = 45°, Tilt = -20°.',
       say: 'POWER ON! I am complete! ⚡'
     }
   ];
@@ -171,23 +116,23 @@ window.MB = (function () {
 
   // Suggested 45-minute lesson with Ms Rahaf. The game itself is the 10-minute block. Minutes add up to 45.
   const TIMINGS = [
-    { min: 8, what: 'Ms Rahaf shows the six Word skills on the projector (quick demo).' },
-    { min: 5, what: 'Students open Word, type their name in the game, copy and paste the starter text.' },
+    { min: 8, what: 'Ms Rahaf shows Insert Pictures, Shapes and 3D Models on the projector (quick demo).' },
+    { min: 2, what: 'Students open the game and type their name.' },
     { min: 10, what: 'Mystery Box game: 10-minute clock, 6 boxes. The game ends when the clock reaches 0.' },
-    { min: 10, what: 'Ms Rahaf checks Word files and confirms badges. Students who ran out of time finish the missing tasks in Word.' },
-    { min: 7, what: 'Robot wall on the projector (?board). Celebrate the Word Champions.' },
-    { min: 5, what: 'Save the Word file, Print Preview, tidy up.' }
+    { min: 10, what: 'Talk about it: Which Wrap Text did you use? Why? Where do you find 3D Models? Students who ran out of time watch a friend finish.' },
+    { min: 10, what: 'Robot wall on the projector (?board). Celebrate the Word Champions and confirm badges.' },
+    { min: 5, what: 'Exit question: name the 3 things you inserted today. Tidy up.' }
   ];
 
-  // What the teacher looks for in each student's Word file.
-  const CHECKLIST = [
-    { box: 1, items: ['Title is bold, size 20 and centred', 'Body text is size 12'] },
-    { box: 2, items: ['“Room Features” uses Heading 1', 'The 3 features have bullets', 'Paragraph line spacing is 1.5'] },
-    { box: 3, items: ['One gaming picture, resized', 'Picture wrap is Square', 'One shape with a fill colour'] },
-    { box: 4, items: ['One 3D model, rotated (or Plan B: one icon)'] },
-    { box: 5, items: ['Table: 2 columns (Activity, Hours) with the 3 rows of data', 'Header row is shaded', 'Column chart with the same data', 'Chart title is “My Daily Activities”'] },
-    { box: 6, items: ['friends, snacks, awesome are spelled right', 'Fits neatly on A4 portrait pages'] }
+  // Answer key for Ms Rahaf (also in the teacher guide).
+  const ANSWERS = [
+    { box: 1, items: ['Insert › Pictures: the 🎮 game controller'] },
+    { box: 2, items: ['Picture Format › Width: 6 cm (5.5 to 6.5 is OK; 5 to 7 in Support mode)', 'Picture Format › Wrap Text: Square'] },
+    { box: 3, items: ['Insert › Shapes: Star'] },
+    { box: 4, items: ['Shape Format › Shape Fill: Yellow', 'Text in the shape: GAME ON!'] },
+    { box: 5, items: ['Insert › 3D Models: the 🤖 robot'] },
+    { box: 6, items: ['3D Model: Turn about 45°, Tilt about -20° (15° either way is OK; 25° in Support mode)'] }
   ];
 
-  return { GAME_MINUTES, TITLE, PARA, HEADING, FEATURES, MISTAKES, plainText, readyHTML, CHART_DATA, BOXES, COLOURS, DANCES, TIMINGS, CHECKLIST };
+  return { GAME_MINUTES, TITLE, PARA, PARA2, PICS, PIC_CHOICES, SHAPES, FILLS, MODELS, MODEL_CHOICES, TARGET, BOXES, COLOURS, DANCES, TIMINGS, ANSWERS };
 })();

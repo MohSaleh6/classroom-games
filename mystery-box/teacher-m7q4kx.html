@@ -30,16 +30,10 @@
   th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
   th { font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
   tfoot td { font-weight: 700; border-bottom: 0; }
-  .paper { background: var(--soft); border-radius: 12px; padding: 16px 18px; font-family: Calibri, Carlito, 'Segoe UI', sans-serif; font-size: 15px; }
-  .paper p { margin: 0 0 8px; }
-  .spell { display: flex; flex-wrap: wrap; gap: 8px; }
-  .spell span { padding: 8px 14px; border-radius: 10px; background: var(--soft); font-weight: 600; }
-  .spell s { color: var(--bad); font-weight: 400; } .spell b { color: var(--ok); }
   .boxes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
   .box { border: 1px solid var(--line); border-left: 6px solid var(--c); border-radius: 12px; padding: 12px 14px; }
   .box h3 { margin: 0 0 6px; }
   .box ul { margin: 0; padding-left: 0; list-style: none; }
-  .box li::before { content: '☐ '; color: var(--muted); }
   .grid-sheet th, .grid-sheet td { border: 1px solid #CFC8EE; text-align: center; padding: 6px 4px; }
   .grid-sheet td:first-child, .grid-sheet th:first-child { text-align: left; width: 34%; }
   .grid-sheet tbody td { height: 30px; }
@@ -68,14 +62,15 @@
 <main>
   <section>
     <h2>How it works</h2>
-    <p>Students make <b>one short Word report</b> about <b>“My Dream Gaming Room”</b> in real Microsoft Word. The website guides them through <b>6 mystery boxes</b>, one task at a time, in <b>10 minutes</b>. Each box they finish gives a <b>star</b> and a <b>robot part</b>. After 6 boxes their robot is complete and they get a <b>Word Champion</b> badge.</p>
+    <p>Everything happens on the website. Students do <b>not</b> need Microsoft Word. Each mystery box opens a <b>pretend Word window</b> with a short page about <b>“My Dream Gaming Room”</b>. Students use its ribbon buttons to insert <b>pictures</b>, <b>shapes</b> and <b>3D models</b>. There is no chart and no typing of the report.</p>
+    <p>There are <b>6 boxes</b> and <b>10 minutes</b>. Each box shows goals. They turn green when the work is right. The student presses <b>Check ⭐</b> to get a <b>star</b> and a <b>robot part</b>. After 6 boxes the robot is complete and they get a <b>Word Champion</b> badge.</p>
     <ul class="tips">
+      <li><b>The game checks the work.</b> A box only gives a star when every goal is green, so the class list shows real progress.</li>
       <li><b>10-minute game.</b> The clock starts when a student presses <b>Start! Open the boxes</b>. A refresh does not reset it. At 0 the game ends: the student sees their robot with the parts they collected and a <b>Robot Builder</b> badge. All 6 boxes in time = <b>Word Champion</b> badge.</li>
       <li>No points and no penalties. Boxes open in order. Students can open finished boxes again.</li>
-      <li><b>“I’ve finished” is the student’s own report.</b> The website cannot see their Word file. Use the checklist below to check the real work.</li>
+      <li>Each box has a <b>💡 Where is it in real Word?</b> button. It shows the real Word menu path (for example Insert › Pictures), so students learn where the buttons are in Word.</li>
       <li>Surprises: after Box 2 they pick their robot’s colour; after Box 4 they pick a celebration dance.</li>
-      <li><b>Support mode</b> (🤝 button): bigger text, hints open, extra tips, and a <b>ready-formatted</b> starter text. Boxes 1–2 become quick “just check it” boxes, so these students spend their time on pictures, the table, the chart and checking.</li>
-      <li><b>Box 4 Plan B:</b> if Word has no 3D Models, students insert an <b>icon</b> instead. The class list shows a “Plan B icon” tag.</li>
+      <li><b>Support mode</b> (🤝 button): bigger text, hints open, an extra hint in every box, and a little more room for the picture size and the 3D angles.</li>
       <li>Progress is saved on the device. A refresh carries on where the student was.</li>
     </ul>
     <p><b>Student link:</b> <span id="studentLink" style="word-break:break-all"></span><br><b>Big-screen wall:</b> <span id="boardLink" style="word-break:break-all"></span></p>
@@ -87,32 +82,25 @@
   </section>
 
   <section>
-    <h2>📋 Starter text</h2>
-    <p class="muted">About 70 words: a title, a short paragraph and three room features. It has exactly three spelling mistakes. Students copy it with the <b>Copy starter text</b> button or download it as a Word file.</p>
-    <div class="paper" id="starter"></div>
-    <h3>Spelling corrections</h3>
-    <div class="spell" id="spell"></div>
-  </section>
-
-  <section>
-    <h2>✅ What to check in each Word file</h2>
-    <div class="boxes" id="checklist"></div>
+    <h2>📦 The six boxes</h2>
+    <p class="muted">What each box asks for, and the answer the game accepts.</p>
+    <div class="boxes" id="answers"></div>
   </section>
 
   <section>
     <h2>👩‍🏫 Teacher panel in the game</h2>
     <ul class="tips">
       <li>On the student page, click <b>👩‍🏫 Teacher</b> at the bottom and type the teacher PIN.</li>
-      <li><b>Class:</b> every student, the boxes they say they finished, Support / Plan B tags. A “⏰ Time up” tag shows who ran out of time. When all six are ticked and you have checked the Word file, press <b>Confirm badge</b>. The student’s badge screen then shows <b>“Checked by Ms Rahaf”</b> and the wall shows ✅.</li>
+      <li><b>Class:</b> every student and the boxes they finished, with a Support tag. A “⏰ Time up” tag shows who ran out of time. When a student shows you their Word Champion badge, press <b>Confirm badge</b>. Their badge screen then shows <b>“Checked by Ms Rahaf”</b> and the wall shows ✅.</li>
       <li><b>Reset</b> next to a name removes that student; their game starts again with a new 10 minutes. Use it if a student typed the wrong name or changed computers.</li>
       <li><b>Reset tab:</b> reset the whole class (before a new lesson) or reset only the device you are using.</li>
-      <li>The tabs also show this 45-minute plan, the spelling corrections and the checklist.</li>
+      <li>The tabs also show this 45-minute plan and the answers for each box.</li>
     </ul>
   </section>
 
   <section class="sheet-section">
-    <h2>🖨️ Class checklist</h2>
-    <p class="muted">Tick each box after you check it in the student’s Word file. Badge = all six correct and badge confirmed.</p>
+    <h2>🖨️ Class record sheet</h2>
+    <p class="muted">Optional: copy each student’s stars from the class list or the robot wall. Badge = all six boxes and badge confirmed.</p>
     <div class="scroll"><table class="grid-sheet" id="sheet"></table></div>
   </section>
 </main>
@@ -127,11 +115,8 @@
   $('#timings').innerHTML = '<thead><tr><th>Minutes</th><th>What happens</th></tr></thead><tbody>' +
     M.TIMINGS.map(t => { const r = `<tr><td>${t0}–${t0 + t.min}</td><td>${esc(t.what)}</td></tr>`; t0 += t.min; return r; }).join('') +
     `</tbody><tfoot><tr><td>${total} min</td><td>Total</td></tr></tfoot>`;
-  $('#starter').innerHTML = [M.TITLE, M.PARA, M.HEADING, ...M.FEATURES].map(l => `<p>${esc(l)}</p>`).join('');
-  $('#spell').innerHTML = M.MISTAKES.map(m => `<span><s>${esc(m.wrong)}</s> → <b>${esc(m.right)}</b></span>`).join('');
-  $('#checklist').innerHTML = M.CHECKLIST.map(c => { const b = M.BOXES[c.box - 1];
-    return `<div class="box" style="--c:${b.color}"><h3>${b.emoji} Box ${c.box}: ${esc(b.name)}</h3><ul>${c.items.map(i => `<li>${esc(i)}</li>`).join('')}</ul></div>`; }).join('') +
-    '<div class="box" style="--c:#FFC93C"><h3>🏅 Word Champion badge</h3><ul><li>All six boxes look right in the Word file</li><li>Badge seen on screen and <b>Confirm badge</b> pressed</li></ul></div>';
+  $('#answers').innerHTML = M.BOXES.map((b, i) => `<div class="box" style="--c:${b.color}"><h3>${b.emoji} Box ${b.n}: ${esc(b.name)}</h3>
+    <p>${b.task}</p><ul>${M.ANSWERS[i].items.map(x => `<li>✅ ${esc(x)}</li>`).join('')}</ul><p class="muted">Robot part: ${b.partEmoji} ${esc(b.partName)}</p></div>`).join('');
   $('#sheet').innerHTML = `<thead><tr><th>Student</th>${M.BOXES.map(b => `<th title="${esc(b.name)}">${b.emoji} ${b.n}</th>`).join('')}<th>🏅</th></tr></thead><tbody>` +
     Array.from({ length: 30 }, () => `<tr><td></td>${'<td></td>'.repeat(7)}</tr>`).join('') + '</tbody>';
 })();

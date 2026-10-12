@@ -1,21 +1,22 @@
-/* Mystery Box: Word Challenge! Students do the real work in Microsoft Word; this page guides them box by box. */
+/* Mystery Box: Word Challenge! Students insert pictures, shapes and 3D models in a pretend Word window. The game checks each box. */
 (function () {
   const M = window.MB;
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
   const app = $('#app'), layer = $('#layer');
-  const KEY = 'mysteryBox.v1';
+  const KEY = 'mysteryBox.v2'; // v2: boxes are done in the pretend Word window
   const reduced = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const wait = ms => new Promise(r => setTimeout(r, reduced ? Math.min(ms, 60) : ms));
   const BOARD = new URLSearchParams(location.search).has('board');
 
   /* ---------- State (kept in localStorage, so a refresh resumes) ---------- */
-  const fresh = () => ({ screen: 'start', name: '', entry: null, done: [false, false, false, false, false, false], ticks: {},
-    colour: 0, dance: '', surprise: { colour: false, dance: false }, planB: false, support: false, confirmed: false,
-    copied: false, dirty: false, offline: false, clash: false, startedAt: 0, timeUp: false, warned: false, finishedIn: 0 });
+  const newDoc = () => ({ pic: { id: null, w: 3, wrap: 'inline' }, shape: { type: null, fill: null, text: '' }, model: { id: null, rx: 0, ry: 0 } });
+  const fresh = () => ({ screen: 'start', name: '', entry: null, done: [false, false, false, false, false, false], doc: newDoc(),
+    colour: 0, dance: '', surprise: { colour: false, dance: false }, support: false, confirmed: false,
+    dirty: false, offline: false, clash: false, startedAt: 0, timeUp: false, warned: false, finishedIn: 0 });
   let S = fresh();
-  try { const o = JSON.parse(localStorage.getItem(KEY) || 'null'); if (o && Array.isArray(o.done)) S = Object.assign(fresh(), o); } catch (e) {}
+  try { const o = JSON.parse(localStorage.getItem(KEY) || 'null'); if (o && Array.isArray(o.done)) { S = Object.assign(fresh(), o); S.doc = Object.assign(newDoc(), S.doc); } } catch (e) {}
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
   const stars = () => S.done.filter(Boolean).length;
   const mask = () => S.done.reduce((m, d, i) => m | (d ? 1 << i : 0), 0);
@@ -110,7 +111,7 @@
         <circle class="noghost" cx="134" cy="170" r="3.5" fill="#fff" opacity=".5"/><circle class="noghost" cx="66" cy="170" r="3.5" fill="#fff" opacity=".5"/>`;
       case 'screen': return `
         <rect x="74" y="126" width="52" height="38" rx="9" fill="#0A0D2A" stroke="#ffffff55" stroke-width="2"/>
-        <g class="bars noghost"><rect class="bar b1" x="83" y="134" width="9" height="24" rx="2" fill="#7CFF6B"/><rect class="bar b2" x="96" y="146" width="9" height="12" rx="2" fill="#18D2FF"/><rect class="bar b3" x="109" y="146" width="9" height="12" rx="2" fill="#FF4FA3"/></g>`;
+        <path class="pulse noghost" d="M80 146 H91 L95 136 L100 156 L105 140 L109 146 H120" fill="none" stroke="#7CFF6B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
       case 'head': return `
         <rect x="44" y="58" width="14" height="28" rx="6" fill="${metal}"/><rect x="142" y="58" width="14" height="28" rx="6" fill="${metal}"/>
         <rect x="54" y="30" width="92" height="74" rx="30" fill="${plate}"/>
@@ -134,7 +135,7 @@
       <linearGradient id="mt${u}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F1F3FF"/><stop offset="1" stop-color="#8E96BD"/></linearGradient></defs>
       <ellipse class="shadow" cx="100" cy="240" rx="56" ry="7"/>${parts}</svg>`;
   }
-  const PICK_LINES = ['Beep boop! 🤖', 'That tickles! 😆', 'Keep going, you are doing great!', 'Did you save your Word file? 💾', 'I love tidy documents. ✨', 'Word skills = super powers! ⚡'];
+  const PICK_LINES = ['Beep boop! 🤖', 'That tickles! 😆', 'Keep going, you are doing great!', 'Pictures, shapes, 3D models… I love them all! ✨', 'Word skills = super powers! ⚡', 'Spin me, spin me! 🔄'];
 
   /* ---------- Mystery box (CSS 3D cube) ---------- */
   function cubeHTML(b, state) {
@@ -162,7 +163,7 @@
         try { const d = await api('/api/scores', { name: S.name }); S.entry = { id: d.id, token: d.token }; }
         catch (e) { if (e.status === 409) { S.clash = true; S.dirty = false; return; } throw e; }
       }
-      const d = await api('/api/scores', { id: S.entry.id, token: S.entry.token, boxes: mask(), colour: S.colour, support: S.support, planB: S.planB, timeUp: S.timeUp }, 'PUT');
+      const d = await api('/api/scores', { id: S.entry.id, token: S.entry.token, boxes: mask(), colour: S.colour, support: S.support, planB: false, timeUp: S.timeUp }, 'PUT');
       S.dirty = false; S.offline = false;
       if (!!d.confirmed !== S.confirmed) { S.confirmed = !!d.confirmed; if (S.screen === 'done') renderDone(true); }
     } catch (e) {
@@ -178,48 +179,6 @@
   // Every 20 s: send any unsent progress; on the badge screen, also ask if the teacher has checked it.
   setInterval(() => { if (!BOARD && S.name && (S.dirty || S.screen === 'done' || S.offline)) sync(); }, 20000);
 
-  /* ---------- Copying ---------- */
-  async function copyPlain(text) {
-    try { await navigator.clipboard.writeText(text); return true; } catch (e) {}
-    try { const ta = document.createElement('textarea'); ta.value = text; ta.className = 'offscreen'; document.body.appendChild(ta); ta.select(); const ok = document.execCommand('copy'); ta.remove(); return ok; } catch (e) { return false; }
-  }
-  async function copyRich(html, text) {
-    try {
-      if (navigator.clipboard && window.ClipboardItem) {
-        await navigator.clipboard.write([new ClipboardItem({ 'text/html': new Blob([html], { type: 'text/html' }), 'text/plain': new Blob([text], { type: 'text/plain' }) })]);
-        return true;
-      }
-    } catch (e) {}
-    try {
-      const d = document.createElement('div'); d.className = 'offscreen paper'; d.contentEditable = 'true'; d.innerHTML = html; document.body.appendChild(d);
-      const r = document.createRange(); r.selectNodeContents(d); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
-      const ok = document.execCommand('copy'); sel.removeAllRanges(); d.remove(); return ok;
-    } catch (e) { return false; }
-  }
-  async function copyStarter() {
-    const ok = S.support ? await copyRich(M.readyHTML, M.plainText) : await copyPlain(M.plainText);
-    if (ok) { S.copied = true; save(); sfx('tick'); toast(S.support ? '✅ Ready text copied! In Word, press Ctrl + V.' : '✅ Copied! In Word, press Ctrl + V.'); $$('[data-act="copy"]').forEach(b => b.classList.add('copied')); }
-    else toast('Copy did not work. Use “Download Word file” instead.');
-  }
-  async function copyChart() {
-    const ok = await copyPlain(M.CHART_DATA.map(r => r.join('\t')).join('\n'));
-    if (ok) sfx('tick');
-    toast(ok ? '✅ Data copied! Click cell A1 in the chart sheet, then Ctrl + V.' : 'Copy did not work. Type the data instead.');
-  }
-  function paperHTML(ready) {
-    const feats = M.FEATURES.map(f => `<li>${esc(f)}</li>`).join('');
-    return ready
-      ? `<div class="paper ready"><p class="p-title">${esc(M.TITLE)}</p><p class="p-body">${esc(M.PARA)}</p><p class="p-h1">${esc(M.HEADING)}</p><ul>${feats}</ul></div>`
-      : `<div class="paper"><p>${esc(M.TITLE)}</p><p>${esc(M.PARA)}</p><p>${esc(M.HEADING)}</p>${M.FEATURES.map(f => `<p>${esc(f)}</p>`).join('')}</div>`;
-  }
-  function starterTools() {
-    const file = S.support ? 'dream-gaming-room-ready.docx' : 'dream-gaming-room.docx';
-    return `<div class="row">
-      <button class="btn primary${S.copied ? ' copied' : ''}" type="button" data-act="copy">📋 ${S.support ? 'Copy ready text' : 'Copy starter text'}</button>
-      <a class="btn ghost" href="${file}" download>⬇️ Download Word file</a></div>
-      ${S.support ? '<p class="note">🤝 Support mode: this text is already formatted for Boxes 1 and 2.</p>' : ''}`;
-  }
-
   /* ---------- Screens ---------- */
   function go(screen) {
     S.screen = screen; save();
@@ -229,7 +188,6 @@
   function hud() {
     const inGame = !!S.name && !BOARD;
     $('#starPill').hidden = !inGame; $('#starCount').textContent = stars();
-    $('#starterBtn').hidden = !inGame;
     $('#clockPill').hidden = !inGame || !S.startedAt || over(); $('#clock').textContent = mmss(left());
     $('#supportBtn').setAttribute('aria-pressed', String(S.support)); $('#supportBtn').classList.toggle('on', S.support);
     document.documentElement.classList.toggle('support', S.support);
@@ -241,7 +199,7 @@
       <div class="hero-text">
         <span class="eyebrow">Ms Rahaf’s ICT class · Grade 7</span>
         <h1>Mystery Box:<br><span class="grad">Word Challenge!</span></h1>
-        <p class="lead">Ms Rahaf has hidden 6 mystery boxes for you. Do each task in Word, collect the parts and build your own robot. You have 10 minutes!</p>
+        <p class="lead">Ms Rahaf has hidden 6 mystery boxes for you. Insert pictures, shapes and 3D models in the Word window, collect the parts and build your own robot. You have 10 minutes!</p>
         <ul class="chips"><li>📦 6 boxes</li><li>⭐ 6 stars</li><li>🤖 1 robot</li><li>⏱ 10 minutes</li></ul>
         <form class="name-form" id="nameForm" autocomplete="off">
           <label for="nameIn">Your name</label>
@@ -250,7 +208,7 @@
           <p class="form-msg" id="nameMsg" role="alert"></p>
         </form>
         <label class="switch"><input type="checkbox" id="supportIn" ${S.support ? 'checked' : ''}><span class="track"><i></i></span>
-          <span><b>Support mode</b><small>Bigger text, extra hints and ready-formatted text.</small></span></label>
+          <span><b>Support mode</b><small>Bigger text, hints open and extra help.</small></span></label>
       </div>
       <div class="hero-art" aria-hidden="true">
         <div class="hero-robot robot">${robotSVG([true, true, true, true, true, true], 0)}</div>
@@ -278,20 +236,24 @@
   function renderReady() {
     app.innerHTML = `<section class="ready-screen">
       <div class="card ready-card">
-        <span class="eyebrow">Before you open the boxes</span>
-        <h2>Get your Word file ready, ${esc(S.name)}!</h2>
+        <span class="eyebrow">How to play</span>
+        <h2>Ready, ${esc(S.name)}?</h2>
         <ol class="big-steps">
-          <li><b>1</b><span>Open <b>Microsoft Word</b>. Click <b>Blank document</b>.</span></li>
-          <li><b>2</b><span>Click <b>${S.support ? 'Copy ready text' : 'Copy starter text'}</b> below.</span></li>
-          <li><b>3</b><span>In Word, press <kbd>Ctrl</kbd> + <kbd>V</kbd> to paste.</span></li>
-          <li><b>4</b><span>Save it as <b>Gaming Room ${esc(S.name)}</b>.</span></li>
+          <li><b>1</b><span>Open the <b>glowing box</b>.</span></li>
+          <li><b>2</b><span>A <b>Word window</b> opens. Use its buttons, just like in real Word.</span></li>
+          <li><b>3</b><span>Make every goal <b>green ✅</b>. Then press <b>Check ⭐</b>.</span></li>
+          <li><b>4</b><span>Each box gives your robot a new part. Finish all 6!</span></li>
         </ol>
-        ${starterTools()}
         <button class="btn go big" type="button" data-act="to-play">${S.startedAt ? 'Back to the boxes ➜' : 'Start! Open the boxes ➜'}</button>
         <p class="note center">⏱ You have 10 minutes for all 6 boxes. The clock starts when you open the boxes.</p>
       </div>
-      <div class="card preview-card"><span class="eyebrow">Starter text preview</span>${paperHTML(S.support)}
-        <p class="note">About 70 words. There are <b>3 spelling mistakes</b> hiding in it… you will fix them in Box 6!</p></div>
+      <div class="card preview-card"><span class="eyebrow">Today you will insert</span>
+        <ul class="learn">
+          <li><span>🖼️</span><div><b>Pictures</b>Insert a picture, make it the right size and wrap the text around it.</div></li>
+          <li><span>⭐</span><div><b>Shapes</b>Insert a shape, fill it with colour and type words inside.</div></li>
+          <li><span>🧊</span><div><b>3D Models</b>Insert a 3D model and spin it around.</div></li>
+        </ul>
+        <p class="note">Everything happens on this website. You do not need to open Word.</p></div>
     </section>`;
   }
 
@@ -309,7 +271,7 @@
   }
   function bubbleText() {
     const n = stars(), c = current();
-    if (S.timeUp && c !== -1) return `Time’s up! ⏰ Thanks for building me. Show your Word file to Ms Rahaf.`;
+    if (S.timeUp && c !== -1) return `Time’s up! ⏰ Thanks for building me. Show me to Ms Rahaf!`;
     if (n === 0) return `Hi ${esc(S.name)}! Ms Rahaf sent me in pieces. 😅 Open <b>Box 1</b> to find my head!`;
     if (c === -1) return 'I’m complete! Thank you, Word Champion! 🏅';
     return `${M.BOXES[S.lastBox ?? c - 1]?.say || 'Nice!'} Next: <b>Box ${c + 1}</b>.`;
@@ -326,7 +288,7 @@
       <div class="boxes">
         <div class="boxes-head">
           <div><span class="eyebrow">Your mystery boxes</span><h2>${c === -1 ? 'All 6 boxes open! 🎉' : S.timeUp ? 'Time’s up! ⏰' : `Open Box ${c + 1}`}</h2>
-          <p class="muted">${c === -1 ? 'You can still open any box again.' : S.timeUp ? 'You can still open the boxes you finished.' : 'Open the glowing box. Do the task in Word. Then come back and press “I’ve finished”.'}</p></div>
+          <p class="muted">${c === -1 ? 'You can still open any box again.' : S.timeUp ? 'You can still open the boxes you finished.' : 'Open the glowing box. Use the Word window. Make the goals green, then press Check.'}</p></div>
         </div>
         <div class="grid">${M.BOXES.map((_, i) => boxCard(i)).join('')}</div>
         ${c === -1 ? '<button class="btn go big wide" type="button" data-act="to-done">🏅 See my Word Champion badge</button>' : S.timeUp ? '<button class="btn go big wide" type="button" data-act="to-done">🤖 See my robot and badge</button>' : ''}
@@ -351,13 +313,90 @@
     clearTimeout(el._dt); el._dt = setTimeout(() => el.classList.remove('dance-' + id), reduced ? 10 : 1400 * times);
   }
 
+  /* ---------- The pretend Word window (one page, shared by all 6 boxes) ---------- */
+  const T = M.TARGET;
+  const D = () => S.doc;
+  const getP = p => p.split('.').reduce((o, k) => o && o[k], D());
+  const setP = (p, v) => { const ks = p.split('.'), last = ks.pop(); ks.reduce((o, k) => o[k], D())[last] = v; };
+  const norm = v => String(v || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const near = (v, want, ok) => Math.abs(v - want) <= ok;
+  // The game checks the page itself. Support mode is a little kinder with sizes and angles.
+  function goals(i) {
+    const d = D(), sup = S.support, deg = sup ? 25 : 15;
+    return [
+      () => [{ t: 'A gaming picture', ok: d.pic.id === T.pic }],
+      () => [{ t: 'Width about 6 cm', ok: !!d.pic.id && near(d.pic.w, T.width, sup ? 1 : .5) }, { t: 'Wrap Text: Square', ok: !!d.pic.id && d.pic.wrap === T.wrap }],
+      () => [{ t: 'Shape: Star', ok: d.shape.type === T.shape }],
+      () => [{ t: 'Fill: Yellow', ok: !!d.shape.type && d.shape.fill === T.fill }, { t: 'Text: GAME ON!', ok: !!d.shape.type && norm(d.shape.text) === norm(T.text) }],
+      () => [{ t: '3D model: Robot', ok: d.model.id === T.model }],
+      () => [{ t: 'Turn about 45°', ok: !!d.model.id && near(d.model.ry, T.ry, deg) }, { t: 'Tilt about -20°', ok: !!d.model.id && near(d.model.rx, T.rx, deg) }]
+    ][i]();
+  }
+  const allOk = i => goals(i).every(g => g.ok);
+  const CTX = ['Picture Format', 'Shape Format', '3D Model'];
+  const wg = (label, inner, cls) => `<div class="wg${cls ? ' ' + cls : ''}"><small>${label}</small><div class="wopts">${inner}</div></div>`;
+  const wb = (path, v, inner, style) => `<button type="button" class="wb" data-set="${path}" data-val="${esc(v)}" aria-pressed="${String(getP(path)) === String(v)}"${style ? ` style="${style}"` : ''}>${inner}</button>`;
+  const wrange = (label, path, min, max, step, unit, aria) => `<div class="wrange"><span>${label}</span><input type="range" min="${min}" max="${max}" step="${step}" value="${getP(path)}" data-range="${path}" aria-label="${aria}"><b data-show="${path}" data-unit="${unit}">${getP(path)}${unit}</b></div>`;
+  function modelCube(id, rx, ry, ghost) {
+    const m = M.MODELS[id] || M.MODELS.robot;
+    const faces = [1, 2, 3, 4, 5, 6].map(k => `<div class="f${k}" style="background:${k % 2 ? m.c1 : m.c2}">${m.em}</div>`).join('');
+    return `<div class="wcube${ghost ? ' ghost' : ''}"${ghost ? '' : ' data-cube'} style="transform:rotateX(${rx}deg) rotateY(${ry}deg)">${faces}</div>`;
+  }
+  function groupsHTML(i) {
+    const d = D();
+    const need = (what, box) => `<div class="wg"><small>Oops</small><p class="wneed">First ${what} in <b>Box ${box}</b>.</p></div>`;
+    switch (i) {
+      case 0: return wg('Pictures', M.PIC_CHOICES.map(id => { const p = M.PICS[id]; return wb('pic.id', id, `<span class="e">${p.em}</span>${esc(p.label)}`, `background:${p.bg}`); }).join(''));
+      case 1: if (!d.pic.id) return need('insert a picture', 1);
+        return wg('Size', wrange('↔ Width', 'pic.w', 2, 12, .5, ' cm', 'Picture width'), 'col') +
+          wg('Wrap Text', [['inline', '▭', 'In Line'], ['square', '▣', 'Square'], ['behind', '⬚', 'Behind Text'], ['front', '◼', 'In Front']].map(([v, ic, l]) => wb('pic.wrap', v, `<span class="e">${ic}</span>${l}`)).join(''));
+      case 2: return wg('Shapes', Object.entries(M.SHAPES).map(([id, sh]) => wb('shape.type', id, `<svg viewBox="0 0 100 100" width="34" height="34" aria-hidden="true"><path d="${sh.path}" fill="${M.FILLS[d.shape.fill] || '#E6E1F7'}" stroke="#241B4B" stroke-width="5"/></svg>${sh.label}`)).join(''));
+      case 3: if (!d.shape.type) return need('insert a shape', 3);
+        return wg('Shape Fill', Object.entries(M.FILLS).map(([n, hex]) => `<button type="button" class="wsw" style="background:${hex}" data-set="shape.fill" data-val="${n}" aria-pressed="${d.shape.fill === n}" aria-label="${n}" title="${n}"></button>`).join('')) +
+          wg('Text in the shape', `<input class="wtext" data-text="shape.text" maxlength="16" value="${esc(d.shape.text)}" placeholder="Type here" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Text in the shape">`);
+      case 4: return wg('3D Models', M.MODEL_CHOICES.map(id => { const m = M.MODELS[id]; return wb('model.id', id, `<span class="e">${m.em}</span>${esc(m.label)}`, `background:${m.c2}`); }).join(''));
+      case 5: if (!d.model.id) return need('insert a 3D model', 5);
+        return wg('Match this! 🎯', `<div class="wstage target">${modelCube(d.model.id, T.rx, T.ry, true)}</div>`) +
+          wg('3D Rotation', wrange('↔ Turn', 'model.ry', -180, 180, 5, '°', 'Turn') + wrange('↕ Tilt', 'model.rx', -90, 90, 5, '°', 'Tilt') + '<span class="wsmall">Or drag the model on the page 👆</span>', 'col');
+    }
+    return '';
+  }
+  function ribbonHTML(i) {
+    const tab = M.BOXES[i].tab, tabs = ['File', 'Home', 'Insert', 'Layout', 'Review'].concat(CTX.includes(tab) ? [tab] : []);
+    return `<div class="wtabs">${tabs.map(t => `<span class="${t === tab ? 'on' : ''}${CTX.includes(t) ? ' ctx' : ''}${['File', 'Layout', 'Review'].includes(t) ? ' far' : ''}">${t}</span>`).join('')}</div><div class="wgroups">${groupsHTML(i)}</div>`;
+  }
+  function pageHTML(i) {
+    const d = D(), on = ['pic', 'pic', 'shape', 'shape', 'model', 'model'][i], sel = x => on === x ? ' sel' : '';
+    const shape = d.shape.type ? `<div class="wshape${sel('shape')}"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="${M.SHAPES[d.shape.type].path}" fill="${M.FILLS[d.shape.fill] || '#ECE8F7'}" stroke="#241B4B" stroke-width="3"/></svg><span>${esc(d.shape.text)}</span></div>` : '';
+    const p = d.pic.id && M.PICS[d.pic.id];
+    const pic = p ? `<div class="wpic ${d.pic.wrap}${sel('pic')}" style="--pw:calc(${d.pic.w * 20}px * var(--k));background:${p.bg}" role="img" aria-label="Picture: ${esc(p.label)}"><span>${p.em}</span></div>` : '';
+    const model = d.model.id ? `<div class="wmodel${sel('model')}"><div class="wstage" data-rot>${modelCube(d.model.id, d.model.rx, d.model.ry)}</div></div>` : '';
+    return `<div class="wtitle-row">${shape}<h1 class="wttl">${esc(M.TITLE)}</h1></div><div class="wblk">${pic}<p>${esc(M.PARA)}</p><p>${esc(M.PARA2)}</p></div>${model}`;
+  }
+  const goalsHTML = i => goals(i).map(g => `<li class="${g.ok ? 'ok' : ''}">${g.ok ? '✅' : '⬜'} ${esc(g.t)}</li>`).join('');
+  function refreshWord(rib) {
+    if (openI < 0 || !$('#wpage', layer)) return;
+    if (rib) $('#wrib', layer).innerHTML = ribbonHTML(openI);
+    $('#wpage', layer).innerHTML = pageHTML(openI);
+    refreshGoals();
+  }
+  function refreshGoals() {
+    const g = $('#wgoals', layer); if (!g) return;
+    g.innerHTML = goalsHTML(openI);
+    const btn = $('[data-act="check"]', layer); if (btn) btn.classList.toggle('ready', allOk(openI));
+  }
+  function liveLabels() {
+    $$('[data-show]', layer).forEach(b => { b.textContent = getP(b.dataset.show) + b.dataset.unit; });
+    $$('[data-range]', layer).forEach(r => { if (document.activeElement !== r) r.value = getP(r.dataset.range); });
+  }
+
   /* ---------- Opening a box ---------- */
-  let openI = -1, plan = 'a', hintOpen = false;
+  let openI = -1, hintOpen = false;
   async function openBox(i, el) {
     const st = boxState(i);
     if (S.timeUp && st !== 'done') { sfx('boop'); say('⏰ Time’s up! You can only open the boxes you finished.'); return; }
     if (st === 'locked') { sfx('boop'); say(`That box is locked. 🔒 Open <b>Box ${current() + 1}</b> first!`); if (el) { el.classList.remove('nope'); void el.offsetWidth; el.classList.add('nope'); } return; }
-    openI = i; plan = i === 3 && S.planB ? 'b' : 'a'; hintOpen = S.support;
+    openI = i; hintOpen = S.support;
     const b = M.BOXES[i], first = st === 'current' && !S.opened?.[i];
     if (first && !reduced) {
       S.opened = Object.assign({}, S.opened, { [i]: true }); save();
@@ -369,52 +408,53 @@
     }
     showBox(i, true); sfx(first ? 'surprise' : 'tap');
   }
-  function stepsHTML(steps, key) {
-    return `<ol class="steps">${steps.map((s, j) => { const k = `${key}-${j}`, on = !!S.ticks[k];
-      return `<li><button class="step${on ? ' on' : ''}" type="button" data-act="tick" data-k="${k}" aria-pressed="${on}"><span class="num">${on ? '✓' : j + 1}</span><span class="txt">${s}</span></button></li>`; }).join('')}</ol>`;
-  }
   function hintsHTML(hints) {
     return hints.map(h => `<div class="hint-row"><div class="path">${h.path.map((p, k) => `<span class="chip${k === 0 ? ' tab' : ''}">${esc(p)}</span>`).join('<span class="sep">›</span>')}</div>
       <p>${h.tip}</p></div>`).join('');
   }
   function showBox(i, anim) {
     const b = M.BOXES[i], done = S.done[i];
-    const useSupport = S.support && b.supportSteps, isB = i === 3 && plan === 'b';
-    const steps = isB ? b.planB.steps : useSupport ? b.supportSteps : b.steps;
-    const key = isB ? `${i}b` : useSupport ? `${i}s` : `${i}`;
-    const hints = isB ? b.planB.hints : b.hints;
-    const ticked = steps.filter((_, j) => S.ticks[`${key}-${j}`]).length;
-    const html = `<div class="sheet${anim ? ' in' : ''}" role="dialog" aria-modal="true" aria-labelledby="boxTitle" style="--c:${b.color};--c2:${b.color2}">
+    const html = `<div class="sheet wide box-sheet${anim ? ' in' : ''}" role="dialog" aria-modal="true" aria-labelledby="boxTitle" style="--c:${b.color};--c2:${b.color2}">
       <header class="sheet-head">
         <span class="sheet-emoji" aria-hidden="true">${b.emoji}</span>
-        <div><span class="sheet-kicker">Box ${i + 1} of 6</span><h2 id="boxTitle">${b.name}</h2></div>
+        <div><span class="sheet-kicker">Box ${i + 1} of 6 · Reward: ⭐ + ${b.partEmoji} ${esc(b.partName)}</span><h2 id="boxTitle">${b.name}</h2></div>
         <button class="x" type="button" data-act="close" aria-label="Close">✕</button>
       </header>
       <div class="sheet-body">
-        <p class="reward">Reward: <b>⭐ 1 star</b> + <b>${b.partEmoji} ${esc(b.partName)}</b></p>
-        ${useSupport ? '<p class="support-note">🤝 <b>Done for you</b> in the ready text. Just check it in Word!</p>' : ''}
-        ${i === 3 ? `<div class="seg" role="group" aria-label="Choose a plan">
-          <button type="button" data-act="plan" data-p="a" aria-pressed="${!isB}">Plan A: 3D model</button>
-          <button type="button" data-act="plan" data-p="b" aria-pressed="${isB}">Plan B: Icon</button></div>
-          ${isB ? `<p class="planb-note"><b>${esc(b.planB.label)}</b><br>${esc(b.planB.note)}</p>` : ''}` : ''}
-        ${i === 4 ? `<div class="data-card"><table><thead><tr>${M.CHART_DATA[0].map(h => `<th>${h}</th>`).join('')}</tr></thead>
-          <tbody>${M.CHART_DATA.slice(1).map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</tbody></table>
-          <div class="data-side"><p>Use this data for the <b>table</b> and the <b>chart</b>.</p><button class="btn ghost sm" type="button" data-act="copy-chart">📋 Copy data for the chart</button></div></div>` : ''}
-        <p class="do-in-word">Do this in <b>Word</b>. Tap each step when you finish it:</p>
-        ${stepsHTML(steps, key)}
-        <button class="hint-btn" type="button" data-act="hint" aria-expanded="${hintOpen}">💡 Show me how <span>${hintOpen ? '▲' : '▼'}</span></button>
-        <div class="hints" ${hintOpen ? '' : 'hidden'}>${hintsHTML(hints)}${S.support && b.extra ? `<p class="extra">⭐ <b>Extra hint:</b> ${b.extra}</p>` : ''}</div>
+        <p class="task">${b.task}</p>
+        <div class="word">
+          <div class="wbar"><span class="wlogo" aria-hidden="true">W</span><span>Gaming Room - Word</span></div>
+          <div class="wribbon" id="wrib">${ribbonHTML(i)}</div>
+          <div class="wpagewrap"><div class="wpage" id="wpage">${pageHTML(i)}</div></div>
+        </div>
+        <div class="goals-row"><span class="goals-label">Goals</span><ul class="wgoals" id="wgoals" aria-live="polite">${goalsHTML(i)}</ul></div>
+        <button class="hint-btn" type="button" data-act="hint" aria-expanded="${hintOpen}">💡 Where is it in real Word? <span>${hintOpen ? '▲' : '▼'}</span></button>
+        <div class="hints" ${hintOpen ? '' : 'hidden'}>${hintsHTML(b.hints)}${S.support && b.extra ? `<p class="extra">⭐ <b>Extra hint:</b> ${b.extra}</p>` : ''}</div>
       </div>
       <footer class="sheet-foot">
-        ${done ? `<p class="done-msg">✅ You said you finished this box.</p><button class="btn primary" type="button" data-act="close">Close</button>`
-          : `<button class="btn go big finish" type="button" data-act="finish" data-i="${i}">I’ve finished! ⭐</button>
-             <p class="honest">${ticked < steps.length ? `${ticked} of ${steps.length} steps ticked. ` : 'All steps ticked! '}Only press when it is done in Word. Ms Rahaf will check your file.</p>`}
+        ${done ? `<p class="done-msg">✅ You finished this box!</p><button class="btn primary" type="button" data-act="close">Close</button>`
+          : `<button class="btn go big finish${allOk(i) ? ' ready' : ''}" type="button" data-act="check" data-i="${i}">Check ⭐</button>
+             <p class="honest">Make all the goals green ✅, then press Check.</p>`}
       </footer></div>`;
     openLayer(html, 'dim sheet-layer');
+    showSelected();
+  }
+  // Scroll the page so the picture, shape or 3D model for this box is in view.
+  function showSelected() {
+    const el = $('#wpage .sel', layer); if (el) el.scrollIntoView({ block: 'nearest' });
+  }
+  function checkBox(i, btn) {
+    if (S.done[i] || S.timeUp) return;
+    const bad = goals(i).filter(g => !g.ok);
+    if (bad.length) {
+      sfx('boop'); btn.classList.remove('nope'); void btn.offsetWidth; btn.classList.add('nope');
+      toast('Not yet! Still to do: ' + bad.map(g => g.t).join(', ')); return;
+    }
+    finishBox(i, btn);
   }
   async function finishBox(i, btn) {
     if (S.done[i] || S.timeUp) return;
-    S.done[i] = true; S.lastBox = i; if (current() === -1) S.finishedIn = GAME_SECONDS - left(); if (i === 3) S.planB = plan === 'b'; save(); queueSync();
+    S.done[i] = true; S.lastBox = i; if (current() === -1) S.finishedIn = GAME_SECONDS - left(); save(); queueSync();
     const target = $$('#slots .slot')[i];
     flyStar(btn, target); sfx('star'); closeLayer(true);
     await wait(500);
@@ -480,21 +520,12 @@
         <span class="eyebrow">${full ? `6 of 6 boxes · robot complete${S.finishedIn ? ' · ' + mmss(S.finishedIn) : ''}` : `Time’s up · ${stars()} of 6 boxes`}</span>
         <h1>${full ? 'You did it' : 'Great building'}, <span class="grad">${esc(S.name)}</span>!</h1>
         <div class="badge-wrap">${badgeSVG()}</div>
-        ${full && S.confirmed ? '<p class="stamp ok">✅ Checked by Ms Rahaf. Well done!</p>' : full ? '<p class="stamp">👩‍🏫 Show your Word file and this badge to Ms Rahaf.</p>' : '<p class="stamp">👩‍🏫 Show your Word file to Ms Rahaf. You can finish the other tasks in Word.</p>'}
+        ${full && S.confirmed ? '<p class="stamp ok">✅ Checked by Ms Rahaf. Well done!</p>' : full ? '<p class="stamp">👩‍🏫 Show this badge to Ms Rahaf.</p>' : '<p class="stamp">👩‍🏫 Show your robot to Ms Rahaf. Great try!</p>'}
         <div class="row center"><button class="btn ghost" type="button" data-act="to-play">📦 See my boxes</button></div>
       </div></section>`;
     hud(); eyesFollow();
     if (!quiet) setTimeout(() => dance($('#robot'), S.dance || 'spin', 2), 400);
     sync();
-  }
-
-  /* ---------- Starter text sheet ---------- */
-  function starterSheet() {
-    openLayer(`<div class="sheet in" role="dialog" aria-modal="true" aria-labelledby="stTitle" style="--c:#18D2FF;--c2:#7B4DFF">
-      <header class="sheet-head"><span class="sheet-emoji" aria-hidden="true">📋</span><div><span class="sheet-kicker">Starter text</span><h2 id="stTitle">My Dream Gaming Room</h2></div>
-      <button class="x" type="button" data-act="close" aria-label="Close">✕</button></header>
-      <div class="sheet-body">${paperHTML(S.support)}${starterTools()}
-      <p class="note">Copy, then press <kbd>Ctrl</kbd> + <kbd>V</kbd> in Word. Copy not working? Use the Download button.</p></div></div>`, 'dim sheet-layer');
   }
 
   /* ---------- Layer (pop-ups) ---------- */
@@ -507,7 +538,7 @@
   }
   function closeLayer(quiet) {
     if (layer.hidden) return;
-    layer.hidden = true; layer.innerHTML = ''; delete layer.dataset.pick; document.body.classList.remove('locked');
+    layer.hidden = true; layer.innerHTML = ''; delete layer.dataset.pick; openI = -1; drag = null; document.body.classList.remove('locked');
     clearInterval(teacherPoll); const cb = onCloseLayer; onCloseLayer = null; cb && cb();
     if (!quiet && lastFocus && lastFocus.isConnected) lastFocus.focus({ preventScroll: true });
   }
@@ -534,10 +565,10 @@
     if (players === null) return '<p class="form-msg">Cannot load the class list right now.</p>';
     if (!players.length) return '<p class="muted">No students yet. When students type their name, they appear here.</p>';
     const champs = players.filter(p => p.boxes === 63).length;
-    return `<p class="muted">${players.length} students · ${champs} finished all 6 boxes · progress is what students reported</p>
+    return `<p class="muted">${players.length} students · ${champs} finished all 6 boxes · the game checks each box</p>
       <div class="tlist">${players.map(p => {
         const n = M.BOXES.filter((_, i) => p.boxes & (1 << i)).length, all = n === 6;
-        return `<div class="trow"><div class="tname"><b>${esc(p.name)}</b>${p.support ? '<span class="tag">Support</span>' : ''}${p.planB ? '<span class="tag">Plan B icon</span>' : ''}${p.timeUp && p.boxes !== 63 ? '<span class="tag">⏰ Time up</span>' : ''}</div>
+        return `<div class="trow"><div class="tname"><b>${esc(p.name)}</b>${p.support ? '<span class="tag">Support</span>' : ''}${p.timeUp && p.boxes !== 63 ? '<span class="tag">⏰ Time up</span>' : ''}</div>
           <div class="tdots">${M.BOXES.map((b, i) => `<span class="${p.boxes & (1 << i) ? 'on' : ''}" title="Box ${i + 1}: ${b.name}" style="--c:${b.color}">${i + 1}</span>`).join('')}</div>
           <div class="tact">${all ? `<button class="btn sm ${p.confirmed ? 'ghost' : 'go'}" type="button" data-act="t-confirm" data-id="${p.id}" data-on="${!p.confirmed}">${p.confirmed ? '✅ Badge confirmed' : 'Confirm badge'}</button>` : `<span class="muted small">${n}/6</span>`}
           <button class="btn sm danger" type="button" data-act="t-remove" data-id="${p.id}" data-name="${esc(p.name)}" aria-label="Reset ${esc(p.name)}">Reset</button></div></div>`;
@@ -547,14 +578,13 @@
     const total = M.TIMINGS.reduce((a, t) => a + t.min, 0); let t0 = 0;
     return `<table class="ttable"><thead><tr><th>Time</th><th>What happens</th></tr></thead><tbody>${M.TIMINGS.map(t => { const r = `<tr><td>${t0}–${t0 + t.min} min</td><td>${esc(t.what)}</td></tr>`; t0 += t.min; return r; }).join('')}</tbody>
       <tfoot><tr><td><b>${total} min</b></td><td>Total</td></tr></tfoot></table>
-      <p class="muted small">The game has a 10-minute clock. It starts when a student presses “Open the boxes”, and a refresh does not reset it. At 0 the game ends and shows the parts the student collected. Resetting a student gives them a new 10 minutes. Support mode skips most of Boxes 1–2, so those students have more time for pictures, the table and the chart.</p>`;
+      <p class="muted small">The game has a 10-minute clock. It starts when a student presses “Open the boxes”, and a refresh does not reset it. At 0 the game ends and shows the parts the student collected. Resetting a student gives them a new 10 minutes. Everything happens in the pretend Word window on the website: students do not need Microsoft Word. Support mode has bigger text, hints open, extra hints and a little more room for sizes and angles.</p>`;
   }
-  function checklistHTML() {
-    return `<h3>Spelling corrections</h3><div class="spell">${M.MISTAKES.map(m => `<span><s>${esc(m.wrong)}</s> ➜ <b>${esc(m.right)}</b></span>`).join('')}</div>
-      <h3>Check each Word file</h3>${M.CHECKLIST.map(c => { const b = M.BOXES[c.box - 1];
-        return `<div class="tcheck"><p class="tcheck-h" style="--c:${b.color}">${b.emoji} Box ${c.box}: ${b.name}</p><ul>${c.items.map(it => `<li><label><input type="checkbox"> ${esc(it)}</label></li>`).join('')}</ul></div>`; }).join('')}
-      <div class="tcheck"><p class="tcheck-h" style="--c:#FFC93C">🏅 Word Champion badge</p><ul><li><label><input type="checkbox"> All six boxes look right in the Word file</label></li><li><label><input type="checkbox"> Badge seen on the student’s screen. Press <b>Confirm badge</b> in the Class tab.</label></li></ul></div>
-      <p class="muted small">Ticks here are only for you while the panel is open. The student’s screen shows “Checked by Ms Rahaf” after you confirm.</p>`;
+  function answersHTML() {
+    return `<p class="muted">The game checks each box itself: a box only gives a star when every goal is green.</p>
+      ${M.ANSWERS.map(c => { const b = M.BOXES[c.box - 1];
+        return `<div class="tcheck"><p class="tcheck-h" style="--c:${b.color}">${b.emoji} Box ${c.box}: ${b.name}</p><ul>${c.items.map(it => `<li>${esc(it)}</li>`).join('')}</ul></div>`; }).join('')}
+      <div class="tcheck"><p class="tcheck-h" style="--c:#FFC93C">🏅 Word Champion badge</p><ul><li>All 6 boxes done before the clock reaches 0.</li><li>When you have seen the badge on the student’s screen, press <b>Confirm badge</b> in the Class tab. Their screen then shows “Checked by Ms Rahaf”.</li></ul></div>`;
   }
   function resetHTML() {
     return `<div class="reset-box"><h3>Reset the whole class</h3><p class="muted">Removes every name and robot from the class list and the big screen. Do this before a new class.</p>
@@ -566,13 +596,13 @@
   }
   async function teacherPanel() {
     if (tTab === 'class') await loadPlayers();
-    const tabs = [['class', '👥 Class'], ['lesson', '⏱ 45-min plan'], ['check', '✅ Checklist'], ['reset', '🔄 Reset']];
+    const tabs = [['class', '👥 Class'], ['lesson', '⏱ 45-min plan'], ['check', '✅ Answers'], ['reset', '🔄 Reset']];
     const scrollY = $('.sheet-body', layer)?.scrollTop || 0;
     openLayer(`<div class="sheet teacher wide" role="dialog" aria-modal="true" aria-labelledby="tTitle" style="--c:#7B4DFF;--c2:#2A1279">
       <header class="sheet-head"><span class="sheet-emoji" aria-hidden="true">👩‍🏫</span><div><span class="sheet-kicker">Teacher</span><h2 id="tTitle">Ms Rahaf’s panel</h2></div>
       <button class="x" type="button" data-act="close" aria-label="Close">✕</button></header>
       <div class="ttabs" role="tablist">${tabs.map(([k, l]) => `<button type="button" role="tab" data-act="t-tab" data-t="${k}" aria-selected="${tTab === k}">${l}</button>`).join('')}</div>
-      <div class="sheet-body">${({ class: classHTML, lesson: lessonHTML, check: checklistHTML, reset: resetHTML })[tTab]()}</div></div>`, 'dim sheet-layer');
+      <div class="sheet-body">${({ class: classHTML, lesson: lessonHTML, check: answersHTML, reset: resetHTML })[tTab]()}</div></div>`, 'dim sheet-layer');
     const sb = $('.sheet-body', layer); if (sb) sb.scrollTop = scrollY;
     clearInterval(teacherPoll);
     if (tTab === 'class') teacherPoll = setInterval(async () => { if (layer.hidden || tTab !== 'class' || !$('.teacher', layer)) return clearInterval(teacherPoll); await loadPlayers(); const b = $('.sheet-body', layer); if (b) b.innerHTML = classHTML(); }, 8000);
@@ -618,23 +648,23 @@
   /* ---------- Clicks ---------- */
   document.addEventListener('click', async e => {
     if (e.target === layer && !layer.querySelector('.surprise')) { closeLayer(); return; }
+    const ws = e.target.closest('[data-set]');
+    if (ws && openI >= 0 && layer.contains(ws)) {
+      let v = ws.dataset.val; if (typeof getP(ws.dataset.set) === 'number') v = +v;
+      if (ws.dataset.set === 'pic.id' && !D().pic.id) D().pic.w = 3;
+      setP(ws.dataset.set, v); save(); sfx('tap'); refreshWord(true);
+      showSelected();
+      return;
+    }
     const el = e.target.closest('[data-act]'); if (!el) return;
     const act = el.dataset.act;
-    if (act === 'copy') return copyStarter();
-    if (act === 'copy-chart') return copyChart();
     if (act === 'to-play') { sfx('tap'); if (!S.startedAt) { S.startedAt = Date.now(); save(); } return go('play'); }
     if (act === 'time-up-ok') { closeLayer(true); return go('done'); }
     if (act === 'to-done') { sfx('fanfare'); return go('done'); }
     if (act === 'open-box') return openBox(Number(el.dataset.i), el);
     if (act === 'close') { sfx('tap'); return closeLayer(); }
-    if (act === 'tick') {
-      const k = el.dataset.k; S.ticks[k] = !S.ticks[k]; save(); sfx(S.ticks[k] ? 'tick' : 'untick');
-      const sc = $('.sheet-body', layer)?.scrollTop || 0; showBox(openI, false); const nb = $('.sheet-body', layer); if (nb) nb.scrollTop = sc;
-      const again = layer.querySelector(`[data-k="${k}"]`); again && again.focus({ preventScroll: true }); return;
-    }
     if (act === 'hint') { hintOpen = !hintOpen; sfx('tap'); el.setAttribute('aria-expanded', String(hintOpen)); $('span', el).textContent = hintOpen ? '▲' : '▼'; $('.hints', layer).hidden = !hintOpen; if (hintOpen) $('.hints', layer).scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); return; }
-    if (act === 'plan') { plan = el.dataset.p; sfx('tap'); showBox(openI, false); return; }
-    if (act === 'finish') return finishBox(Number(el.dataset.i), el);
+    if (act === 'check') return checkBox(Number(el.dataset.i), el);
     if (act === 'robot') { const r = $('#robot'); sfx('boop'); if (r) { r.classList.remove('hop'); void r.offsetWidth; r.classList.add('hop'); } say(PICK_LINES[Math.floor(Math.random() * PICK_LINES.length)]); return; }
     if (act === 'colour') {
       const k = Number(el.dataset.c); layer.dataset.pick = k; sfx('tap');
@@ -655,17 +685,35 @@
     if (act === 't-clear') { if (!confirm('Reset the whole class? Every name and robot is removed.')) return; if (await teacherAction('clear')) { toast('The class is reset. Ready for a new lesson!'); tTab = 'class'; teacherPanel(); } return; }
     if (act === 't-device') { if (!confirm('Reset the game on this device?')) return; S = fresh(); save(); closeLayer(true); go('start'); toast('This device is reset.'); return; }
   });
+  document.addEventListener('input', e => {
+    if (openI < 0 || layer.hidden) return;
+    let t;
+    if ((t = e.target.closest('[data-range]'))) { setP(t.dataset.range, +t.value); liveLabels(); $('#wpage', layer).innerHTML = pageHTML(openI); refreshGoals(); save(); }
+    else if ((t = e.target.closest('[data-text]'))) { setP(t.dataset.text, t.value.slice(0, 16)); $('#wpage', layer).innerHTML = pageHTML(openI); refreshGoals(); save(); }
+  });
+  /* Drag the 3D model on the page to spin it (Box 6) */
+  let drag = null;
+  document.addEventListener('pointerdown', e => {
+    if (openI !== 5 || layer.hidden || !e.target.closest('#wpage [data-rot]')) return;
+    drag = { x: e.clientX, y: e.clientY, rx: D().model.rx, ry: D().model.ry }; e.preventDefault();
+  });
+  document.addEventListener('pointermove', e => {
+    if (!drag) return;
+    let ry = drag.ry + (e.clientX - drag.x) * .6, rx = drag.rx - (e.clientY - drag.y) * .6;
+    ry = ((ry + 180) % 360 + 360) % 360 - 180; rx = Math.max(-90, Math.min(90, rx));
+    D().model.ry = Math.round(ry / 5) * 5; D().model.rx = Math.round(rx / 5) * 5;
+    const cube = $('#wpage [data-cube]', layer); if (cube) cube.style.transform = `rotateX(${D().model.rx}deg) rotateY(${D().model.ry}deg)`;
+    liveLabels(); refreshGoals();
+  });
+  document.addEventListener('pointerup', () => { if (drag) { drag = null; save(); } });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !layer.hidden && !layer.querySelector('.surprise')) closeLayer(); });
   $('#soundBtn').onclick = () => { soundOn = !soundOn; try { localStorage.setItem('mbSound', soundOn ? 'on' : 'off'); } catch (e) {} updateSound(); sfx('tick'); };
   $('#supportBtn').onclick = () => {
     S.support = !S.support; save(); hud(); sfx('tap'); if (S.name) queueSync();
-    toast(S.support ? '🤝 Support mode on: bigger text, extra hints, ready-formatted text.' : 'Support mode off.');
+    toast(S.support ? '🤝 Support mode on: bigger text, hints open, extra help.' : 'Support mode off.');
     if (S.screen === 'start') { const c = $('#supportIn'); if (c) c.checked = S.support; }
-    else if (S.screen === 'ready') renderReady();
-    if (!layer.hidden && openI >= 0 && $('#boxTitle', layer)) showBox(openI, false);
-    else if (!layer.hidden && $('#stTitle', layer)) starterSheet();
+    if (!layer.hidden && openI >= 0 && $('#boxTitle', layer)) { hintOpen = S.support || hintOpen; showBox(openI, false); }
   };
-  $('#starterBtn').onclick = () => { sfx('tap'); starterSheet(); };
   $('#teacherBtn').onclick = () => { sfx('tap'); teacherOpen(); };
 
   /* ---------- Start ---------- */

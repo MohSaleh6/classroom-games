@@ -10,7 +10,7 @@ No build step, no framework. Keep the English simple: the players are 12–14 ye
 | --- | --- | --- | --- |
 | `crack-the-secret-code/` | Grade 8 Excel: LEFT, RIGHT, MID, SUBSTITUTE. 9 missions, about 10 minutes | https://crack-the-secret-code-moh-93f1.vercel.app | `crack-the-secret-code` (prj_Cjr5IpgxtqXhZNLXVUgay87yN1EL) |
 | `report-rescue/` | Grade 7 Word Unit 1, played in a pretend Word window (no real Word needed). 5 missions, 15 minutes, 200 points | https://report-rescue-moh-93f1.vercel.app | `report-rescue` (prj_6kSTKKVijFKbIbGpX64MIuYw746Q) |
-| `mystery-box/` | **Mystery Box: Word Challenge!** for Ms Rahaf's Grade 7 class. Students work in real Microsoft Word; the site guides them through 6 mystery boxes in 10 minutes and they build a robot | https://mystery-box-moh-93f1.vercel.app | `mystery-box` (prj_5oXnhsce7eaJENFPJm8RcoE0WMgp). Root Directory `mystery-box` |
+| `mystery-box/` | **Mystery Box: Word Challenge!** for Ms Rahaf's Grade 7 class. 6 mystery boxes in 10 minutes, played in a pretend Word window: insert pictures, shapes and 3D models (no chart, no real Word) and build a robot | https://mystery-box-moh-93f1.vercel.app | `mystery-box` (prj_5oXnhsce7eaJENFPJm8RcoE0WMgp). Root Directory `mystery-box` |
 | `archive/report-rescue-real-word/` | First Report Rescue version, where students used real Word. Not deployed; kept for reference only | — | — |
 
 Vercel team: `moh-93f1` (team_dcnImgjOKecfTukD5B2Ebmvd).
@@ -61,27 +61,32 @@ connection), so its project has Root Directory `mystery-box`. Vercel Authenticat
 ## Mystery Box: Word Challenge (`mystery-box/`)
 
 A separate game from Report Rescue, made for **Ms Rahaf's** Grade 7 ICT class. Her name appears in the game
-(start screen, robot, badge, teacher panel, wall). Report Rescue stays as it is; don't mix the two.
+(start screen, robot, badge, teacher panel, wall). Report Rescue stays as it is; don't mix the two (Mystery Box has its
+own copy of the pretend Word window code).
 
-- Students work in **real Microsoft Word**. The site never inspects their file: "I've finished" is student-reported
-  progress, and the wording must never claim otherwise. Ms Rahaf checks the Word file with the checklist.
+- **No real Word.** Ms Rahaf asked that students do not use Microsoft Word. Each box opens a pretend Word window (ribbon tab +
+  page about "My Dream Gaming Room") inside the box pop-up. Only **pictures, shapes and 3D models**. **No chart**, no text
+  formatting, no tables, no spelling. Don't add those back.
+- The game checks the work itself: each box has `goals(i)` returning [{t, ok}]; **Check ⭐** only gives the star when all
+  are green. One shared page (`S.doc` = pic {id, w, wrap}, shape {type, fill, text}, model {id, rx, ry}) builds up over the boxes.
+- The 6 boxes (answers in `MB.TARGET` / `MB.ANSWERS`): 1 Insert › Pictures (game controller) · 2 Picture Format: width 6 cm
+  + Wrap Text Square · 3 Insert › Shapes: Star · 4 Shape Fill Yellow + text GAME ON! · 5 Insert › 3D Models: Robot ·
+  6 spin the 3D model to Turn 45°, Tilt -20° (drag or sliders; ±15°, ±25° in Support mode).
+- Each box has a "Where is it in real Word?" hint with the real Word menu path as chips.
 - **10-minute game** (`GAME_MINUTES` in `data.js`). The clock starts at "Start! Open the boxes", uses wall-clock time
   (`S.startedAt`) so a refresh does not reset it, warns at 2 minutes, and at 0 the game ends (`S.timeUp`): only
   finished boxes can be reopened. All 6 = Word Champion badge; otherwise a Robot Builder badge with the stars collected.
 - No points, no penalties, no ranking. 6 boxes open in order. Each box = 1 star + 1 robot part (head, body, arms,
-  rocket legs, chart screen, power core). Surprises: robot colour after Box 2, celebration dance after Box 4.
-- Box 5 includes a column chart ("My Daily Activities"). Box 4 has Plan B (insert an icon) for Word without 3D Models.
-- Support mode: bigger text (html.support), hints open, extra hints, ready-formatted starter text (rich HTML copy and
-  `dream-gaming-room-ready.docx`); Boxes 1–2 become "just check it".
-- `data.js` is `window.MB`: starter text (about 70 words, exactly 3 spelling mistakes: freinds, snaks, awsome), boxes
-  (2–4 steps each, hints as Word menu paths), colours, dances, 45-minute lesson timings (game = 10-minute block),
-  teacher checklist. The two starter .docx files are built by `scripts/make_starter_docx.py`; keep their text in sync.
+  rocket legs, chest screen, power core). Surprises: robot colour after Box 2, celebration dance after Box 4.
+- Support mode: bigger text (html.support), hints open, an extra hint per box, wider size/angle tolerance.
+- `data.js` is `window.MB`: page text, pictures, shapes, fills, 3D models, targets, boxes, colours, dances, 45-minute
+  lesson timings (game = 10-minute block), answers.
 - `app.js`: screens start → ready → play → done, plus `?board` (class robot wall) and the in-game 👩‍🏫 Teacher panel
   ("Ms Rahaf's panel", PIN): class progress, Confirm badge, reset one student / whole class / this device,
-  45-minute plan, spelling corrections, checklist.
+  45-minute plan, answers. localStorage key `mysteryBox.v2`.
 - `api/scores.js`: GET list; POST {name} reserves a name → {id, token} or 409; PUT {id, token, boxes, colour, support,
-  planB, timeUp} saves progress (any number of times) and returns {confirmed}. A 404 on PUT means the teacher reset
-  the student, and the game goes back to the name screen.
+  planB, timeUp} saves progress (any number of times) and returns {confirmed}. `planB` is always false now (it was the
+  real-Word icon fallback). A 404 on PUT means the teacher reset the student, and the game goes back to the name screen.
 - `api/teacher.js`: POST {pin, action: check | confirm {id, on} | remove {id} | clear}.
 - `teacher-m7q4kx.html` is an unlinked, printable teacher guide. Don't link it from the student page.
 - Simple English for 12–13 year olds. Sound is optional (🔊 toggle).
