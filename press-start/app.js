@@ -27,7 +27,6 @@
   const T = () => P.TICKETS[S.ti];
   const pageIx = () => (T() ? T().page : 4);
   const doc = () => S.D[pageIx()];
-  const timeLeft = () => S.startedAt ? P.GAME_SECONDS - (Date.now() - S.startedAt) / 1000 : P.GAME_SECONDS;
 
   /* ================= Sound (optional) ================= */
   let soundOn = true, ac = null;
@@ -221,13 +220,13 @@
         <div class="cv-mast">PRESS<em>START</em></div>
         <div class="cv-issue"><span>ISSUE 07</span><span>GRADE 7 DESIGN TEAM</span></div>
         <div class="cv-art">${picSVG('car')}</div>
-        <div class="cv-lines"><b>THE<br>DEADLINE<br>ISSUE</b><span>5 pages · 11 jobs · 10 minutes</span></div>
+        <div class="cv-lines"><b>THE<br>DEADLINE<br>ISSUE</b><span>5 pages · 11 jobs · 1 printed issue</span></div>
         <div class="cv-barcode"></div>
       </div>
       <div class="start-card">
         <p class="eyebrow">Ms Rahaf’s ICT class · Unit 1: Creating a document</p>
         <h1>You’re hired.</h1>
-        <p class="lead">You are the new designer at <b>PRESS START</b>, the school gaming magazine. Ms Rahaf is the Editor-in-Chief. She sends you jobs. Make each page match her brief before the printer starts in <b>10 minutes</b>.</p>
+        <p class="lead">You are the new designer at <b>PRESS START</b>, the school gaming magazine. Ms Rahaf is the Editor-in-Chief. She sends you jobs. Make each page match her brief, then send the whole issue to the printer.</p>
         <ol class="how">
           <li><b>01</b><span>Read the job and look at the brief.</span></li>
           <li><b>02</b><span>Click the page, then use the toolbar.</span></li>
@@ -267,7 +266,6 @@
         <div class="hud-brand"><span class="logo">PRESS<em>START</em></span><span class="who">${esc(S.name)}</span></div>
         <ol class="pages" id="hudPages"></ol>
         <div class="hud-stats">
-          <span class="stat clock" id="clock" title="Time until the printer starts">${ic('clock')}<b>10:00</b></span>
           <span class="stat"><small>SCORE</small><b id="score">0</b></span>
           <span class="stat combo" id="combo" hidden></span>
           <button class="iconbtn" type="button" data-act="sound" id="soundBtn" aria-label="Sound"></button>
@@ -283,7 +281,7 @@
         </div>
         <aside class="docket" id="docket"></aside>
       </div></section>`;
-    updateSound(); renderAll(true); tickClock(); scrollToJob();
+    updateSound(); renderAll(true); scrollToJob();
     setTimeout(() => { if (S.screen === 'play' && !U.busy) checkTicket(true); }, 400);
   }
   function renderAll(enter) { renderHud(); renderTabs(); renderRibbon(); renderCanvas(enter); renderDocket(); }
@@ -296,14 +294,6 @@
     const c = $('#combo'); if (c) { c.hidden = S.streak < 2; c.innerHTML = `<small>COMBO</small><b>×${S.streak}</b>`; }
     const fn = $('#fileName'); if (fn) fn.textContent = `Issue07_Page${P.PAGES[pi].num}.draft`;
   }
-  function tickClock() {
-    const el = $('#clock'); if (!el || S.screen !== 'play') return;
-    const l = timeLeft();
-    $('b', el).textContent = mmss(l); el.classList.toggle('low', l <= 60);
-    if (l <= 60 && !S.warned) { S.warned = true; save(); sfx('warn'); toast('1 minute left! The printer is warming up.'); }
-    if (l <= 0 && !U.busy) endGame('time');
-  }
-  setInterval(tickClock, 250);
 
   /* ---------- Ribbon ---------- */
   const CTX = { picture: 'Picture Format', shape: 'Shape Format', model: '3D Model', tdesign: 'Table Design', tlayout: 'Table Layout' };
@@ -683,15 +673,13 @@
     saveScore();
     const ov = document.createElement('div'); ov.className = 'press'; ov.setAttribute('role', 'status');
     const pages = P.PAGES.map((p, i) => `<div class="press-pg" style="--i:${i}"><div class="pp-scale">${pageHTML(i, S.D[i], false)}</div></div>`).join('');
-    ov.innerHTML = reason === 'print'
-      ? `<div class="press-in"><p class="eyebrow">Sending to Library Printer</p><h2>Printing ${S.PR.copies} copies…</h2><div class="printer"><div class="slot"></div><div class="tray">${pages}</div></div></div>`
-      : `<div class="press-in"><p class="eyebrow">10:00</p><h2>Time’s up!</h2><p class="lead">The printer started without you. Let’s see what made it into the magazine.</p><div class="printer"><div class="slot"></div><div class="tray">${pages}</div></div></div>`;
+    ov.innerHTML = `<div class="press-in"><p class="eyebrow">Sending to Library Printer</p><h2>Printing ${S.PR.copies} copies…</h2><div class="printer"><div class="slot"></div><div class="tray">${pages}</div></div></div>`;
     document.body.appendChild(ov);
     sfx('print');
     setTimeout(() => { ov.classList.add('out'); setTimeout(() => { ov.remove(); U.busy = false; go('results'); sfx('end'); }, reduced ? 0 : 400); }, reduced ? 600 : 3200);
   }
   const approvedCount = () => S.log.filter(r => r && !r.skipped).length;
-  const usedSeconds = () => Math.round(clamp(((S.endedAt || Date.now()) - S.startedAt) / 1000, 0, P.GAME_SECONDS));
+  const usedSeconds = () => Math.round(clamp(((S.endedAt || Date.now()) - S.startedAt) / 1000, 0, P.MAX_SECONDS));
   const rankFor = s => P.RANKS.find(r => s >= r.min);
 
   /* ---------- Results ---------- */
@@ -700,7 +688,7 @@
     app.innerHTML = `<section class="results">
       <div class="spread" aria-hidden="true">${P.PAGES.map((p, i) => `<div class="sp-pg" style="--i:${i}"><div class="pp-scale">${pageHTML(i, S.D[i], false)}</div></div>`).join('')}</div>
       <div class="res-card">
-        <p class="eyebrow">${S.endReason === 'time' ? 'Time’s up · the issue went to print' : 'Issue 07 is printed'}</p>
+        <p class="eyebrow">Issue 07 is printed</p>
         <h1>Designed by <span>${esc(S.name)}</span></h1>
         <div class="res-score"><b>${S.score}</b><span>points</span></div>
         <p class="rank">${rk.name}</p>
@@ -980,6 +968,6 @@
   else {
     if (S.screen === 'play' && (!S.name || !S.startedAt)) S = fresh();
     if (S.screen === 'printing') S.screen = 'results';
-    render(); // a finished clock ends the game on the first tick
+    render();
   }
 })();

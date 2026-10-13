@@ -1,6 +1,6 @@
 /* PRESS START: content. Pages, pictures, shapes, 3D models and the 11 job tickets. */
 window.PS = (function () {
-  const GAME_SECONDS = 600; // the printer starts after 10 minutes
+  const MAX_SECONDS = 660; // time is saved for the leaderboard tie-break; the database allows up to 660
 
   /* ---------- Look-up lists for the editor ---------- */
   const FONTS = ['Calibri', 'Arial', 'Arial Black', 'Times New Roman', 'Georgia', 'Impact', 'Verdana', 'Comic Sans MS'];
@@ -260,7 +260,7 @@ window.PS = (function () {
 
   const SCORE = { base: 100, speedMax: 50, speedFull: 15, speedZero: 75, hint: 30, wrong: 10, comboStep: 10, comboMax: 50 };
 
-  return { GAME_SECONDS, FONTS, FONT_CSS, SIZES, SPACINGS, COLOURS, FONT_COLOURS, FILL_COLOURS, SHADE_COLOURS, STYLES, BORDERS, WRAPS, TABLE_BORDERS,
+  return { MAX_SECONDS, FONTS, FONT_CSS, SIZES, SPACINGS, COLOURS, FONT_COLOURS, FILL_COLOURS, SHADE_COLOURS, STYLES, BORDERS, WRAPS, TABLE_BORDERS,
     PICS, SHAPES, MODELS, SPELL, LETTER, TABLE_HEAD, TABLE_ROWS, TABLE_BLANKS, CHIPS, CLUES, PAGES, TICKETS, RANKS, PRIZES, SCORE,
     freshDocs, freshPrint, makeTable };
 })();

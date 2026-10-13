@@ -11,7 +11,7 @@ No build step, no framework. Keep the English simple: the players are 12–14 ye
 | `crack-the-secret-code/` | Grade 8 Excel: LEFT, RIGHT, MID, SUBSTITUTE. 9 missions, about 10 minutes | https://crack-the-secret-code-moh-93f1.vercel.app | `crack-the-secret-code` (prj_Cjr5IpgxtqXhZNLXVUgay87yN1EL) |
 | `report-rescue/` | Grade 7 Word Unit 1, played in a pretend Word window (no real Word needed). 5 missions, 15 minutes, 200 points | https://report-rescue-moh-93f1.vercel.app | `report-rescue` (prj_6kSTKKVijFKbIbGpX64MIuYw746Q) |
 | `mystery-box/` | **Mystery Box: Word Challenge!** for Ms Rahaf's Grade 7 class. 6 mystery boxes in 10 minutes, played in a pretend Word window: insert pictures, shapes and 3D models (no chart, no real Word) and build a robot | Not live any more (its site now runs PRESS START) | — |
-| `press-start/` | **PRESS START: the magazine design desk.** Grade 7 Word Unit 1 (all 5 topics) in a pretend Word editor called Draft. 11 jobs on 5 magazine pages, 10 minutes, points + leaderboard | https://mystery-box-moh-93f1.vercel.app | `mystery-box` (prj_5oXnhsce7eaJENFPJm8RcoE0WMgp), Root Directory `press-start` |
+| `press-start/` | **PRESS START: the magazine design desk.** Grade 7 Word Unit 1 (all 5 topics) in a pretend Word editor called Draft. 11 jobs on 5 magazine pages, no timer, points + leaderboard | https://mystery-box-moh-93f1.vercel.app | `mystery-box` (prj_5oXnhsce7eaJENFPJm8RcoE0WMgp), Root Directory `press-start` |
 | `archive/report-rescue-real-word/` | First Report Rescue version, where students used real Word. Not deployed; kept for reference only | — | — |
 
 Vercel team: `moh-93f1` (team_dcnImgjOKecfTukD5B2Ebmvd).
@@ -107,7 +107,8 @@ A separate Grade 7 game for Ms Rahaf (the user found Mystery Box too young for G
   03 Feature (picture + resize + wrap, shape + fill + text, 3D dice rotation) · 04 Ratings (insert 3×4 table, fill cells
   from notes, insert row, shading, white bold header, borders) · 05 Print (spelling, File › Print settings, Print).
 - No real Word and **no chart** (Ms Rahaf asked for no chart in her games).
-- 10-minute clock (`GAME_SECONDS` in `data.js`), wall-clock based so a refresh does not reset it; at 0 the game ends.
+- **No timer** (the user asked to remove the 10-minute clock; don't add it back). The game ends when job 11 is printed.
+  Time used is still saved for the leaderboard tie-break, capped at `MAX_SECONDS` (660, the database limit).
 - Scoring (`SCORE` in `data.js`): 100 per job + speed bonus up to 50 (full ≤15 s, none ≥75 s) + combo up to 50 for jobs in a
   row without a hint. Hint −30 (and resets the combo), wrong spelling pick −10. Skip (after a hint or 45 s) = 0 points and
   the job is applied for them. Max ≈ 2050. Leaderboard and prizes work like Report Rescue (POST reserves the name, PUT saves
