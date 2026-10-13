@@ -1,6 +1,6 @@
 # Classroom Games
 
-Three browser games for Ms Rahaf's ICT classes, each with one shared class board.
+Four browser games for Ms Rahaf's ICT classes, each with one shared class board.
 Plain HTML/CSS/JS frontends plus Vercel serverless functions talking to Neon Postgres.
 No build step, no framework. Keep the English simple: the players are 12–14 year olds.
 
@@ -11,6 +11,7 @@ No build step, no framework. Keep the English simple: the players are 12–14 ye
 | `crack-the-secret-code/` | Grade 8 Excel: LEFT, RIGHT, MID, SUBSTITUTE. 9 missions, about 10 minutes | https://crack-the-secret-code-moh-93f1.vercel.app | `crack-the-secret-code` (prj_Cjr5IpgxtqXhZNLXVUgay87yN1EL) |
 | `report-rescue/` | Grade 7 Word Unit 1, played in a pretend Word window (no real Word needed). 5 missions, 15 minutes, 200 points | https://report-rescue-moh-93f1.vercel.app | `report-rescue` (prj_6kSTKKVijFKbIbGpX64MIuYw746Q) |
 | `mystery-box/` | **Mystery Box: Word Challenge!** for Ms Rahaf's Grade 7 class. 6 mystery boxes in 10 minutes, played in a pretend Word window: insert pictures, shapes and 3D models (no chart, no real Word) and build a robot | https://mystery-box-moh-93f1.vercel.app | `mystery-box` (prj_5oXnhsce7eaJENFPJm8RcoE0WMgp) |
+| `press-start/` | **PRESS START: the magazine design desk.** Grade 7 Word Unit 1 (all 5 topics) in a pretend Word editor called Draft. 11 jobs on 5 magazine pages, 10 minutes, points + leaderboard | Not deployed yet | None yet. Needs its own Vercel project with `DATABASE_URL` and `TEACHER_PIN` |
 | `archive/report-rescue-real-word/` | First Report Rescue version, where students used real Word. Not deployed; kept for reference only | — | — |
 
 Vercel team: `moh-93f1` (team_dcnImgjOKecfTukD5B2Ebmvd).
@@ -30,6 +31,8 @@ always pass `projectSettings.rootDirectory: "mystery-box"` with the deployment: 
 - Table `scores` is used by Crack the Secret Code.
 - Table `mb_players` is used by Mystery Box (`mystery-box/`): id, name, name_key UNIQUE, boxes 0–63 (bit per box), colour 0–5,
   support, plan_b, confirmed, time_up, token, created_at, updated_at. `api/_db.js` creates it with CREATE TABLE IF NOT EXISTS on first use.
+- Table `ps_scores` is used by PRESS START: id, name, name_key UNIQUE, points 0–2500, seconds 0–660, approved 0–11, finished, token,
+  created_at. `press-start/api/_db.js` creates it with CREATE TABLE IF NOT EXISTS on first use.
 - Table `rr_scores` is used by Report Rescue: id, name, name_key UNIQUE, points 0–200, seconds 0–900, finished, token, created_at.
 - The Crack the Secret Code, Report Rescue and Mystery Box Vercel projects have the env vars `DATABASE_URL` and `TEACHER_PIN`
   (Mystery Box uses the same values as Report Rescue, so the teacher PIN is the same). Never commit them. The PIN is in the
@@ -91,6 +94,32 @@ own copy of the pretend Word window code).
 - `api/teacher.js`: POST {pin, action: check | confirm {id, on} | remove {id} | clear}.
 - `teacher-m7q4kx.html` is an unlinked, printable teacher guide. Don't link it from the student page.
 - Simple English for 12–13 year olds. Sound is optional (🔊 toggle).
+
+## PRESS START (`press-start/`)
+
+A separate Grade 7 game for Ms Rahaf (the user found Mystery Box too young for Grade 7). Don't mix it with the other games.
+
+- Story: the student is the new designer at PRESS START, the school gaming magazine. **Ms Rahaf is the Editor-in-Chief** and
+  sends 11 job tickets. Each ticket has a message, a **brief** (a live preview of the finished page), a to-do list that ticks
+  itself, Compare (onion-skin overlay of the brief) and Zoom. When every spec is met the page is stamped APPROVED.
+- Pages = Unit 1 topics: 01 Cover (formatting text) · 02 Top 4 (styles, numbering, line spacing, columns, page border) ·
+  03 Feature (picture + resize + wrap, shape + fill + text, 3D dice rotation) · 04 Ratings (insert 3×4 table, fill cells
+  from notes, insert row, shading, white bold header, borders) · 05 Print (spelling, File › Print settings, Print).
+- No real Word and **no chart** (Ms Rahaf asked for no chart in her games).
+- 10-minute clock (`GAME_SECONDS` in `data.js`), wall-clock based so a refresh does not reset it; at 0 the game ends.
+- Scoring (`SCORE` in `data.js`): 100 per job + speed bonus up to 50 (full ≤15 s, none ≥75 s) + combo up to 50 for jobs in a
+  row without a hint. Hint −30 (and resets the combo), wrong spelling pick −10. Skip (after a hint or 45 s) = 0 points and
+  the job is applied for them. Max ≈ 2050. Leaderboard and prizes work like Report Rescue (POST reserves the name, PUT saves
+  {points, seconds, approved} once).
+- `data.js` is `window.PS`: fonts, colours, styles, 6 SVG pictures, shapes, 3D models, page text (`freshDocs()`),
+  spelling mistakes, table data and notes, and `TICKETS`. Each ticket spec has `ok(D, PR)`, `sel` (what to click),
+  `tab`/`ctl` (the ribbon control the hint glows) and `path` (the real Word menu path). `apply(D, PR)` builds the brief
+  and is also used when a job is skipped.
+- `app.js`: start → play → printing → results, plus `?board`. The editor renders each page from the data model
+  (`pageHTML`), the ribbon has Word's tab names (File, Home, Insert, Design, Layout, Review + contextual Picture Format,
+  Shape Format, 3D Model, Table Design, Table Layout). Undo (Ctrl+Z) and Word shortcuts (Ctrl+B/I/U/E/L/R/J/P) work.
+  localStorage key `pressStart.v1`.
+- `teacher-k4p7sd.html` is an unlinked, printable teacher guide with the answer key. Don't link it from the student page.
 
 ## Testing
 

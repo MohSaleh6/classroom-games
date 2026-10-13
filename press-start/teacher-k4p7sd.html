@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Teacher Guide · PRESS START</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Sans:wght@400..700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root { --ink: #141414; --paper: #F5F2EA; --line: #DDD7CA; --muted: #6E685B; --signal: #FF4A1C; --ok: #138A55; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 400 15px/1.55 'Instrument Sans', system-ui, sans-serif; }
+  header { background: #18302A; color: var(--paper); padding: 28px 20px 24px; }
+  .in, main { max-width: 940px; margin: 0 auto; }
+  .logo { font: 900 22px 'Archivo', sans-serif; font-stretch: 120%; letter-spacing: -.02em; }
+  .logo em { color: var(--signal); font-style: normal; margin-left: .2em; }
+  h1 { font: 900 clamp(30px, 5vw, 46px)/1 'Archivo', sans-serif; letter-spacing: -.03em; margin: 10px 0 8px; }
+  .kick { font: 500 11.5px 'JetBrains Mono', monospace; letter-spacing: .14em; text-transform: uppercase; opacity: .7; }
+  .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .links a, .links button { padding: 8px 14px; border-radius: 8px; border: 1.5px solid rgba(245, 242, 234, .4); background: none; color: var(--paper); font: 600 14px 'Instrument Sans', sans-serif; text-decoration: none; cursor: pointer; }
+  main { padding: 24px 20px 50px; display: grid; gap: 18px; }
+  section { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 20px 22px; }
+  h2 { font: 900 22px 'Archivo', sans-serif; letter-spacing: -.02em; margin: 0 0 10px; }
+  h3 { font-size: 15px; margin: 16px 0 6px; }
+  p { margin: 0 0 8px; }
+  ul { margin: 0; padding-left: 20px; } li { margin: 3px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  th { font: 500 11px 'JetBrains Mono', monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  td:first-child { white-space: nowrap; font: 700 12.5px 'JetBrains Mono', monospace; }
+  .path { display: inline-block; padding: 1px 7px; margin: 1px 0; border-radius: 4px; background: #F0ECE3; font-size: 13px; }
+  .muted { color: var(--muted); }
+  .scroll { overflow-x: auto; }
+  code { font: 600 13px 'JetBrains Mono', monospace; }
+  @media print { header { background: none; color: var(--ink); padding: 0 0 10px; border-bottom: 2px solid var(--ink); } .links { display: none; } section { break-inside: avoid; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; padding: 12px 0; } body { background: #fff; } }
+</style>
+</head>
+<body>
+<header><div class="in">
+  <span class="logo">PRESS<em>START</em></span>
+  <h1>Teacher guide</h1>
+  <p class="kick">Ms Rahaf’s ICT class · Grade 7 · Unit 1: Creating a document</p>
+  <div class="links"><a href="./" target="_blank" rel="noopener">Student game</a><a href="./?board" target="_blank" rel="noopener">Big-screen leaderboard</a><button type="button" onclick="print()">Print this guide</button></div>
+</div></header>
+<main>
+  <section>
+    <h2>The idea</h2>
+    <p>Students are the new designer at <b>PRESS START</b>, the school gaming magazine. You (Ms Rahaf) are the Editor-in-Chief. You send them <b>11 jobs</b> across <b>5 magazine pages</b>, one page per lesson topic. Each job shows a <b>brief</b>: a preview of how the page must look. Students use <b>Draft</b>, a pretend Word editor in the browser (no real Word needed), to make the page match. When everything matches, the page is stamped <b>APPROVED</b>.</p>
+    <p>The printer starts after <b>10 minutes</b>. Then the game ends, the score is saved to the class leaderboard automatically, and the student sees their printed magazine.</p>
+    <p><b>Student link:</b> <code id="studentLink"></code><br><b>Projector leaderboard:</b> <code id="boardLink"></code></p>
+  </section>
+
+  <section>
+    <h2>Topics and jobs</h2>
+    <div class="scroll"><table>
+      <tr><th>Page</th><th>Topic</th><th>Jobs</th></tr>
+      <tr><td>01 Cover</td><td>Formatting text</td><td>Font, size, colour, alignment · Justify · Bold + Italic on a word</td></tr>
+      <tr><td>02 Top 4</td><td>Advanced formatting</td><td>Heading 1 style · Numbering · Line spacing · Columns · Page border</td></tr>
+      <tr><td>03 Feature</td><td>Images and graphics</td><td>Insert picture · Resize · Wrap Text · Shape + fill + text · 3D model rotation</td></tr>
+      <tr><td>04 Ratings</td><td>Working with tables</td><td>Insert table 3×4 · Enter data · Insert row · Shading · Bold/white header · Borders</td></tr>
+      <tr><td>05 Print</td><td>Check and print</td><td>Spelling (right-click or Review › Spelling &amp; Grammar) · Print settings</td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Answer key</h2>
+    <div class="scroll"><table>
+      <tr><th>Job</th><th>What to do</th><th>Where (same as real Word)</th></tr>
+      <tr><td>01</td><td>Headline: Impact, 36, Red, Center</td><td><span class="path">Home › Font / Font Size / Font Color / Center</span></td></tr>
+      <tr><td>02</td><td>Cover text: Calibri, 12, Justify. “Neon Drift”: Bold + Italic</td><td><span class="path">Home › Font, Font Size, Justify, B, I</span></td></tr>
+      <tr><td>03</td><td>Both headings: Heading 1. Top 4 list: Numbering</td><td><span class="path">Home › Styles › Heading 1</span> <span class="path">Home › Numbering</span></td></tr>
+      <tr><td>04</td><td>Paragraph line spacing 1.5 · Two columns · Box page border</td><td><span class="path">Home › Line Spacing</span> <span class="path">Layout › Columns</span> <span class="path">Design › Page Borders</span></td></tr>
+      <tr><td>05</td><td>Race Car picture · width 6 cm (5.7–6.3) · Wrap Square</td><td><span class="path">Insert › Pictures</span> <span class="path">Picture Format › Wrap Text</span></td></tr>
+      <tr><td>06</td><td>Starburst shape · Yellow fill · text NEW!</td><td><span class="path">Insert › Shapes</span> <span class="path">Shape Format › Shape Fill</span></td></tr>
+      <tr><td>07</td><td>Game Dice 3D model · Turn 40° · Tilt −25° (±12°)</td><td><span class="path">Insert › 3D Models</span>, then drag to spin</td></tr>
+      <tr><td>08</td><td>Table 3 columns × 4 rows. Notes: 4.8 (Neon Drift score), Puzzle (Pixel Quest type), Sky Builders (Building game). Decoys: Racing, 4.2</td><td><span class="path">Insert › Table</span></td></tr>
+      <tr><td>09</td><td>Insert an empty row below the last row · header row Dark Blue shading · header text White + Bold · All Borders</td><td><span class="path">Table Layout › Insert Below</span> <span class="path">Table Design › Shading / Borders</span></td></tr>
+      <tr><td>10</td><td>isue → issue · realy → really · vist → visit · peple → people</td><td>Right-click word, or <span class="path">Review › Spelling &amp; Grammar</span></td></tr>
+      <tr><td>11</td><td>A4 · Portrait · 30 copies · Print All Pages, then Print</td><td><span class="path">File › Print</span></td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Scoring and prizes</h2>
+    <ul>
+      <li>Each approved job: <b>100</b> points + up to <b>50</b> speed bonus (full bonus within 15 seconds, none after 75 seconds).</li>
+      <li><b>Combo:</b> jobs in a row without a hint give +10, +20 … up to +50 extra.</li>
+      <li><b>Show me how</b> (hint): −30 on that job, and the combo resets. It shows what to click and glows the right button.</li>
+      <li>Wrong spelling choice: −10 each.</li>
+      <li><b>Skip job</b> (after a hint or 45 seconds): 0 points, Ms Rahaf finishes the job so the student can continue.</li>
+      <li>Highest possible score is about 2,050. Ranks: 1700+ Art Director · 1300+ Senior Designer · 900+ Designer · 500+ Junior Designer.</li>
+      <li>Leaderboard: most points first; equal points → faster time first.</li>
+      <li>Prizes: 1st +5 bonus marks, a sweet treat and 10 minutes free time · 2nd +3 bonus marks and 10 minutes free time · 3rd 10 minutes free time.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Suggested 45-minute lesson</h2>
+    <div class="scroll"><table>
+      <tr><th>Minutes</th><th>What happens</th></tr>
+      <tr><td>0–5</td><td>Show the big-screen leaderboard and the prizes. Explain: 10 minutes, 11 jobs, one play per name.</td></tr>
+      <tr><td>5–17</td><td>Students play (10-minute clock, plus 2 minutes to type names).</td></tr>
+      <tr><td>17–25</td><td>Leaderboard on the projector. Celebrate the top 3.</td></tr>
+      <tr><td>25–45</td><td>Go through the answer key together: which job was hardest? Students explain where each tool is.</td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Teacher tools</h2>
+    <ul>
+      <li>Open <b>Class leaderboard</b> on the student page, then <b>Teacher tools</b>, and type the teacher PIN (the same PIN as the other games).</li>
+      <li>Remove a name to let that student play again (for example a typo in the name).</li>
+      <li><b>Clear the whole board</b> before a new class.</li>
+      <li>Progress is saved on the computer, so a refresh continues the game and the clock keeps running.</li>
+    </ul>
+  </section>
+</main>
+<script>
+  const base = location.origin + location.pathname.replace(/[^/]*$/, '');
+  document.getElementById('studentLink').textContent = base;
+  document.getElementById('boardLink').textContent = base + '?board';
+</script>
+</body>
+</html>
