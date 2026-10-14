@@ -111,7 +111,8 @@ A separate Grade 7 game for Ms Rahaf (the user found Mystery Box too young for G
   Time used is still saved for the leaderboard tie-break, capped at `MAX_SECONDS` (660, the database limit).
 - Scoring (`SCORE` in `data.js`): 100 per job + speed bonus up to 50 (full ≤15 s, none ≥75 s) + combo up to 50 for jobs in a
   row without a hint. Hint −30 (and resets the combo), wrong spelling pick −10. Skip (after a hint or 45 s) = 0 points and
-  the job is applied for them. Max ≈ 2050. Leaderboard and prizes work like Report Rescue (POST reserves the name, PUT saves
+  the job is applied for them. Max ≈ 2050. If the board is reset mid-game, the score is saved under the name again; the
+  results screen has a New game button (a name can still only play once per board). Leaderboard and prizes work like Report Rescue (POST reserves the name, PUT saves
   {points, seconds, approved} once).
 - `data.js` is `window.PS`: fonts, colours, styles, 6 SVG pictures, shapes, 3D models, page text (`freshDocs()`),
   spelling mistakes, table data and notes, and `TICKETS`. Each ticket spec has `ok(D, PR)`, `sel` (what to click),

@@ -694,13 +694,13 @@
         <p class="rank">${rk.name}</p>
         <dl class="res-stats"><div><dt>Jobs approved</dt><dd>${ok}/${P.TICKETS.length}</dd></div><div><dt>Time</dt><dd>${mmss(usedSeconds())}</dd></div><div><dt>Best combo</dt><dd>×${S.best}</dd></div></dl>
         <p class="save-msg" id="saveMsg">${esc(S.saveMsg || 'Saving your score…')}</p>
-        <div class="row"><button class="btn primary" type="button" data-act="board">${ic('board')} Class leaderboard</button></div>
+        <div class="row"><button class="btn primary" type="button" data-act="board">${ic('board')} Class leaderboard</button><button class="btn ghost" type="button" data-act="new-game">${ic('reset')} New game</button></div>
         <p class="fine">Ms Rahaf’s prizes: 1st +5 marks, a sweet treat and 10 min free time · 2nd +3 marks and 10 min · 3rd 10 min free time.</p>
       </div></section>`;
     if (!S.saved) saveScore();
   }
   let saving = false;
-  async function saveScore() {
+  async function saveScore(retried) {
     if (S.saved || saving || !S.name) return;
     saving = true;
     const body = { points: clamp(S.score, 0, 2500), seconds: usedSeconds(), approved: approvedCount() };
@@ -711,7 +711,8 @@
     } catch (e) {
       S.saveMsg = e.status === 409 ? 'This name was already used, so the score could not be saved. Ask Ms Rahaf.' : 'Could not save yet. Check the internet; it will try again.';
       if (e.status !== 409 && e.status !== 404) setTimeout(saveScore, 8000);
-      if (e.status === 404) { S.saved = true; S.saveMsg = 'Your score was already saved, or Ms Rahaf reset your name.'; }
+      if (e.status === 404 && !retried) { S.entry = null; saving = false; return saveScore(true); } // the board was reset: save under the name again
+      if (e.status === 404) { S.saved = true; S.saveMsg = 'Your score was already saved.'; }
     }
     saving = false; save();
     const m = $('#saveMsg'); if (m) m.textContent = S.saveMsg;
@@ -799,6 +800,7 @@
     const a = t.closest('[data-act]'); if (!a) return;
     const act = a.dataset.act, v = a.dataset.v, d = S.screen === 'play' ? doc() : null;
     if (act === 'board') return openBoard();
+    if (act === 'new-game') { if (!confirm('Start a new game? You need a name that has not played yet.')) return; S = fresh(); save(); U.undo = []; return go('start'); }
     if (act === 'close-modal') return closeModal();
     if (act === 'sound') { soundOn = !soundOn; try { localStorage.setItem('psSound', soundOn ? 'on' : 'off'); } catch (er) {} updateSound(); sfx('click'); return; }
     if (act === 'clear-board') { if (!confirm('Clear the whole leaderboard? This cannot be undone.')) return; if (await teacherAction('clear')) { await loadBoard(); const b = $('#lbBody'); if (b) b.innerHTML = boardHTML(false); } return; }
