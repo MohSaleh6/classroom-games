@@ -5,7 +5,7 @@ const sql = neon(process.env.DATABASE_URL);
 const cleanName = n => String(n ?? '').replace(/[\u0000-\u001f\u007f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 20);
 const nameKey = n => cleanName(n).toLowerCase();
 const readBody = b => (typeof b === 'string' ? JSON.parse(b || '{}') : (b || {}));
-const validResult = (p, s) => Number.isInteger(p) && p >= 0 && p <= 9 && Number.isInteger(s) && s >= 0 && s <= 600;
+const validResult = (p, s) => Number.isInteger(p) && p >= 0 && p <= 9 && Number.isInteger(s) && s >= 0 && s <= 3600;
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
         const token = randomBytes(16).toString('hex');
         const r = await sql`
           INSERT INTO scores (name, name_key, points, seconds, finished, token)
-          VALUES (${name}, ${nameKey(name)}, 0, 600, false, ${token})
+          VALUES (${name}, ${nameKey(name)}, 0, 0, false, ${token})
           ON CONFLICT (name_key) DO NOTHING RETURNING id`;
         if (!r.length) return res.status(409).json({ error: 'taken' });
         return res.status(201).json({ id: r[0].id, token });

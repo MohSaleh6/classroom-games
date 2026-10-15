@@ -342,7 +342,6 @@ h2.sec{font-family:var(--display); font-weight:400; font-size:1.25rem; margin:0 
 <header class="topbar">
   <div class="topbar-inner">
     <div class="brand">🕵️ Crack the Secret Code!</div>
-    <span class="pill" id="timerPill" title="Time left">⏱ <b id="timer">10:00</b></span>
     <span class="pill" title="Points">⭐ <b id="score">0</b>/9</span>
     <span class="pill fire" id="streakPill" hidden title="Missions in a row">🔥 <b id="streak">0</b></span>
     <button class="tbtn" id="soundBtn" type="button" aria-label="Sound on">🔊</button>
@@ -582,18 +581,18 @@ const $ = (s, el = document) => el.querySelector(s);
 const app = $('#app');
 const TOTAL = LEVELS.reduce((n, L) => n + L.missions.length, 0);
 const MAX_TRIES = 3;
-const GAME_SECONDS = 600;
+const MAX_SECONDS = 3600; // time is only used to break ties on the board
 const PRAISE = [['Code Cracked! 🔓','#E8247A'], ['Excellent, Agent! 🕵️','#2E7FF0'], ['Mission Complete! 🎯','#138A47']];
 const CONFETTI = ['#FF5FA2','#FFC83D','#5BD982','#4FA3FF','#B47CFF','#FF9A4D'];
 const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const state = {};
-let timerId = null;
+let clockId = null;
 
 function resetState(){
-  stopTimer();
+  stopClock();
   Object.assign(state, {name:'', level:0, idx:0, score:0, levelScores:[0,0,0], firstTry:0, tries:0,
     solved:false, revealed:false, done:0, started:false, praiseI:0, streak:0, bestStreak:0,
-    timeLeft:GAME_SECONDS, timeUp:false, screen:'start', saved:false, saveStatus:'', finalSeconds:0, entry:null});
+    elapsed:0, screen:'start', saved:false, saveStatus:'', finalSeconds:0, entry:null});
 }
 function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function displayName(){ return state.name ? 'Agent ' + state.name : 'Agent'; }
@@ -647,7 +646,7 @@ function confetti(){
   setTimeout(() => box.remove(), 2600);
 }
 
-/* ----- HUD + timer ----- */
+/* ----- HUD + quiet clock (no countdown, no time limit) ----- */
 function updateHud(){
   $('#score').textContent = state.score;
   $('#streak').textContent = state.streak;
@@ -655,23 +654,15 @@ function updateHud(){
   $('#fill').style.width = (state.done / TOTAL * 100) + '%';
   $('#progText').textContent = `${state.done} of ${TOTAL}`;
   $('#track').setAttribute('aria-valuenow', state.done);
-  renderTimer();
   $('#restartBtn').hidden = !state.started;
   $('#restartBtn').textContent = state.screen === 'results' ? '↺ Next student' : '⏹ End';
 }
-function renderTimer(){
-  $('#timer').textContent = mmss(state.timeLeft);
-  $('#timerPill').classList.toggle('warn', state.started && state.timeLeft <= 60 && !state.timeUp && state.screen !== 'results');
-}
-function startTimer(){ if (!timerId) timerId = setInterval(tick, 1000); }
-function stopTimer(){ clearInterval(timerId); timerId = null; }
+function startClock(){ if (!clockId) clockId = setInterval(tick, 1000); }
+function stopClock(){ clearInterval(clockId); clockId = null; }
 function tick(){
-  // The clock only runs while a mission is open and not yet finished.
+  // Counts up quietly while a mission is open, only to break ties on the board.
   if (document.querySelector('.modal:not([hidden])') || state.screen !== 'mission' || state.solved || state.revealed) return;
-  state.timeLeft--;
-  if (state.timeLeft <= 10 && state.timeLeft > 0) sfx('tick');
-  renderTimer();
-  if (state.timeLeft <= 0){ state.timeUp = true; stopTimer(); sfx('end'); renderResults(); }
+  if (state.elapsed < MAX_SECONDS) state.elapsed++;
 }
 
 function scramble(el, text){
@@ -702,7 +693,7 @@ function renderStart(){
   <section class="hero">
     <div class="ts-stamp">TOP SECRET</div>
     <h1 aria-label="Crack the Secret Code!"><span id="scr" aria-hidden="true">CRACK THE SECRET CODE!</span></h1>
-    <p class="lead">Agent, HQ needs you! Secret codes are hidden in a spreadsheet. Crack them with Excel formulas before the clock runs out.</p>
+    <p class="lead">Agent, HQ needs you! Secret codes are hidden in a spreadsheet. Crack them with Excel formulas!</p>
   </section>
   <section class="dossier" style="--lvl:var(--sun)">
     <div class="tab">📁 Your mission file</div>
@@ -720,7 +711,7 @@ function renderStart(){
       <li style="--c:var(--l2)"><b>🩷 Master Agent</b><span>3 missions: + SUBSTITUTE</span></li>
       <li style="--c:var(--boss)"><b>👑 Final Boss</b><span>2 locks</span></li>
     </ol>
-    <p class="rules">⏱ You have <b>10 minutes</b> for <b>9 missions</b>. Each mission is worth <b>1 point</b>. You get <b>3 tries</b> per mission and a hint after each wrong try. Crack missions in a row to build a 🔥 streak! The clock stops while you read the level pages. Each student plays <b>one time</b>, and your score goes to the class board automatically.</p>
+    <p class="rules">There are <b>9 missions</b> and <b>no time limit</b>, so take your time and think. Each mission is worth <b>1 point</b>. You get <b>3 tries</b> per mission and a hint after each wrong try. Crack missions in a row to build a 🔥 streak! If two agents have the same points, the one who finished faster wins. Each student plays <b>one time</b>, and your score goes to the class board automatically.</p>
     ${prizeHTML()}
     <div class="name-row">
       <label for="agentName">Your agent name (for the leaderboard)
@@ -750,7 +741,7 @@ function renderStart(){
       }
       /* no internet: let them play, the score is sent at the end */
     }
-    state.name = n; state.started = true; startTimer(); sfx('level'); renderIntro();
+    state.name = n; state.started = true; startClock(); sfx('level'); renderIntro();
   };
   $('#startBoardBtn').onclick = openBoard;
   name.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); $('#startBtn').click(); } });
@@ -883,7 +874,7 @@ function fix(msg){
 function setB2(text, cls){ const b2 = $('#b2'); b2.className = 'active ' + cls; b2.textContent = text; }
 
 function check(){
-  if (state.solved || state.revealed || state.timeUp) return;
+  if (state.solved || state.revealed) return;
   const L = LEVELS[state.level], m = L.missions[state.idx];
   const raw = normalize($('#formula').value).trim();
   if (!raw) return fix('Type a formula first. Every formula starts with = .');
@@ -982,7 +973,6 @@ function nextLabel(){
 }
 function showNext(){ const b = $('#nextBtn'); b.textContent = nextLabel(); b.hidden = false; b.focus({preventScroll:true}); }
 function next(){
-  if (state.timeUp) return;
   const L = LEVELS[state.level];
   state.idx++;
   if (state.idx < L.missions.length) return renderMission();
@@ -995,10 +985,10 @@ function next(){
 function rankFor(s){ return RANKS.find(r => s >= r.min && s <= r.max); }
 function renderResults(){
   state.screen = 'results';
-  stopTimer();
+  stopClock();
   const s = state.score, r = rankFor(s);
-  state.finalSeconds = state.timeUp ? GAME_SECONDS : Math.min(GAME_SECONDS, GAME_SECONDS - state.timeLeft);
-  if (!state.timeUp) { sfx('level'); confetti(); }
+  state.finalSeconds = Math.min(MAX_SECONDS, state.elapsed);
+  sfx('level'); confetti();
   const rows = LEVELS.map((L, i) => {
     const pct = state.levelScores[i] / L.missions.length * 100;
     return `<div class="brow"><span>${L.emoji} ${L.short}</span><div class="mini"><i style="width:${pct}%;background:${L.color}"></i></div><span>${state.levelScores[i]}/${L.missions.length}</span></div>`;
@@ -1007,7 +997,7 @@ function renderResults(){
   app.innerHTML = `
   <section class="dossier" style="--lvl:var(--sun)">
     <div class="tab">🗂️ Mission report</div>
-    ${state.timeUp ? `<div class="stampx" style="--sc:#D6264F">Time's Up! ⏰</div>` : `<div class="stampx" style="--sc:#138A47">Mission Complete! 🎯</div>`}
+    <div class="stampx" style="--sc:#138A47">Mission Complete! 🎯</div>
     <p class="agent-line">${esc(displayName())}, here is your result.</p>
     <div class="rank-card">
       <div class="rank-emoji" aria-hidden="true">${r.emoji}</div>
@@ -1020,7 +1010,7 @@ function renderResults(){
     <p>${r.msg}</p>
     <div class="breakdown">${rows}</div>
     <div class="stats">
-      <span class="stat">⏱ Time used: ${mmss(GAME_SECONDS - state.timeLeft)}</span>
+      <span class="stat">⏱ Time taken: ${mmss(state.finalSeconds)}</span>
       <span class="stat">🔥 Best streak: ${state.bestStreak}</span>
       <span class="stat">⚡ First-try cracks: ${state.firstTry}</span>
       ${bossWin ? '<span class="stat">👑 Boss defeated!</span>' : ''}
