@@ -8,16 +8,16 @@ No build step, no framework. Keep the English simple: the players are 12–14 ye
 
 | Folder | Game | Live URL | Vercel project |
 | --- | --- | --- | --- |
-| `crack-the-secret-code/` | Grade 8 Excel: LEFT, RIGHT, MID, SUBSTITUTE. 9 missions, about 10 minutes | https://crack-the-secret-code-moh-93f1.vercel.app | `crack-the-secret-code` (prj_Cjr5IpgxtqXhZNLXVUgay87yN1EL) |
+| `crack-the-secret-code/` | Grade 8 Excel: LEFT, RIGHT, MID, SUBSTITUTE. 9 missions, no time limit (time only breaks ties) | https://crack-the-secret-code-moh-93f1.vercel.app | `crack-the-secret-code` (prj_Cjr5IpgxtqXhZNLXVUgay87yN1EL) |
 | `report-rescue/` | Grade 7 Word Unit 1, played in a pretend Word window (no real Word needed). 5 missions, 15 minutes, 200 points | https://report-rescue-moh-93f1.vercel.app | `report-rescue` (prj_6kSTKKVijFKbIbGpX64MIuYw746Q) |
 | `archive/report-rescue-real-word/` | First Report Rescue version, where students used real Word. Not deployed; kept for reference only | — | — |
 
 Vercel team: `moh-93f1` (team_dcnImgjOKecfTukD5B2Ebmvd).
 
-These Vercel projects are **not** connected to this GitHub repo. Pushing here does not deploy.
-To deploy, upload the contents of one game folder as a production deployment of its Vercel project
-(for example `vercel deploy --prod` from inside that folder after `vercel link`), or connect the repo in
-Vercel with that folder as the Root Directory.
+Pushing to GitHub does not deploy by itself.
+- `crack-the-secret-code`: its Vercel Root Directory is set to `crack-the-secret-code`. Deploy by creating a production
+  deployment from GitHub (`MohSaleh6/classroom-games`, ref `main`), e.g. Vercel MCP `create_deployment` with `gitSource`.
+- `report-rescue`: still deployed by uploading the files of `report-rescue/` directly (no Root Directory set).
 
 ## Database (Neon)
 
