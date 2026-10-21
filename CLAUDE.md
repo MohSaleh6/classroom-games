@@ -21,6 +21,16 @@ Pushing to GitHub does not deploy by itself.
 - `midterm-quest`: Vercel Root Directory is `midterm-quest`. Deploy the same way as `crack-the-secret-code` (production deployment from GitHub `main`).
 - `report-rescue`: still deployed by uploading the files of `report-rescue/` directly (no Root Directory set).
 
+## Cloudflare addresses (because some providers block vercel.app)
+
+Some Jordanian internet providers (e.g. Umniah) block every `*.vercel.app` address by DNS. So students open the games on
+Cloudflare `workers.dev` instead. `cloudflare/worker.js` is a tiny Worker that passes every request (page and `/api/*`)
+to the game's Vercel site; only `TARGET` changes per game. Vercel, Neon and the PIN stay exactly as they are.
+- Cloudflare account subdomain: `mohalisal1.workers.dev`. Worker `midterm-quest` → https://midterm-quest.mohalisal1.workers.dev
+- The Cloudflare connector in Claude cannot upload Worker code; paste `cloudflare/worker.js` in the Cloudflare dashboard
+  (Workers & Pages → Create → Start with Hello World → Edit code → Deploy). The connector can then check it with
+  `workers_get_worker_code`.
+
 ## Database (Neon)
 
 - Neon project `misty-dream-98474453`, default branch and database.
