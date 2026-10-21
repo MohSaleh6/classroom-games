@@ -1,0 +1,1051 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Midterm Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: a workbook. HUD on top, the "sheet" in the middle, level tabs along the bottom like Excel sheet tabs. */
+:root {
+  --paper: #F3F6F2; --surface: #FFFFFF; --ink: #15201A; --muted: #5A6A61; --grid: #D3DDD6; --head: #E7EDE8;
+  --accent: #1E7B4C; --accent-ink: #FFFFFF; --accent-soft: #DDF0E5;
+  --mark: #F1B42F; --mark-soft: #FFF1CC; --bad: #B83A26; --bad-soft: #FBE6E1;
+  --gold: #F5C542; --silver: #C9D1DB; --bronze: #E2A06B; --podium-ink: #1A1A1A;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", Consolas, "Courier New", monospace;
+  --radius: 10px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root {
+  --paper: #0F1612; --surface: #17211B; --ink: #E5EEE8; --muted: #9AAEA2; --grid: #2C3A32; --head: #1F2C24;
+  --accent: #4FC58A; --accent-ink: #0B140F; --accent-soft: #1C3A2A; --mark-soft: #3A3016; --bad: #F2846E; --bad-soft: #3D211B;
+  color-scheme: dark;
+} }
+html, body { height: 100%; margin: 0; }
+body {
+  background-color: var(--paper);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 96px 28px; background-position: -1px -1px;
+  color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.5;
+}
+* { box-sizing: border-box; }
+button { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid var(--mark); outline-offset: 2px; }
+
+.app { min-height: 100%; display: flex; flex-direction: column; }
+.topbar { position: sticky; top: 0; z-index: 5; background: var(--surface); border-bottom: 1px solid var(--grid);
+  padding: 8px max(16px, env(safe-area-inset-right, 0px)) 8px max(16px, env(safe-area-inset-left, 0px)); padding-top: calc(8px + env(safe-area-inset-top, 0px)); }
+.topbar-in { max-width: 920px; margin: 0 auto; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-cell { width: 34px; height: 34px; border: 2px solid var(--accent); display: grid; place-items: center; font-family: var(--font-mono); font-weight: 700; font-size: 13px; color: var(--accent); position: relative; flex: none; }
+.logo-cell::after { content: ""; position: absolute; right: -4px; bottom: -4px; width: 7px; height: 7px; background: var(--accent); }
+.logo-name { font-family: var(--font-display); font-weight: 800; font-size: 20px; letter-spacing: -0.01em; line-height: 1.1; display: block; }
+.logo-sub { font-size: 12px; color: var(--muted); display: block; line-height: 1.1; }
+.spacer { flex: 1; }
+.hud { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.chip { font-family: var(--font-mono); font-size: 14px; padding: 4px 10px; border: 1px solid var(--grid); border-radius: 999px; background: var(--paper); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.chip b { color: var(--accent); }
+.chip.fire b { color: #E8590C; }
+.tbtn { border: 1px solid var(--grid); background: var(--surface); border-radius: 999px; padding: 4px 12px; cursor: pointer; font-size: 14px; font-weight: 700; white-space: nowrap; }
+.tbtn:hover { border-color: var(--accent); }
+
+main { flex: 1; width: 100%; max-width: 920px; margin: 0 auto; padding: 20px max(16px, env(safe-area-inset-right, 0px)) 110px max(16px, env(safe-area-inset-left, 0px)); }
+.card { background: var(--surface); border: 1px solid var(--grid); border-radius: var(--radius); padding: 22px; box-shadow: 0 1px 0 var(--grid); }
+.card + .card { margin-top: 16px; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(34px, 7vw, 54px); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: clamp(22px, 4vw, 28px); font-weight: 800; }
+h3 { font-size: 19px; font-weight: 600; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.muted { color: var(--muted); }
+p { margin: 0; }
+.stack { display: flex; flex-direction: column; gap: 14px; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+.btn { border: 2px solid var(--accent); background: var(--accent); color: var(--accent-ink); padding: 11px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 17px; transition: transform .08s ease; }
+.btn:active { transform: translateY(1px); }
+.btn.ghost { background: transparent; color: var(--accent); }
+.btn.small { padding: 6px 12px; font-size: 15px; }
+.btn.danger { background: var(--bad); border-color: var(--bad); color: #fff; }
+.btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+/* start */
+.hero-formula { font-family: var(--font-mono); font-size: 15px; display: flex; border: 1px solid var(--grid); border-radius: 6px; overflow: hidden; background: var(--surface); max-width: 520px; }
+.hero-formula span:first-child { background: var(--head); padding: 8px 12px; color: var(--muted); border-right: 1px solid var(--grid); font-style: italic; }
+.hero-formula span:last-child { padding: 8px 12px; overflow-x: auto; white-space: nowrap; }
+.how { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.how li { display: flex; gap: 10px; align-items: flex-start; }
+.how .n { flex: none; width: 26px; height: 26px; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: 14px; border-radius: 50%; }
+.map { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.map li { border: 1px solid var(--grid); border-radius: 8px; padding: 8px 12px; display: flex; gap: 8px; align-items: baseline; background: var(--paper); }
+.map b { font-family: var(--font-mono); color: var(--accent); }
+label.field { display: flex; flex-direction: column; gap: 6px; font-weight: 700; max-width: 380px; flex: 1 1 260px; }
+input[type=text], input[type=password] { font: inherit; padding: 10px 12px; border: 2px solid var(--grid); border-radius: 8px; background: var(--surface); color: var(--ink); width: 100%; }
+input[type=text]:focus, input[type=password]:focus { border-color: var(--accent); outline: none; }
+.name-err { color: var(--bad); font-weight: 700; font-size: 15px; min-height: 1.2em; }
+
+/* prizes + podium */
+.prize { border: 2px solid var(--podium-ink); border-radius: 12px; padding: 14px 16px; background: linear-gradient(135deg, #FFF3C4, #FFE0EF 55%, #DCEBFF); color: var(--podium-ink); box-shadow: 4px 4px 0 var(--podium-ink); }
+.prize h3 { margin-bottom: 8px; }
+.prize-rows { display: grid; gap: 6px; margin-bottom: 8px; }
+.prow { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.prow .pm { font-weight: 800; min-width: 62px; }
+.prow ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; flex-wrap: wrap; }
+.prow li { background: #fff; border: 2px solid var(--podium-ink); border-radius: 999px; padding: 1px 10px; font-weight: 700; font-size: 15px; }
+.podium { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: end; gap: 8px; max-width: 620px; margin: 8px auto 0; }
+.pod { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; min-width: 0; }
+.pod .who { font-weight: 800; font-size: 17px; line-height: 1.2; overflow-wrap: anywhere; }
+.pod .pts { font-family: var(--font-mono); font-size: 14px; color: var(--muted); }
+.pod .block { width: 100%; border: 2px solid var(--podium-ink); border-bottom: 0; border-radius: 10px 10px 0 0; display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; color: var(--podium-ink); font-size: 34px; }
+.pod.p1 .block { height: 150px; background: var(--gold); }
+.pod.p2 .block { height: 110px; background: var(--silver); }
+.pod.p3 .block { height: 80px; background: var(--bronze); }
+.pod .medal { font-size: 34px; line-height: 1; }
+.pod.p1 .medal { font-size: 44px; animation: bob 2.4s ease-in-out infinite; }
+.pod.empty .who { color: var(--muted); font-weight: 400; font-style: italic; }
+.podium-base { height: 10px; background: var(--podium-ink); border-radius: 4px; max-width: 620px; margin: 0 auto; }
+@keyframes bob { 50% { transform: translateY(-6px); } }
+
+.board-wrap { overflow-x: auto; border: 1px solid var(--grid); border-radius: 10px; background: var(--surface); }
+table.board { border-collapse: collapse; width: 100%; min-width: 420px; font-variant-numeric: tabular-nums; }
+table.board th { background: var(--head); text-align: left; font-size: 13px; padding: 8px 10px; color: var(--muted); white-space: nowrap; }
+table.board td { padding: 9px 10px; border-top: 1px solid var(--grid); }
+table.board td.num { font-family: var(--font-mono); white-space: nowrap; }
+table.board td.place { font-size: 20px; width: 56px; text-align: center; }
+table.board tr.p1 td { background: #FFE88F; color: var(--podium-ink); }
+table.board tr.p2 td { background: #E6EBF2; color: var(--podium-ink); }
+table.board tr.p3 td { background: #F8D2B0; color: var(--podium-ink); }
+table.board tr.playing td { color: var(--muted); font-style: italic; }
+.you { margin-left: 8px; background: var(--accent); color: var(--accent-ink); font-size: 12px; font-weight: 700; padding: 1px 8px; border-radius: 999px; font-style: normal; }
+.rm { margin-left: 8px; border: 1px solid var(--bad); color: var(--bad); background: transparent; border-radius: 6px; font-size: 13px; padding: 1px 8px; cursor: pointer; }
+.board-empty { padding: 18px; text-align: center; color: var(--muted); font-weight: 700; margin: 0; }
+.board-note { font-size: 14px; color: var(--muted); margin-top: 8px; }
+.place-line { font-weight: 800; font-size: 19px; }
+.save-status.ok { color: var(--accent); font-weight: 700; }
+.save-status.bad { color: var(--bad); font-weight: 700; }
+
+/* lesson */
+.lesson-list { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+.code { font-family: var(--font-mono); font-weight: 700; background: var(--head); padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
+.callout { border-left: 4px solid var(--mark); background: var(--mark-soft); padding: 12px 14px; border-radius: 0 8px 8px 0; }
+.steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.steps li { counter-increment: s; display: flex; gap: 10px; }
+.steps li::before { content: counter(s); flex: none; width: 26px; height: 26px; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: 14px; border-radius: 50%; }
+
+/* challenge */
+.ch-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.progress { display: flex; gap: 3px; margin-top: 10px; }
+.progress i { flex: 1; height: 8px; background: var(--head); border: 1px solid var(--grid); }
+.progress i.done { background: var(--accent); border-color: var(--accent); }
+.progress i.now { background: var(--mark); border-color: var(--mark); }
+.tries { display: flex; gap: 4px; align-items: center; font-size: 14px; color: var(--muted); }
+.tries i { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); display: inline-block; }
+.tries i.used { background: var(--grid); }
+.prompt { font-size: 21px; font-weight: 700; line-height: 1.35; }
+.prompt .code { font-size: 19px; }
+.fbar { display: flex; border: 2px solid var(--grid); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.fbar:focus-within { border-color: var(--accent); }
+.fbar .namebox { font-family: var(--font-mono); font-size: 15px; padding: 10px 12px; background: var(--head); color: var(--muted); border-right: 1px solid var(--grid); min-width: 64px; text-align: center; }
+.fbar .fx { font-family: var(--font-mono); font-style: italic; padding: 10px; color: var(--muted); border-right: 1px solid var(--grid); }
+.fbar input { border: 0; border-radius: 0; font-family: var(--font-mono); font-size: 18px; flex: 1; min-width: 0; padding: 10px 12px; }
+.fbar input:focus { outline: none; }
+.opts { display: grid; gap: 10px; }
+.opt { text-align: left; padding: 12px 14px; border: 2px solid var(--grid); background: var(--surface); border-radius: 8px; cursor: pointer; display: flex; gap: 12px; align-items: center; font-size: 17px; }
+.opt .key { flex: none; width: 28px; height: 28px; border-radius: 6px; display: grid; place-items: center; background: var(--head); font-weight: 700; font-family: var(--font-mono); font-size: 14px; }
+.opt[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.opt.right { border-color: var(--accent); background: var(--accent-soft); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.scroll { overflow-x: auto; max-width: 100%; }
+table.sheet { border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; min-width: 100%; background: var(--surface); }
+table.sheet th, table.sheet td { border: 1px solid var(--grid); padding: 7px 10px; white-space: nowrap; text-align: left; }
+table.sheet th.colh, table.sheet th.rowh { background: var(--head); color: var(--muted); font-family: var(--font-mono); font-weight: 500; font-size: 13px; text-align: center; padding: 4px 8px; }
+table.sheet td.fname { font-weight: 700; background: var(--paper); }
+table.sheet td.mono { font-family: var(--font-mono); font-size: 14px; }
+table.sheet td.empty { min-width: 70px; }
+table.sheet td.pick { cursor: pointer; }
+table.sheet td.pick:hover { background: var(--accent-soft); }
+table.sheet td.sel { outline: 3px solid var(--accent); outline-offset: -3px; background: var(--accent-soft); }
+table.sheet td.target { outline: 3px dashed var(--mark); outline-offset: -3px; background: var(--mark-soft); }
+table.sheet tr.pickrow { cursor: pointer; }
+table.sheet tr.pickrow:hover td { background: var(--accent-soft); }
+table.sheet tr.on td { background: var(--accent-soft); }
+table.sheet tr.on th.rowh { background: var(--accent); color: var(--accent-ink); }
+table.sheet tr.target td { box-shadow: inset 0 0 0 999px var(--mark-soft); }
+.badge { display: inline-grid; place-items: center; min-width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: 14px; font-family: var(--font-mono); }
+.badge.blank { background: transparent; border: 2px dashed var(--grid); }
+.tiles { display: flex; gap: 6px; flex-wrap: wrap; }
+.tile { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.tile small { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.tile button { width: 44px; height: 52px; font-family: var(--font-mono); font-weight: 700; font-size: 22px; border: 2px solid var(--grid); background: var(--surface); border-radius: 6px; cursor: pointer; }
+.tile button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.tile button.target { border: 3px dashed var(--mark); background: var(--mark-soft); color: var(--ink); }
+.feedback { border-radius: 8px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+.feedback.good { background: var(--accent-soft); border-left: 5px solid var(--accent); }
+.feedback.bad { background: var(--bad-soft); border-left: 5px solid var(--bad); }
+.feedback.reveal { background: var(--mark-soft); border-left: 5px solid var(--mark); }
+.feedback strong { font-family: var(--font-display); font-size: 19px; }
+.hintbox { background: var(--head); border-radius: 8px; padding: 10px 14px; font-size: 16px; }
+.shake { animation: shake .35s; }
+@keyframes shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+.pts-pop { position: fixed; z-index: 30; font-family: var(--font-display); font-weight: 800; font-size: 36px; color: var(--accent); pointer-events: none; animation: rise 1s ease-out forwards; text-shadow: 0 2px 0 var(--surface); }
+@keyframes rise { from { opacity: 1; transform: translateY(0) scale(.8); } to { opacity: 0; transform: translateY(-70px) scale(1.15); } }
+
+/* level tabs */
+.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: var(--head); border-top: 1px solid var(--grid);
+  padding: 0 max(8px, env(safe-area-inset-right, 0px)) env(safe-area-inset-bottom, 0px) max(8px, env(safe-area-inset-left, 0px)); }
+.tabs-in { max-width: 920px; margin: 0 auto; display: flex; gap: 2px; overflow-x: auto; }
+.tab { flex: none; border: 1px solid var(--grid); border-top: 0; background: var(--paper); color: var(--muted); padding: 8px 14px 9px; font-size: 14px; border-radius: 0 0 8px 8px; display: flex; gap: 6px; align-items: center; }
+.tab .tn { font-family: var(--font-mono); font-weight: 700; }
+.tab.now { background: var(--surface); color: var(--ink); font-weight: 700; box-shadow: inset 0 -3px 0 var(--accent); }
+.tab.lock { opacity: .55; }
+.tab .ts { color: var(--mark); font-size: 12px; letter-spacing: 1px; }
+
+/* results */
+.big-score { font-family: var(--font-display); font-weight: 800; font-size: clamp(52px, 12vw, 88px); line-height: 1; color: var(--accent); font-variant-numeric: tabular-nums; }
+.rank-card { display: flex; gap: 16px; align-items: center; border: 2px solid var(--accent); border-radius: 12px; padding: 14px 18px; background: var(--accent-soft); }
+.rank-emoji { font-size: 52px; line-height: 1; }
+.rank-name { font-family: var(--font-display); font-weight: 800; font-size: 26px; }
+.result-table { width: 100%; border-collapse: collapse; }
+.result-table td { padding: 8px 6px; border-bottom: 1px solid var(--grid); }
+.result-table td:last-child { text-align: right; }
+.stars { font-size: 16px; letter-spacing: 2px; color: var(--grid); white-space: nowrap; }
+.stars .on { color: var(--mark); }
+.stats { display: flex; gap: 8px; flex-wrap: wrap; }
+.pop { animation: pop .5s cubic-bezier(.2,1.6,.4,1) both; }
+@keyframes pop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* modal */
+.modal { position: fixed; inset: 0; z-index: 20; background: rgba(10, 20, 15, .55); display: grid; place-items: center; padding: 16px; }
+.modal-card { background: var(--surface); border-radius: 12px; padding: 20px; max-width: 460px; width: 100%; max-height: 90vh; overflow: auto; }
+.modal-card.wide { max-width: 860px; }
+.board-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
+details.teacher { border: 1px solid var(--grid); border-radius: 10px; padding: 8px 12px; margin-bottom: 12px; }
+details.teacher summary { cursor: pointer; font-weight: 700; }
+.add-msg.ok { color: var(--accent); font-weight: 700; }
+.add-msg.bad { color: var(--bad); font-weight: 700; }
+
+/* projector board */
+body.bigboard main { max-width: 1200px; padding-bottom: 30px; }
+body.bigboard .tabs { display: none; }
+body.bigboard table.board { font-size: 22px; }
+body.bigboard .pod .who { font-size: 26px; }
+body.bigboard .podium, body.bigboard .podium-base { max-width: 900px; }
+
+.confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 40; }
+.confetti i { position: absolute; top: -16px; width: 10px; height: 15px; border-radius: 2px; animation: fall linear forwards; }
+@keyframes fall { to { transform: translate(var(--dx), 105vh) rotate(var(--rot)); } }
+@media (prefers-reduced-motion: reduce) { .pop, .shake, .pts-pop, .pod.p1 .medal { animation: none; } }
+@media (max-width: 560px) {
+  .card { padding: 16px; }
+  .prompt { font-size: 19px; }
+  .tile button { width: 36px; height: 46px; font-size: 19px; }
+  .tiles { gap: 4px; }
+  .logo-sub { display: none; }
+  .pod .who { font-size: 15px; }
+  .pod.p1 .block { height: 120px; } .pod.p2 .block { height: 90px; } .pod.p3 .block { height: 66px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar"><div class="topbar-in">
+    <div class="logo"><span class="logo-cell">fx</span><span><span class="logo-name">Midterm Quest</span><span class="logo-sub">Grade 8 ICT · Unit 1</span></span></div>
+    <span class="spacer"></span>
+    <div class="hud">
+      <span class="chip" id="scoreChip">Score <b>0</b></span>
+      <span class="chip fire" id="streakChip" hidden>🔥 <b>0</b></span>
+      <button class="tbtn" id="boardBtn" type="button">🏆 Board</button>
+      <button class="tbtn" id="soundBtn" type="button" aria-label="Sound on">🔊</button>
+      <button class="tbtn" id="endBtn" type="button" hidden>⏹ End</button>
+    </div>
+  </div></header>
+  <main id="view" aria-live="polite"></main>
+  <nav class="tabs" aria-label="Levels"><div class="tabs-in" id="tabs"></div></nav>
+</div>
+
+<div class="modal" id="endModal" hidden>
+  <div class="modal-card stack" role="dialog" aria-modal="true" aria-labelledby="endTitle">
+    <h3 id="endTitle">End the game now?</h3>
+    <p>Your score so far will be saved to the class board. Each student plays one time, so you cannot start again.</p>
+    <div class="row"><button class="btn danger" id="endOk" type="button">Yes, end and save</button><button class="btn ghost" id="endCancel" type="button">Keep playing</button></div>
+  </div>
+</div>
+
+<div class="modal" id="boardModal" hidden>
+  <div class="modal-card wide" role="dialog" aria-modal="true" aria-labelledby="boardTitle">
+    <div class="board-head"><h3 id="boardTitle">🏆 Class leaderboard</h3><button class="tbtn" id="boardClose" type="button">✕ Close</button></div>
+    <details class="teacher" id="teacherPanel">
+      <summary>👩‍🏫 Teacher tools</summary>
+      <div class="row" style="margin-top:8px">
+        <input id="pinInput" type="password" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="Teacher PIN" aria-label="Teacher PIN" style="max-width:180px">
+        <button class="btn small" id="pinBtn" type="button">Unlock</button>
+        <button class="btn small danger" id="boardClear" type="button" hidden>Clear leaderboard</button>
+      </div>
+      <p class="add-msg" id="pinMsg" role="status"></p>
+    </details>
+    <div data-board></div>
+  </div>
+</div>
+
+<script>
+/* ---------------- helpers ---------------- */
+const $ = (s, r = document) => r.querySelector(s);
+function el(tag, attrs = {}, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v === null || v === undefined || v === false) continue;
+    if (k === 'class') e.className = v;
+    else if (k === 'html') e.innerHTML = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+    else e.setAttribute(k, v === true ? '' : v);
+  }
+  for (const k of kids.flat()) if (k !== null && k !== undefined && k !== false) e.append(k.nodeType ? k : document.createTextNode(String(k)));
+  return e;
+}
+/* seeded random, so a refresh rebuilds exactly the same questions */
+let rng = Math.random;
+function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const rand = (a, b) => a + Math.floor(rng() * (b - a + 1));
+const pick = (arr) => arr[Math.floor(rng() * arr.length)];
+const shuffle = (arr) => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const sample = (arr, n) => shuffle(arr).slice(0, n);
+const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const C = (s) => `<span class="code">${esc(s)}</span>`;
+const colL = (i) => String.fromCharCode(65 + i);
+const mmss = (s) => { s = Math.max(0, s | 0); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+
+/* ---------------- data ---------------- */
+const NAMES = ['Lina', 'Omar', 'Sara', 'Zaid', 'Hana', 'Yousef', 'Noor', 'Rami', 'Dana', 'Kareem', 'Leen', 'Tamer', 'Maya', 'Ahmad', 'Jana', 'Faris', 'Rana', 'Hamza', 'Tala', 'Khaled'];
+const MODELS = ['Nova X Lite', 'Orbit 5 Pro', 'Zen Max Plus', 'Luma S Mini', 'Flash 9 Ultra', 'Echo 3 Lite', 'Terra 7 Pro', 'Pulse Air Max'];
+const COLORS = ['Black', 'Blue', 'Gold', 'Silver', 'White'];
+const STORES = ['ABD', 'SWF', 'KHL', 'JBH', 'MRJ'];
+const TYPES = ['PH', 'TB', 'WT'];
+const HEAD = ['Customer', 'Phone model', 'Year', 'Color', 'Code', 'Units Made', 'Units Sold'];
+const KEYS = ['name', 'model', 'year', 'color', 'code', 'made', 'sold'];
+function makeRecord(name) {
+  const year = rand(2018, 2025);
+  const made = pick([200, 250, 300, 400, 450, 500, 600, 700, 800]);
+  const sold = rand(2, made / 10 - 1) * 10 - pick([0, 0, 5]);
+  const code = pick(TYPES) + pick(STORES) + year + String.fromCharCode(rand(65, 90)) + String(rand(1, 99)).padStart(2, '0');
+  return { name, model: pick(MODELS), year, color: pick(COLORS), code, made, sold };
+}
+const makeRecords = (n) => sample(NAMES, n).map(makeRecord);
+const recKey = (r) => KEYS.map(k => r[k]).join('|');
+function sheetTable(recs, o = {}) {
+  const cols = HEAD.length + (o.extraCol ? 1 : 0);
+  const tbl = el('table', { class: 'sheet' });
+  const hr = el('tr', {}, el('th', { class: 'rowh' }, ''));
+  for (let c = 0; c < cols; c++) hr.append(el('th', { class: 'colh', scope: 'col' }, colL(c)));
+  const tbody = el('tbody');
+  const fr = el('tr', {}, el('th', { class: 'rowh', scope: 'row' }, '1'));
+  for (let c = 0; c < cols; c++) fr.append(el('td', { class: 'fname' + (c >= HEAD.length ? ' empty' : '') }, HEAD[c] || ''));
+  tbody.append(fr);
+  const rowEls = [];
+  recs.forEach((r, i) => {
+    const tr = el('tr', {}, el('th', { class: 'rowh', scope: 'row' }, String(i + 2)));
+    KEYS.forEach(k => tr.append(el('td', { class: k === 'code' ? 'mono' : '' }, r[k])));
+    if (o.extraCol) tr.append(el('td', { class: 'empty' }, ''));
+    tbody.append(tr); rowEls.push(tr);
+  });
+  if (o.extraRow) {
+    const tr = el('tr', {}, el('th', { class: 'rowh', scope: 'row' }, String(recs.length + 2)));
+    for (let c = 0; c < cols; c++) tr.append(el('td', { class: 'empty' }, ''));
+    tbody.append(tr);
+  }
+  tbl.append(el('thead', {}, hr), tbody);
+  return { tbl, rowEls };
+}
+
+/* ---------------- answer checking ---------------- */
+function normFormula(s) {
+  s = String(s).trim().replace(/[“”„]/g, '"');
+  let out = '', q = false;
+  for (const ch of s) { if (ch === '"') { q = !q; out += ch; continue; } if (q) out += ch; else if (!/\s/.test(ch)) out += ch.toUpperCase(); }
+  return out;
+}
+function formulaCheck(accept, traps = []) {
+  const okSet = accept.map(normFormula);
+  return (raw) => {
+    const s = normFormula(raw || '');
+    if (!s) return { ok: false, empty: true, msg: 'Type your formula in the box first.' };
+    if (okSet.includes(s)) return { ok: true };
+    for (const t of traps) if (t.match.map(normFormula).includes(s)) return { ok: false, msg: t.msg };
+    if (s[0] !== '=') return { ok: false, msg: 'Every formula must start with an equals sign <b>=</b>.' };
+    if (s.replace(/"[^"]*"/g, '').includes(';')) return { ok: false, msg: 'Use commas <b>,</b> between the parts, not semicolons.' };
+    if ((s.match(/\(/g) || []).length !== (s.match(/\)/g) || []).length) return { ok: false, msg: 'Check your brackets. Every <b>(</b> needs a <b>)</b>.' };
+    if ((s.match(/"/g) || []).length % 2) return { ok: false, msg: 'Text must be inside two quotation marks, like <b>" "</b>.' };
+    return { ok: false, msg: 'Not quite. Check the cell addresses and the numbers.' };
+  };
+}
+const valueCheck = (accept, opts = {}) => (raw) => {
+  const n = (x) => String(x).trim().toLowerCase().replace(/\s+/g, '');
+  if (!String(raw || '').trim()) return { ok: false, empty: true, msg: 'Type your answer in the box first.' };
+  if (String(raw).trim().startsWith('=')) return { ok: false, msg: 'Type the <b>result</b> (what the cell shows), not a formula.' };
+  return accept.map(n).includes(n(raw)) ? { ok: true } : { ok: false, msg: opts.wrongMsg || 'Not quite. Try again.' };
+};
+const mcq = (prompt, options, correct, explain, o = {}) => {
+  const order = shuffle(options.map((_, i) => i));
+  const opts = order.map(i => options[i]);
+  return { kind: 'mcq', prompt, options: opts.map(x => typeof x === 'string' ? { t: x } : x), solution: order.indexOf(correct), explain, hint: o.hint,
+    check(a) { if (a === null || a === undefined) return { ok: false, empty: true, msg: 'Choose an answer first.' }; return a === this.solution ? { ok: true } : { ok: false, msg: this.options[a].why || 'Not quite. Read the question again.' }; } };
+};
+const typeQ = (prompt, check, solution, explain, o = {}) => ({ kind: 'type', prompt, check, solution, explain, hint: o.hint, namebox: o.namebox, formula: !!o.formula, placeholder: o.placeholder });
+
+/* ---------------- levels ---------------- */
+const LEVELS = [
+  { tab: 'Duplicates', title: 'Remove Duplicates', lesson: 'Lesson 1 · Introduction to databases' },
+  { tab: 'Records & Fields', title: 'Records and Fields', lesson: 'Lesson 1 · Introduction to databases' },
+  { tab: 'Percentages', title: 'Calculating Percentages', lesson: 'Lesson 3 · Making complex calculations' },
+  { tab: 'Text Functions', title: 'Text Functions', lesson: 'Lesson 3 · Making complex calculations' },
+  { tab: 'Power ^', title: 'The Power Operator ^', lesson: 'Lesson 3 · Making complex calculations' },
+  { tab: 'Sorting', title: 'Sorting by Two Fields', lesson: 'Lesson 2 · Filter and sort' },
+  { tab: 'Filtering', title: 'Filtering with Text', lesson: 'Lesson 2 · Filter and sort' },
+];
+const LESSONS = [
+  () => `<p>A <b>duplicate</b> is a record (row) that appears more than once, where <b>every field is exactly the same</b>.</p>
+    <p>Duplicates give wrong results, so we keep <b>one copy</b> and delete the extra copies.</p>
+    <ol class="steps"><li>Click any cell inside the table.</li><li>Go to the <b>Data</b> tab and click <b>Remove Duplicates</b>.</li><li>Tick <b>My data has headers</b> and keep <b>all columns</b> ticked.</li><li>Click <b>OK</b>.</li></ol>
+    <div class="callout"><b>Watch out:</b> Lina, Blue, 2021 and Lina, Blue, 2022 are <b>not</b> duplicates. One field (the year) is different.</div>`,
+  () => `<p>A <b>field</b> is a <b>column</b>. It holds one type of information, and its name is in <b>row 1</b>.</p>
+    <p>A <b>record</b> is a <b>row</b>. It holds all the information about one thing.</p>
+    <ol class="steps"><li><b>New record:</b> type it in the first empty row under the table.</li><li><b>New field:</b> type the field name in the first empty cell of row 1, on the right.</li><li>Fill the new field in for <b>every</b> record.</li></ol>
+    <div class="callout"><b>Trick:</b> <b>R</b>ecords are <b>R</b>ows. Fields go down like columns.</div>`,
+  () => `<p>A <b>percentage</b> means “out of 100”. To find it, divide the <b>part</b> by the <b>whole</b>.</p>
+    <p>Sales percentage = Units Sold ÷ Units Made, so in row 2 the formula is ${C('=G2/F2')}.</p>
+    <ol class="steps"><li>Type the formula and press <b>Enter</b>. You see a decimal like 0.25.</li><li>Click the <b>%</b> button on the Home tab. It shows 25%.</li><li>Click <b>Increase Decimal</b> twice to show <b>2 decimal places</b>: 25.00%.</li></ol>
+    <div class="callout"><b>Watch out:</b> don’t add ${C('*100')}. The % button already does that.</div>`,
+  () => `<p>Every character in a cell has a <b>position number</b>, starting at 1 on the left.</p>
+    <ul class="lesson-list">
+      <li>${C('LEFT(text, how many)')} takes characters from the <b>start</b>.</li>
+      <li>${C('MID(text, start, how many)')} takes characters from the <b>middle</b>.</li>
+      <li>${C('RIGHT(text, how many)')} takes characters from the <b>end</b>.</li>
+      <li>${C('SUBSTITUTE(text, "old", "new")')} swaps old text for new text.</li>
+    </ul>
+    <div class="callout"><b>MID rule:</b> characters 3 to 5 means start at 3 and take <b>3</b> characters (5 − 3 + 1). So ${C('=MID(E2,3,3)')}.</div>`,
+  () => `<p><b>Power</b> means multiplying a number by itself. 5 to the power of 2 (5 squared) = 5 × 5 = 25.</p>
+    <p>In Excel the power symbol is <b>^</b>. Type it with <b>Shift + 6</b>.</p>
+    <ol class="steps"><li>To square cell G2, type ${C('=G2^2')}.</li><li>Press <b>Enter</b>, then copy it down.</li></ol>
+    <div class="callout"><b>Watch out:</b> ${C('=G2*2')} only doubles the number. It is not squared.</div>`,
+  () => `<p><b>Sorting</b> puts records in order. <b>Ascending</b> = A to Z or smallest to largest. <b>Descending</b> = Z to A or largest to smallest.</p>
+    <p>With <b>two levels</b>, Excel sorts by the first field. Then, inside each group with the same value, it sorts by the second field.</p>
+    <ol class="steps"><li>Click inside the table, then <b>Data</b> → <b>Sort</b>.</li><li>Sort by the first field and choose the order.</li><li>Click <b>Add Level</b> and choose the second field.</li><li>Click <b>OK</b>.</li></ol>`,
+  () => `<p><b>Filtering</b> shows only the records that match a rule. The others are <b>hidden</b>, not deleted.</p>
+    <ul class="lesson-list">
+      <li><b>Contains</b> = the text is anywhere inside.</li>
+      <li><b>Begins With</b> = the text is at the start.</li>
+      <li><b>Ends With</b> = the text is at the end.</li>
+      <li><b>Equals</b> = exactly the same.</li>
+    </ul>
+    <ol class="steps"><li><b>Data</b> → <b>Filter</b>. Arrows appear on the field names.</li><li>Click the arrow on the field → <b>Text Filters</b> → <b>Contains…</b></li><li>Type the text and click <b>OK</b>.</li></ol>`,
+];
+function genLevel(n) {
+  const L = [];
+  const range = (a, k) => Array.from({ length: k }, (_, i) => a + i);
+  if (n === 0) {
+    const base = makeRecords(4);
+    const A = base[0];
+    let rows = shuffle([...base, { ...A }, { ...A }]);
+    const keys = rows.map(recKey);
+    const counts = {}; keys.forEach(k => counts[k] = (counts[k] || 0) + 1);
+    const distinct = Object.keys(counts).length;
+    const seen = new Set(), sol = [];
+    keys.forEach((k, i) => { if (seen.has(k)) sol.push(i); seen.add(k); });
+    L.push(mcq('What is a <b>duplicate record</b>?', [
+      'A row that is repeated, with every field the same',
+      { t: 'Two rows with the same customer name', why: 'Same name is not enough. Every field must be the same.' },
+      { t: 'A row with an empty cell', why: 'An empty cell is missing data, not a duplicate.' },
+    ], 0, 'A duplicate is a record that is repeated exactly. Every field matches.'));
+    L.push({ kind: 'rows', prompt: `<b>${A.name}</b>’s record appears 3 times. Click the <b>2 extra copies</b> to remove them. Keep one.`, recs: rows, solution: sol,
+      hint: `Find the 3 rows for ${A.name}. Click any 2 of them.`,
+      explain: `${A.name} had 2 extra copies. After removing them, ${distinct} records are left.`,
+      check(sel) {
+        if (!sel.length) return { ok: false, msg: 'Click the rows you want to remove.' };
+        const selKeys = {}; sel.forEach(i => selKeys[keys[i]] = (selKeys[keys[i]] || 0) + 1);
+        for (const k in selKeys) if (counts[k] === 1) return { ok: false, msg: `Only click rows for ${A.name}. The others are not repeated.` };
+        for (const k in selKeys) if (selKeys[k] >= counts[k]) return { ok: false, msg: 'You removed every copy. Keep one copy.' };
+        if (sel.length < 2) return { ok: false, msg: 'There is still one extra copy left.' };
+        return { ok: true };
+      } });
+    L.push(mcq('Are these two records duplicates?<br><span class="code">Lina | Blue | 2021</span><br><span class="code">Lina | Blue | 2022</span>',
+      ['No, the year is different', { t: 'Yes, the name is the same', why: 'Look at the year. One field is different, so they are not duplicates.' }], 0,
+      'They are not duplicates. Every field must be the same, and the year is different.', { keepOrder: true }));
+    L.push(mcq('Where is the <b>Remove Duplicates</b> button?', ['Data tab', { t: 'Home tab', why: 'Remove Duplicates is a data tool. Look on the Data tab.' }, { t: 'Insert tab', why: 'Insert is for adding pictures and charts.' }], 0, 'Data tab → Remove Duplicates → OK.'));
+  }
+  if (n === 1) {
+    const recs = makeRecords(4);
+    const fi = rand(1, 6), ri = rand(0, 3);
+    L.push(mcq('A <b>field</b> is a …', ['Column', { t: 'Row', why: 'A row is a record. A field is a column.' }], 0, 'Field = column. Record = row.', { keepOrder: true }));
+    L.push({ kind: 'grid', recs, prompt: `Click any cell in the <b>field</b> (column) called <b>${HEAD[fi]}</b>.`, hint: `Find “${HEAD[fi]}” in row 1. Then click any cell under it.`,
+      solution: { r: rand(1, 4), c: fi }, targetFn: (r, c) => c === fi && r <= 4,
+      explain: `${HEAD[fi]} is column ${colL(fi)}. A field is one column.`,
+      check(a) { if (!a) return { ok: false, msg: 'Click a cell in the sheet.' }; if (a.c === fi && a.r <= 4) return { ok: true }; return { ok: false, msg: 'That is a different column. A field goes down, like a column.' }; } });
+    L.push({ kind: 'grid', recs, prompt: `Click any cell in the <b>record</b> (row) for <b>${recs[ri].name}</b>.`, hint: `Find ${recs[ri].name} in column A. Click any cell in that row.`,
+      solution: { r: ri + 1, c: rand(0, 6) }, targetFn: (r, c) => r === ri + 1 && c < 7,
+      explain: `${recs[ri].name}’s record is row ${ri + 2}. A record goes across, like a row.`,
+      check(a) { if (!a) return { ok: false, msg: 'Click a cell in the sheet.' }; if (a.r === ri + 1 && a.c < 7) return { ok: true }; return { ok: false, msg: 'A record is a row. Find the name, then click a cell in that row.' }; } });
+    L.push({ kind: 'grid', recs, prompt: 'Where do you type a <b>new record</b>? Click a cell in the correct row.', hint: 'New records go at the bottom, in the first empty row.',
+      solution: { r: 5, c: 0 }, targetFn: (r, c) => r === 5 && c < 7,
+      explain: 'The first empty row under the table is row 6. Start in cell A6.',
+      check(a) { if (!a) return { ok: false, msg: 'Click a cell in the sheet.' }; if (a.r === 5 && a.c < 7) return { ok: true }; return { ok: false, msg: 'A new record goes in the first empty row at the bottom.' }; } });
+    L.push({ kind: 'grid', recs, prompt: 'You add a <b>new field</b> called <b>City</b>. Click the cell where you type the word <b>City</b>.', hint: 'Field names are in row 1. Use the empty column on the right (H).',
+      solution: { r: 0, c: 7 }, targetFn: (r, c) => r === 0 && c === 7,
+      explain: 'Field names are in row 1. The first empty column is H, so type City in H1.',
+      check(a) { if (!a) return { ok: false, msg: 'Click a cell in the sheet.' }; if (a.r === 0 && a.c === 7) return { ok: true }; if (a.c === 7) return { ok: false, msg: 'Right column! Field names go in row 1 (the top).' }; return { ok: false, msg: 'A new field is a new column on the right. Its name goes in row 1.' }; } });
+  }
+  if (n === 2) {
+    const r = rand(2, 6);
+    L.push(mcq('Sales percentage = …', ['Units Sold ÷ Units Made', { t: 'Units Made ÷ Units Sold', why: 'Upside down. It is the part (sold) ÷ the whole (made).' }, { t: 'Units Sold × 100', why: 'We divide sold by made. The % button does the ×100.' }], 0, 'Part ÷ whole = Sold ÷ Made.'));
+    L.push(mcq(`Units Made is in <b>F${r}</b>. Units Sold is in <b>G${r}</b>. Which formula is correct?`, [`=G${r}/F${r}`, { t: `=F${r}/G${r}`, why: 'Upside down. Sold (G) comes first.' }, { t: `G${r}/F${r}`, why: 'A formula must start with =.' }, { t: `=G${r}*F${r}`, why: '* means multiply. Use / to divide.' }], 0, `=G${r}/F${r}  (Sold ÷ Made)`));
+    L.push(typeQ(`Now type it yourself. Units Made is in <b>F${r}</b>, Units Sold is in <b>G${r}</b>.`,
+      formulaCheck([`=G${r}/F${r}`], [
+        { match: [`=F${r}/G${r}`], msg: 'Upside down! It is <b>Sold ÷ Made</b>, so G comes first.' },
+        { match: [`=G${r}/F${r}*100`, `=(G${r}/F${r})*100`], msg: 'Don’t multiply by 100. The % button does that.' },
+        { match: [`G${r}/F${r}`], msg: 'Start with an equals sign <b>=</b>.' },
+      ]), `=G${r}/F${r}`, 'Sold ÷ Made. Then click % and Increase Decimal twice.', { formula: true, namebox: `I${r}`, hint: `Type: = then G${r} then / then F${r}`, placeholder: '=' }));
+    const [sold, made] = pick([[50, 200], [30, 120], [75, 300], [90, 360], [45, 180], [60, 400]]);
+    const right = (sold / made * 100).toFixed(2) + '%';
+    L.push(mcq(`A store made <b>${made}</b> phones and sold <b>${sold}</b>. What does the cell show with <b>2 decimal places</b>?`, [right, { t: (sold / made * 100).toFixed(0) + '%', why: 'This has 0 decimal places. You need 2 digits after the point.' }, { t: (made / sold * 100).toFixed(2) + '%', why: 'Upside down. Divide sold by made.' }], 0, `${sold} ÷ ${made} = ${sold / made} → ${right}`, { hint: 'Divide sold by made. 2 decimal places means 2 digits after the point, like 25.00%.' }));
+    L.push(mcq('Your cell shows <b>25%</b>. You need <b>2 decimal places</b>. What do you click?', ['Increase Decimal, two times', { t: 'Decrease Decimal', why: 'Decrease removes digits. You need to add 2.' }, { t: 'Bold', why: 'Bold only changes the look.' }], 0, 'Increase Decimal twice: 25% → 25.0% → 25.00%.'));
+  }
+  if (n === 3) {
+    const rec = makeRecord('x'); const code = rec.code; const r = rand(2, 6);
+    const charQ = (fn, positions, label) => ({ kind: 'chars', code, cell: `E${r}`, prompt: `Cell E${r} holds this code. Click the characters that ${C(fn)} gives.`, solution: positions, hint: label,
+      explain: `${fn} → ${positions.map(p => code[p]).join('')}`,
+      check(sel) { if (!sel.length) return { ok: false, msg: 'Click the characters.' }; if ([...sel].sort((x, y) => x - y).join() === positions.join()) return { ok: true }; return { ok: false, msg: `You chose ${sel.length} character${sel.length === 1 ? '' : 's'}. Check how many to take and where to start.` }; } });
+    L.push(charQ(`=LEFT(E${r},2)`, range(0, 2), 'LEFT = start from the left. Take 2 characters.'));
+    L.push(charQ(`=RIGHT(E${r},2)`, range(code.length - 2, 2), 'RIGHT = start from the right end. Take the last 2 characters.'));
+    L.push(charQ(`=MID(E${r},3,3)`, range(2, 3), 'Start at position 3. Take 3 characters: positions 3, 4 and 5.'));
+    L.push(mcq(`You need <b>characters 3 to 5</b> of E${r}. Which formula is correct?`, [`=MID(E${r},3,3)`, { t: `=MID(E${r},3,5)`, why: 'The last number is HOW MANY, not the end. From 3 to 5 is 3 characters.' }, { t: `=LEFT(E${r},3)`, why: 'LEFT starts at position 1. You need to start at 3.' }], 0, 'MID(text, start, how many): start 3, take 3.', { hint: 'Count: 3, 4, 5. That is 3 characters.' }));
+    const model = pick(MODELS); const res = model.split(' ').join('/');
+    L.push(mcq(`Cell B${r} holds <b>${model}</b>. What does ${C(`=SUBSTITUTE(B${r}," ","/")`)} give?`, [res, { t: model.replace(' ', '/'), why: 'SUBSTITUTE changes EVERY space, not just the first.' }, { t: model.split(' ').join(''), why: 'The spaces are swapped for /, not deleted.' }], 0, `Every space becomes /: ${res}`));
+    L.push(typeQ(`Type a formula to get <b>characters 3 to 5</b> of cell <b>E${r}</b>.`, formulaCheck([`=MID(E${r},3,3)`], [
+      { match: [`=MID(E${r},3,5)`], msg: 'The last number is <b>how many</b> characters. From 3 to 5 is 3 characters.' },
+      { match: [`MID(E${r},3,3)`], msg: 'Start with an equals sign <b>=</b>.' },
+    ]), `=MID(E${r},3,3)`, `=MID(E${r},3,3)`, { formula: true, namebox: `K${r}`, hint: `Type: =MID(E${r},3,3)  — start 3, take 3.`, placeholder: '=' }));
+  }
+  if (n === 4) {
+    const a = rand(2, 10), r = rand(2, 6);
+    L.push(mcq('Which symbol means <b>power</b> in Excel?', ['^', { t: '*', why: '* means multiply.' }, { t: '/', why: '/ means divide.' }], 0, '^ is the power symbol. Type it with Shift + 6.'));
+    L.push(mcq(`What is ${C(`=${a}^2`)}?`, [String(a * a), { t: String(a * 2), why: `That is ${a} × 2. Squared means ${a} × ${a}.` }, { t: String(a + 2), why: `That is ${a} + 2. Squared means ${a} × ${a}.` }], 0, `${a} × ${a} = ${a * a}`));
+    L.push(typeQ(`Units Sold is in <b>G${r}</b>. Type a formula that <b>squares</b> it (power of 2).`, formulaCheck([`=G${r}^2`], [
+      { match: [`=G${r}*2`], msg: '*2 doubles the number. Use <b>^2</b>.' },
+      { match: [`=G${r}*G${r}`], msg: 'Same answer, but use the <b>power symbol ^</b>.' },
+      { match: [`G${r}^2`], msg: 'Start with an equals sign <b>=</b>.' },
+    ]), `=G${r}^2`, `=G${r}^2 means G${r} × G${r}.`, { formula: true, namebox: `N${r}`, hint: `Type: =G${r}^2`, placeholder: '=' }));
+    L.push(mcq('How do you type <b>^</b> on the keyboard?', ['Shift + 6', { t: 'Shift + 8', why: 'Shift + 8 types * (multiply).' }, { t: 'Ctrl + P', why: 'Ctrl + P opens Print.' }], 0, 'Hold Shift and press 6.'));
+  }
+  if (n === 5) {
+    L.push(mcq('<b>A to Z</b> is called …', ['Ascending', { t: 'Descending', why: 'Descending is Z to A.' }], 0, 'Ascending = A to Z, or smallest to largest.', { keepOrder: true }));
+    L.push(mcq('For numbers, <b>Smallest to Largest</b> puts 2019, 2023, 2021 in which order?', ['2019, 2021, 2023', { t: '2023, 2021, 2019', why: 'That is largest to smallest.' }, { t: '2019, 2023, 2021', why: 'That is the original order.' }], 0, 'Smallest first: 2019, 2021, 2023.'));
+    let s1;
+    for (;;) {
+      s1 = makeRecords(4);
+      const groups = sample(COLORS, 2);
+      s1[0].color = s1[1].color = groups[0]; s1[2].color = s1[3].color = groups[1];
+      if (s1[0].year !== s1[1].year && s1[2].year !== s1[3].year) break;
+    }
+    s1 = shuffle(s1);
+    const ord1 = s1.map((x, i) => i).sort((i, j) => s1[i].color.localeCompare(s1[j].color) || s1[i].year - s1[j].year);
+    L.push({ kind: 'order', recs: s1, cols: ['name', 'color', 'year'], prompt: 'Sort by <b>Color (A to Z)</b>, then by <b>Year (Smallest to Largest)</b>. Tap the records in their <b>new order</b>, first to last.', solution: ord1,
+      hint: `First the color that comes first in the alphabet. Inside each color, the smaller year goes first.`,
+      explain: 'Color makes the groups (A to Z). Inside each color, the years go from smallest to largest.',
+      check(seq) { if (seq.length < s1.length) return { ok: false, msg: 'Tap all 4 records to put them in order.' }; if (seq.join() === ord1.join()) return { ok: true };
+        const colorsOk = seq.every((v, i) => i === 0 || s1[seq[i - 1]].color.localeCompare(s1[v].color) <= 0);
+        return { ok: false, msg: colorsOk ? 'The colors are right! Now check the years inside each color.' : 'Start with the colors: A to Z.' }; } });
+    L.push(mcq('In the Sort window, which button adds the <b>second field</b>?', ['Add Level', { t: 'Delete Level', why: 'That removes a level.' }, { t: 'Filter', why: 'Filter is a different tool.' }], 0, 'Data → Sort → Add Level → Then by.'));
+  }
+  if (n === 6) {
+    L.push(mcq('When you filter, the records that don’t match are …', ['Hidden', { t: 'Deleted', why: 'Filtering never deletes. Clear the filter and they come back.' }], 0, 'They are hidden, not deleted.', { keepOrder: true }));
+    let recs, st, target;
+    for (;;) { recs = makeRecords(5); st = pick(STORES); recs.forEach(x => { if (rng() < .45) x.code = x.code.slice(0, 2) + st + x.code.slice(5); }); target = recs.map((x, i) => x.code.includes(st) ? i : -1).filter(i => i >= 0); if (target.length >= 2 && target.length <= 3) break; }
+    L.push(mcq(`<b>${st}</b> is in the <b>middle</b> of the codes. Which text filter do you choose?`, ['Contains', { t: 'Begins With', why: `The codes don’t start with ${st}.` }, { t: 'Equals', why: `Equals only matches a cell that is exactly ${st}.` }], 0, 'Contains finds the text anywhere in the cell.'));
+    L.push({ kind: 'rows', recs, prompt: `Filter: <b>Code Contains “${st}”</b>. Click every record that will be <b>shown</b>.`, solution: target,
+      hint: `Look for the letters ${st} inside each code (positions 3 to 5).`, explain: `${target.length} codes contain ${st}.`,
+      check(sel) { if (!sel.length) return { ok: false, msg: 'Click the records that will be shown.' }; if ([...sel].sort().join() === [...target].sort().join()) return { ok: true }; return sel.some(i => !target.includes(i)) ? { ok: false, msg: `One of your records does not contain ${st}.` } : { ok: false, msg: `You missed a record that contains ${st}.` }; } });
+    L.push(mcq('Where is the <b>Filter</b> button?', ['Data tab', { t: 'Insert tab', why: 'Insert is for pictures and charts.' }, { t: 'View tab', why: 'Look on the Data tab, next to Sort.' }], 0, 'Data tab → Filter. It is next to Sort.'));
+  }
+  return L;
+}
+
+/* ---------------- game state (saved, so a refresh resumes) ---------------- */
+const KEY = 'mqRun';
+const MAX_SECONDS = 3600;
+const POINTS = [10, 5, 2];
+const COUNTS = LEVELS.map((_, i) => { rng = mulberry32(1 + i); const n = genLevel(i).length; rng = Math.random; return n; });
+const TOTAL = COUNTS.reduce((a, b) => a + b, 0) * POINTS[0];
+const fresh = () => ({ v: 1, screen: 'start', seed: 0, name: '', entry: null, level: 0, idx: 0, earned: LEVELS.map(() => 0), done: LEVELS.map(() => false),
+  tries: 0, chDone: false, lastRes: null, elapsed: 0, streak: 0, bestStreak: 0, firstTry: 0, finalSeconds: 0, saved: false, saveStatus: '', started: false });
+let S = fresh();
+try { const raw = localStorage.getItem(KEY); if (raw) { const o = JSON.parse(raw); if (o && o.v === 1) S = Object.assign(fresh(), o); } } catch (e) { }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { } };
+const cache = {};
+function levelData(n) {
+  const k = S.seed + ':' + n;
+  if (!cache[k]) { rng = mulberry32(S.seed * 31 + n * 7919 + 1); try { cache[k] = genLevel(n); } finally { rng = Math.random; } }
+  return cache[k];
+}
+const score = () => S.earned.reduce((a, b) => a + b, 0);
+function starsFor(i) { if (!S.done[i]) return 0; const p = S.earned[i] / (COUNTS[i] * POINTS[0]); return p >= 0.9 ? 3 : p >= 0.6 ? 2 : 1; }
+const starHTML = (n, size) => `<span class="stars" style="${size ? 'font-size:' + size + 'px' : ''}" aria-label="${n} of 3 stars">${[0, 1, 2].map(i => `<span class="${i < n ? 'on' : ''}">★</span>`).join('')}</span>`;
+const RANKS = [
+  { min: 0.9, emoji: '👑', name: 'Excel Master', msg: 'Amazing! You know every midterm skill. You are ready!' },
+  { min: 0.7, emoji: '⭐', name: 'Spreadsheet Star', msg: 'Great work! Revise the levels with fewer stars and you will be ready.' },
+  { min: 0.4, emoji: '🔍', name: 'Data Explorer', msg: 'Good effort! Read your study guide again for the levels with 1 or 2 stars.' },
+  { min: 0, emoji: '🌱', name: 'Excel Beginner', msg: 'You started your journey! Read the study guide and practise in Excel.' },
+];
+const rankFor = (s) => RANKS.find(r => s / TOTAL >= r.min);
+
+/* ---------------- sound + confetti ---------------- */
+let soundOn = true, audioCtx = null;
+try { soundOn = localStorage.getItem('mqSound') !== 'off'; } catch (e) { }
+const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function tone(freq, start, dur, type, vol) {
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = type; o.frequency.value = freq;
+  const t = audioCtx.currentTime + start;
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t + dur + 0.05);
+}
+function sfx(kind) {
+  if (!soundOn) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (kind === 'win') [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.08, 0.18, 'triangle', 0.12));
+    if (kind === 'wrong') { tone(220, 0, 0.15, 'square', 0.05); tone(165, 0.13, 0.22, 'square', 0.05); }
+    if (kind === 'level') [392, 523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.1, 0.22, 'triangle', 0.1));
+    if (kind === 'tap') tone(880, 0, 0.05, 'sine', 0.04);
+  } catch (e) { }
+}
+const CONFETTI = ['#FF5FA2', '#FFC83D', '#5BD982', '#4FA3FF', '#B47CFF', '#FF9A4D'];
+function confetti(n = 46) {
+  if (reducedMotion) return;
+  const box = el('div', { class: 'confetti' });
+  for (let i = 0; i < n; i++) {
+    const p = el('i');
+    p.style.left = Math.random() * 100 + '%'; p.style.background = CONFETTI[i % CONFETTI.length];
+    p.style.setProperty('--dx', (Math.random() * 160 - 80) + 'px'); p.style.setProperty('--rot', (Math.random() * 900 - 450) + 'deg');
+    p.style.animationDuration = (1.1 + Math.random() * 0.9) + 's'; p.style.animationDelay = (Math.random() * 0.25) + 's';
+    if (i % 3 === 0) p.style.borderRadius = '50%';
+    box.append(p);
+  }
+  document.body.append(box); setTimeout(() => box.remove(), 2600);
+}
+function ptsPop(anchor, pts) {
+  if (reducedMotion || !anchor) return;
+  const r = anchor.getBoundingClientRect();
+  const p = el('div', { class: 'pts-pop' }, '+' + pts);
+  p.style.left = (r.left + 10) + 'px'; p.style.top = (r.top - 10) + 'px';
+  document.body.append(p); setTimeout(() => p.remove(), 1000);
+}
+
+/* ---------------- HUD + clock ---------------- */
+const view = $('#view');
+function hud() {
+  $('#scoreChip').innerHTML = `Score <b>${score()}</b>`;
+  $('#streakChip').hidden = S.streak < 2; $('#streakChip').innerHTML = `🔥 <b>${S.streak}</b>`;
+  $('#endBtn').hidden = !(S.started && S.screen !== 'results');
+  $('#soundBtn').textContent = soundOn ? '🔊' : '🔇'; $('#soundBtn').setAttribute('aria-label', soundOn ? 'Sound on' : 'Sound off');
+  const t = $('#tabs'); t.innerHTML = '';
+  LEVELS.forEach((L, i) => {
+    const st = starsFor(i), now = S.started && S.screen !== 'results' && S.level === i;
+    t.append(el('div', { class: 'tab' + (now ? ' now' : '') + (!S.done[i] && !now ? ' lock' : ''), 'aria-current': now ? 'step' : null },
+      el('span', { class: 'tn' }, i + 1), L.tab, st ? el('span', { class: 'ts' }, '★'.repeat(st)) : (!S.done[i] && !now ? ' 🔒' : '')));
+  });
+}
+setInterval(() => {
+  if (!S.started || document.hidden || !$('#endModal').hidden) return;
+  if ((S.screen === 'lesson' || S.screen === 'ch') && S.elapsed < MAX_SECONDS) { S.elapsed++; save(); }
+}, 1000);
+
+/* ---------------- screens ---------------- */
+function go(screen) { S.screen = screen; save(); render(); window.scrollTo({ top: 0 }); }
+function render() {
+  view.innerHTML = '';
+  hud();
+  ({ start: renderStart, lesson: renderLesson, ch: renderChallenge, levelDone: renderLevelDone, results: renderResults })[S.screen]();
+}
+
+function prizeHTML() {
+  return `<div class="prize">
+    <h3>🏆 Top 3 players win prizes!</h3>
+    <div class="prize-rows">
+      <div class="prow"><span class="pm">🥇 1st</span><ul><li>⭐ +5 Bonus Marks</li><li>🍬 A Sweet Treat</li><li>🎮 10 Minutes FREE TIME</li></ul></div>
+      <div class="prow"><span class="pm">🥈 2nd</span><ul><li>⭐ +3 Bonus Marks</li><li>🎮 10 Minutes FREE TIME</li></ul></div>
+      <div class="prow"><span class="pm">🥉 3rd</span><ul><li>🎮 10 Minutes FREE TIME</li></ul></div>
+    </div>
+    <p>The prizes will be given by <b>Ms Rahaf</b> to the first 3 players on the leaderboard.</p>
+  </div>`;
+}
+
+function renderStart() {
+  const nameIn = el('input', { type: 'text', id: 'playerName', maxlength: '20', placeholder: 'First and last name', autocomplete: 'off' });
+  const err = el('p', { class: 'name-err', role: 'alert' });
+  const startBtn = el('button', { class: 'btn', type: 'button', id: 'startBtn' }, 'Start the quest 🚀');
+  startBtn.addEventListener('click', async () => {
+    const n = nameIn.value.trim().replace(/\s+/g, ' ').slice(0, 20);
+    if (n.split(' ').length < 2) { err.textContent = 'Type your first and last name, so Ms Rahaf knows who you are.'; nameIn.focus(); return; }
+    startBtn.disabled = true; startBtn.textContent = 'Checking…';
+    let entry = null;
+    try { const d = await api('/api/scores', { method: 'POST', body: JSON.stringify({ name: n }) }); entry = { id: d.id, token: d.token }; }
+    catch (e) {
+      if (e.status === 409) { err.textContent = 'This name already played. Each student plays one time. If this is a mistake, ask Ms Rahaf.'; startBtn.disabled = false; startBtn.textContent = 'Start the quest 🚀'; nameIn.focus(); return; }
+      /* no internet: let them play, the score is sent at the end */
+    }
+    S = fresh(); S.name = n; S.entry = entry; S.seed = Math.floor(Math.random() * 1e9); S.started = true;
+    sfx('level'); go('lesson');
+  });
+  nameIn.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); startBtn.click(); } });
+  view.append(
+    el('section', { class: 'card stack' },
+      el('div', { class: 'eyebrow' }, 'Grade 8 ICT · Midterm challenge'),
+      el('h1', {}, 'Midterm Quest'),
+      el('p', { class: 'muted', style: 'max-width:60ch' }, 'Beat 7 levels, one for every task in the midterm exam. Each level starts with a short lesson, then you solve challenges on a spreadsheet. Score points, build a 🔥 streak and climb the class leaderboard!'),
+      el('div', { class: 'hero-formula', 'aria-hidden': 'true' }, el('span', {}, 'fx'), el('span', {}, '=MID(E2,3,3)  ·  =G2/F2  ·  =G2^2'))),
+    el('section', { class: 'card stack' },
+      el('h3', {}, 'How to play'),
+      el('ol', { class: 'how', html: [
+        'Read the short lesson at the start of each level.',
+        'Answer the challenges: choose, click, or type a formula.',
+        'You get <b>3 tries</b> for every challenge. After a wrong try you get a hint.',
+        '<b>10 points</b> on the first try, <b>5</b> on the second, <b>2</b> on the third.',
+        'Each student plays <b>one time</b>. Your score goes to the class board automatically. If points are equal, the faster player wins.',
+      ].map((t, i) => `<li><span class="n">${i + 1}</span><span>${t}</span></li>`).join('') }),
+      el('h3', {}, 'The 7 levels'),
+      el('ul', { class: 'map', html: LEVELS.map((L, i) => `<li><b>${i + 1}</b><span>${esc(L.title)}</span></li>`).join('') }),
+      el('div', { html: prizeHTML() }),
+      el('div', { class: 'row', style: 'align-items:flex-end' },
+        el('label', { class: 'field', for: 'playerName' }, 'Your name (for the leaderboard)', nameIn),
+        startBtn, el('button', { class: 'btn ghost', type: 'button', onclick: openBoard }, '🏆 Leaderboard')),
+      err));
+}
+
+function renderLesson() {
+  const L = LEVELS[S.level];
+  view.append(el('section', { class: 'card stack' },
+    el('div', { class: 'eyebrow' }, `Level ${S.level + 1} of 7 · Quick lesson`),
+    el('h2', {}, L.title),
+    el('p', { class: 'muted', style: 'font-size:14px' }, L.lesson),
+    el('div', { class: 'stack', html: LESSONS[S.level]() }),
+    el('div', { class: 'row' }, el('button', { class: 'btn', type: 'button', onclick: () => { S.idx = 0; S.tries = 0; S.chDone = false; S.lastRes = null; sfx('tap'); go('ch'); } }, `Start level ${S.level + 1} (${COUNTS[S.level]} challenges) ▶`))));
+}
+
+function renderChallenge() {
+  const lvCh = levelData(S.level), ch = lvCh[S.idx];
+  let answer = null;
+  let finished = S.chDone;
+  const triesEl = el('span', { class: 'tries', 'aria-label': 'Tries left' });
+  const drawTries = () => { triesEl.innerHTML = 'Tries ' + [0, 1, 2].map(i => `<i class="${i < S.tries ? 'used' : ''}"></i>`).join(''); };
+  drawTries();
+  const head = el('div', {},
+    el('div', { class: 'ch-head' },
+      el('div', { class: 'eyebrow' }, `Level ${S.level + 1} · ${LEVELS[S.level].title}`),
+      el('div', { class: 'row', style: 'gap:14px' }, triesEl, el('span', { class: 'muted', style: 'font-size:15px' }, `Challenge ${S.idx + 1} of ${lvCh.length}`))),
+    el('div', { class: 'progress', 'aria-hidden': 'true' }, lvCh.map((_, i) => el('i', { class: i < S.idx ? 'done' : i === S.idx ? 'now' : '' }))));
+  const card = el('section', { class: 'card stack' });
+  const body = el('div', { class: 'stack' }, el('p', { class: 'prompt', html: ch.prompt }));
+  if (ch.extra) body.append(el('div', { class: 'scroll' }, ch.extra()));
+  const area = el('div', { class: 'stack' }); body.append(area);
+  let reveal = () => { }, markWrong = () => { };
+
+  if (ch.kind === 'mcq') {
+    const box = el('div', { class: 'opts', role: 'group' });
+    const btns = ch.options.map((o, i) => el('button', { class: 'opt', type: 'button', 'aria-pressed': 'false', onclick: () => { if (finished) return; answer = i; sfx('tap'); btns.forEach((b, j) => { b.setAttribute('aria-pressed', j === i ? 'true' : 'false'); b.classList.remove('wrong'); }); } }, el('span', { class: 'key' }, 'ABCD'[i]), el('span', { html: esc(o.t) })));
+    box.append(...btns); area.append(box);
+    reveal = () => btns[ch.solution].classList.add('right');
+    markWrong = () => { if (answer !== null && answer !== ch.solution) btns[answer].classList.add('wrong'); };
+  }
+  if (ch.kind === 'type') {
+    const inp = el('input', { type: 'text', id: 'answerInput', autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false', placeholder: ch.placeholder || '', 'aria-label': 'Your answer' });
+    inp.addEventListener('input', () => answer = inp.value);
+    inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); (finished ? nextBtn : checkBtn).click(); } });
+    area.append(el('div', { class: 'fbar' }, el('span', { class: 'namebox' }, ch.namebox || 'Answer'), ch.formula ? el('span', { class: 'fx' }, 'fx') : null, inp));
+    if (!finished) setTimeout(() => inp.focus({ preventScroll: true }), 30);
+    reveal = () => { inp.value = ch.solution; inp.readOnly = true; };
+  }
+  if (ch.kind === 'grid') {
+    const { tbl } = sheetTable(ch.recs, { extraCol: true, extraRow: true });
+    const nb = el('span', { class: 'namebox', style: 'flex:1;text-align:left;background:transparent;border:0;color:var(--ink);font-weight:700' }, '');
+    const cells = [];
+    [...tbl.tBodies[0].rows].forEach((tr, r) => [...tr.cells].filter(c => c.tagName === 'TD').forEach((td, c) => {
+      td.classList.add('pick'); td.tabIndex = 0; cells.push({ td, r, c });
+      const choose = () => { if (finished) return; answer = { r, c }; sfx('tap'); cells.forEach(x => x.td.classList.toggle('sel', x.td === td)); nb.textContent = colL(c) + (r + 1); };
+      td.addEventListener('click', choose); td.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); choose(); } });
+    }));
+    area.append(el('div', { class: 'fbar', style: 'max-width:260px' }, el('span', { class: 'fx' }, 'Cell'), nb), el('div', { class: 'scroll' }, tbl));
+    reveal = () => cells.forEach(x => { if (ch.targetFn(x.r, x.c)) x.td.classList.add('target'); });
+  }
+  if (ch.kind === 'rows') {
+    const { tbl, rowEls } = sheetTable(ch.recs);
+    const sel = new Set(); answer = [];
+    rowEls.forEach((tr, i) => {
+      tr.classList.add('pickrow'); tr.tabIndex = 0; tr.setAttribute('role', 'button'); tr.setAttribute('aria-pressed', 'false');
+      const toggle = () => { if (finished) return; sfx('tap'); sel.has(i) ? sel.delete(i) : sel.add(i); tr.classList.toggle('on', sel.has(i)); tr.setAttribute('aria-pressed', String(sel.has(i))); answer = [...sel]; };
+      tr.addEventListener('click', toggle); tr.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+    });
+    area.append(el('p', { class: 'muted', style: 'font-size:15px' }, 'Tap a row to select it. Tap again to unselect.'), el('div', { class: 'scroll' }, tbl));
+    reveal = () => rowEls.forEach((tr, i) => { if (ch.solution.includes(i)) tr.classList.add('target'); });
+  }
+  if (ch.kind === 'order') {
+    const seq = []; answer = [];
+    const LBL = { name: 'Customer', color: 'Color', year: 'Year' };
+    const tbl = el('table', { class: 'sheet' }, el('thead', {}, el('tr', {}, el('th', { class: 'rowh' }, 'Order'), ch.cols.map(k => el('th', { class: 'colh' }, LBL[k])))));
+    const tb = el('tbody'); tbl.append(tb);
+    const badges = [];
+    const rows = ch.recs.map((r, i) => {
+      const b = el('span', { class: 'badge blank' }, ''); badges.push(b);
+      const tr = el('tr', { class: 'pickrow', tabindex: '0', role: 'button' }, el('th', { class: 'rowh' }, b), ch.cols.map(k => el('td', {}, r[k])));
+      const add = () => { if (finished || seq.includes(i)) return; sfx('tap'); seq.push(i); upd(); };
+      tr.addEventListener('click', add); tr.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); add(); } });
+      tb.append(tr); return tr;
+    });
+    const upd = () => { badges.forEach((b, i) => { const p = seq.indexOf(i); b.textContent = p >= 0 ? p + 1 : ''; b.classList.toggle('blank', p < 0); rows[i].classList.toggle('on', p >= 0); }); answer = seq.slice(); };
+    area.append(el('p', { class: 'muted', style: 'font-size:15px' }, 'Tap the record that comes 1st, then 2nd, and so on.'), el('div', { class: 'scroll' }, tbl),
+      el('div', { class: 'row' }, el('button', { class: 'btn ghost small', type: 'button', onclick: () => { if (!finished) { seq.pop(); upd(); } } }, 'Undo'), el('button', { class: 'btn ghost small', type: 'button', onclick: () => { if (!finished) { seq.length = 0; upd(); } } }, 'Start over')));
+    reveal = () => { seq.length = 0; seq.push(...ch.solution); upd(); };
+  }
+  if (ch.kind === 'chars') {
+    const sel = new Set(); answer = [];
+    const tiles = el('div', { class: 'tiles', role: 'group', 'aria-label': `Characters of ${ch.code}` });
+    const bs = ch.code.split('').map((c, i) => {
+      const b = el('button', { type: 'button', 'aria-pressed': 'false', 'aria-label': `Position ${i + 1}: ${c}`, onclick: () => { if (finished) return; sfx('tap'); sel.has(i) ? sel.delete(i) : sel.add(i); b.setAttribute('aria-pressed', String(sel.has(i))); answer = [...sel]; } }, c);
+      tiles.append(el('div', { class: 'tile' }, el('small', {}, i + 1), b)); return b;
+    });
+    area.append(el('div', { class: 'fbar', style: 'max-width:340px' }, el('span', { class: 'namebox' }, ch.cell), el('span', { style: 'padding:10px 12px;font-family:var(--font-mono);font-size:17px' }, ch.code)), el('div', { class: 'scroll' }, tiles), el('p', { class: 'muted', style: 'font-size:15px' }, 'The small numbers are the positions.'));
+    reveal = () => bs.forEach((b, i) => { b.setAttribute('aria-pressed', 'false'); if (ch.solution.includes(i)) b.classList.add('target'); });
+  }
+
+  const fb = el('div', { 'aria-live': 'assertive' });
+  const hintBox = el('div', {});
+  const showHint = () => { if (!ch.hint || hintBox.childNodes.length) return; hintBox.append(el('div', { class: 'hintbox', html: '💡 <b>Hint:</b> ' + ch.hint })); if (hintBtn) hintBtn.hidden = true; };
+  const hintBtn = ch.hint ? el('button', { class: 'btn ghost', type: 'button', onclick: showHint }, '💡 Show hint') : null;
+  const nextBtn = el('button', { class: 'btn', type: 'button', hidden: true, onclick: () => next() }, S.idx + 1 < lvCh.length ? 'Next challenge ▶' : 'Finish level 🏁');
+  const checkBtn = el('button', { class: 'btn', type: 'button' }, 'Check ✔');
+  checkBtn.addEventListener('click', () => {
+    if (finished) return;
+    const res = ch.check(answer);
+    fb.innerHTML = '';
+    if (res.empty) { fb.append(el('div', { class: 'feedback bad' }, el('span', { html: res.msg }))); return; }
+    S.tries++;
+    if (res.ok) {
+      const pts = POINTS[S.tries - 1];
+      S.earned[S.level] += pts;
+      if (S.tries === 1) { S.firstTry++; S.streak++; S.bestStreak = Math.max(S.bestStreak, S.streak); } else S.streak = 0;
+      S.chDone = true; S.lastRes = { kind: 'good', pts, first: S.tries === 1 };
+      finished = true; save();
+      sfx('win'); ptsPop(checkBtn, pts); if (S.streak >= 3 && S.streak % 3 === 0) confetti(30);
+      showResult();
+    } else if (S.tries < 3) {
+      save(); sfx('wrong'); markWrong();
+      card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+      fb.append(el('div', { class: 'feedback bad' }, el('strong', {}, S.tries === 1 ? 'Not yet. Try again!' : 'Almost. Last try!'), el('span', { html: res.msg })));
+      showHint();
+    } else {
+      S.streak = 0; S.chDone = true; S.lastRes = { kind: 'reveal', msg: res.msg || '' };
+      finished = true; save(); sfx('wrong'); markWrong();
+      showResult();
+    }
+    drawTries(); hud();
+  });
+  function showResult() {
+    const r = S.lastRes; fb.innerHTML = '';
+    if (r.kind === 'good') fb.append(el('div', { class: 'feedback good' }, el('strong', {}, r.first ? `Correct! +${r.pts} ${S.streak >= 2 ? '🔥 ' + S.streak + ' in a row!' : ''}` : `Got it! +${r.pts}`), el('span', { html: ch.explain })));
+    else { reveal(); fb.append(el('div', { class: 'feedback reveal' }, el('strong', {}, 'Here is the answer'), el('span', { html: (r.msg ? r.msg + '<br>' : '') + '<b>Answer:</b> ' + ch.explain }))); }
+    checkBtn.hidden = true; if (hintBtn) hintBtn.hidden = true; nextBtn.hidden = false;
+    setTimeout(() => nextBtn.focus({ preventScroll: true }), 30);
+    fb.scrollIntoView({ block: 'nearest', behavior: reducedMotion ? 'auto' : 'smooth' });
+  }
+  function next() {
+    sfx('tap');
+    if (S.idx + 1 < lvCh.length) { S.idx++; S.tries = 0; S.chDone = false; S.lastRes = null; go('ch'); }
+    else { S.done[S.level] = true; S.chDone = false; S.lastRes = null; sfx('level'); confetti(); go('levelDone'); }
+  }
+  card.append(head, body, hintBox, fb, el('div', { class: 'row' }, checkBtn, hintBtn, nextBtn));
+  view.append(card);
+  if (S.tries > 0 && !finished) showHint();
+  if (finished && S.lastRes) showResult();
+}
+
+function renderLevelDone() {
+  const i = S.level, st = starsFor(i), max = COUNTS[i] * POINTS[0];
+  const msg = st === 3 ? 'Excellent! You are ready for this exam task.' : st === 2 ? 'Good work! Read this topic again in your study guide.' : 'Keep going! Read this topic again in your study guide after the game.';
+  const last = i === LEVELS.length - 1;
+  view.append(el('section', { class: 'card stack', style: 'text-align:center;align-items:center' },
+    el('div', { class: 'eyebrow' }, `Level ${i + 1} complete`),
+    el('h2', {}, LEVELS[i].title),
+    el('div', { class: 'pop', html: starHTML(st, 48) }),
+    el('p', { class: 'big-score' }, `${S.earned[i]}/${max}`),
+    el('p', { class: 'muted' }, msg),
+    el('p', {}, `Total score: `, el('b', {}, score()), ` points`),
+    el('button', { class: 'btn', type: 'button', onclick: () => { if (last) finish(); else { S.level++; S.idx = 0; S.tries = 0; go('lesson'); } } }, last ? 'See my results 🏆' : `Next: Level ${i + 2} ▶`)));
+}
+
+function finish() {
+  S.finalSeconds = Math.min(MAX_SECONDS, S.elapsed);
+  S.screen = 'results'; save();
+  sfx('level'); confetti(70);
+  render(); window.scrollTo({ top: 0 });
+  saveRun();
+}
+function renderResults() {
+  const s = score(), r = rankFor(s);
+  const tbl = el('table', { class: 'result-table' });
+  LEVELS.forEach((L, i) => tbl.append(el('tr', {}, el('td', {}, el('b', {}, `${i + 1}. `), L.title), el('td', { class: 'muted', style: 'font-variant-numeric:tabular-nums' }, S.done[i] ? `${S.earned[i]}/${COUNTS[i] * POINTS[0]}` : S.earned[i] || (S.level === i && S.idx > 0) ? `${S.earned[i]}/${COUNTS[i] * POINTS[0]} (stopped)` : 'not played'), el('td', { html: starHTML(starsFor(i)) }))));
+  const weak = LEVELS.map((L, i) => i).filter(i => starsFor(i) < 3);
+  view.append(el('section', { class: 'card stack' },
+    el('div', { class: 'eyebrow' }, 'Quest report'),
+    el('h2', {}, `Well done, ${S.name || 'player'}!`),
+    el('div', { class: 'rank-card' }, el('span', { class: 'rank-emoji', 'aria-hidden': 'true' }, r.emoji),
+      el('div', {}, el('p', { class: 'muted', style: 'font-size:14px' }, 'Your rank'), el('p', { class: 'rank-name' }, r.name), el('p', {}, el('b', {}, s), ` of ${TOTAL} points`))),
+    el('p', {}, r.msg),
+    el('div', { class: 'stats' }, el('span', { class: 'chip' }, `⏱ Time: ${mmss(S.finalSeconds)}`), el('span', { class: 'chip' }, `🔥 Best streak: ${S.bestStreak}`), el('span', { class: 'chip' }, `⚡ First-try answers: ${S.firstTry}`)),
+    tbl,
+    weak.length ? el('div', { class: 'callout' }, el('b', {}, 'Revise before the exam: '), weak.map(i => LEVELS[i].title).join(', '), '.') : null,
+    el('p', { class: 'save-status', id: 'saveStatus' })),
+    el('section', { class: 'card stack' },
+      el('h2', {}, '🏆 Class leaderboard'),
+      el('p', { class: 'place-line', id: 'placeLine' }),
+      el('div', { 'data-board': '' }),
+      el('div', { class: 'row' }, el('button', { class: 'btn', type: 'button', onclick: () => { S = fresh(); save(); go('start'); } }, 'Next student 🔁'))));
+  renderSaveStatus(); renderBoards();
+}
+
+/* ---------------- leaderboard ---------------- */
+const MEDALS = ['🥇', '🥈', '🥉'];
+const PRIZE_TEXT = ['+5 bonus marks, a sweet treat and 10 minutes free time', '+3 bonus marks and 10 minutes free time', '10 minutes free time'];
+const Board = { rows: [], loaded: false, error: '', pin: '' };
+async function api(path, opts = {}) {
+  const r = await fetch(path, { cache: 'no-store', headers: { 'Content-Type': 'application/json' }, ...opts });
+  let data = {}; try { data = await r.json(); } catch (e) { }
+  if (!r.ok) { const e = new Error(data.error || ('http_' + r.status)); e.status = r.status; throw e; }
+  return data;
+}
+function cleanEntry(d) {
+  if (!d || typeof d !== 'object' || typeof d.name !== 'string') return null;
+  const points = Number(d.points), seconds = Number(d.seconds);
+  if (!Number.isFinite(points) || !Number.isFinite(seconds)) return null;
+  return { id: d.id, name: d.name.slice(0, 20), points, seconds, ts: Number(d.ts) || 0, finished: d.finished !== false };
+}
+async function refreshBoard() {
+  try { const d = await api('/api/scores'); Board.rows = (d.scores || []).map(cleanEntry).filter(Boolean); Board.loaded = true; Board.error = ''; }
+  catch (e) { Board.error = 'Could not load the class board. Check the internet connection.'; }
+  renderBoards();
+}
+const ranked = () => Board.rows.filter(r => r.finished).sort((a, b) => b.points - a.points || a.seconds - b.seconds || a.ts - b.ts);
+const playing = () => Board.rows.filter(r => !r.finished).sort((a, b) => a.ts - b.ts);
+const nameKey = (n) => String(n || '').toLowerCase().replace(/\s+/g, ' ').trim();
+const isMe = (r) => S.saveStatus === 'saved' && nameKey(r.name) === nameKey(S.name);
+function podiumHTML(rows) {
+  const slot = (i) => { const r = rows[i]; return `<div class="pod p${i + 1}${r ? '' : ' empty'}"><span class="medal" aria-hidden="true">${MEDALS[i]}</span><span class="who">${r ? esc(r.name) : 'Free spot!'}</span><span class="pts">${r ? r.points + ' pts · ' + mmss(r.seconds) : '&nbsp;'}</span><div class="block">${i + 1}</div></div>`; };
+  return `<div class="podium">${slot(1)}${slot(0)}${slot(2)}</div><div class="podium-base"></div>`;
+}
+function boardHTML() {
+  const rows = ranked(), pl = playing();
+  const rm = r => Board.pin ? `<button type="button" class="rm" data-id="${esc(r.id)}" aria-label="Remove ${esc(r.name)}">✕ Remove</button>` : '';
+  let table;
+  if (!Board.loaded && !Board.error) table = `<div class="board-wrap"><p class="board-empty">Loading the class board…</p></div>`;
+  else if (!rows.length && !pl.length) table = `<div class="board-wrap"><p class="board-empty">No scores yet. Finish the quest to be the first on the board!</p></div>`;
+  else table = `<div class="board-wrap"><table class="board"><thead><tr><th>Place</th><th>Player</th><th>Points</th><th>Time</th></tr></thead><tbody>${rows.map((r, i) => `<tr class="${i < 3 ? 'p' + (i + 1) : ''}">
+      <td class="place">${MEDALS[i] || i + 1}</td><td>${esc(r.name)}${isMe(r) ? '<span class="you">You</span>' : ''}${rm(r)}</td><td class="num">${r.points}/${TOTAL}</td><td class="num">${mmss(r.seconds)}</td></tr>`).join('')}${pl.map(r => `<tr class="playing"><td class="place">🎮</td><td>${esc(r.name)}${rm(r)}</td><td class="num">–</td><td class="num">playing…</td></tr>`).join('')}</tbody></table></div>`;
+  return `<div class="stack">${podiumHTML(rows)}${table}<p class="board-note">Ranking: the most points wins. If points are equal, the faster time wins. Each student plays one time. 🎮 means the student is still playing. The board updates by itself. ${esc(Board.error)}</p>${prizeHTML()}</div>`;
+}
+function renderBoards() {
+  document.querySelectorAll('[data-board]').forEach(e => { e.innerHTML = boardHTML(); });
+  const line = $('#placeLine');
+  if (line) {
+    const i = ranked().findIndex(isMe);
+    line.textContent = i < 0 ? '' : i < 3 ? `🎉 You are number ${i + 1} on the class leaderboard right now! Your prize from Ms Rahaf: ${PRIZE_TEXT[i]}.` : `You are number ${i + 1} on the class leaderboard. Well done!`;
+  }
+  $('#boardClear').hidden = !Board.pin;
+}
+function renderSaveStatus() {
+  const e = $('#saveStatus'); if (!e) return;
+  const st = S.saveStatus;
+  e.className = 'save-status' + (st === 'saved' ? ' ok' : (st === 'error' || st === 'taken') ? ' bad' : '');
+  e.innerHTML = st === 'saving' ? '⏳ Saving your score to the class board…'
+    : st === 'saved' ? `✅ Saved! ${esc(S.name)}: ${score()}/${TOTAL} points in ${mmss(S.finalSeconds)} is on the class board.`
+    : st === 'taken' ? 'This name already has a score on the class board, so this game was not saved. Ask Ms Rahaf if this is a mistake.'
+    : st === 'error' ? 'Your score could not be saved. Check the internet connection, then try again. <button class="btn small" id="retrySave" type="button">Try again</button>' : '';
+  const b = $('#retrySave'); if (b) b.onclick = () => { S.saved = false; saveRun(); };
+}
+async function saveRun() {
+  if (S.saved && S.saveStatus === 'saved') { refreshBoard(); return; }
+  S.saved = true; S.saveStatus = 'saving'; save(); renderSaveStatus();
+  const result = { points: score(), seconds: S.finalSeconds };
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      if (S.entry) {
+        try { await api('/api/scores', { method: 'PUT', body: JSON.stringify({ ...S.entry, ...result }) }); }
+        catch (e) { if (e.status !== 404) throw e; S.entry = null; continue; }
+      } else await api('/api/scores', { method: 'POST', body: JSON.stringify({ name: S.name, ...result }) });
+      S.saveStatus = 'saved'; break;
+    } catch (e) {
+      if (e.status === 409) { S.saveStatus = 'taken'; break; }
+      S.saveStatus = 'error'; await new Promise(r => setTimeout(r, 1500));
+    }
+  }
+  save(); renderSaveStatus(); await refreshBoard();
+}
+/* teacher tools */
+async function unlockTeacher() {
+  const msg = $('#pinMsg'), input = $('#pinInput'), pin = input.value.trim();
+  if (!pin) { msg.className = 'add-msg bad'; msg.textContent = 'Type the teacher PIN.'; input.focus(); return; }
+  try { await api('/api/teacher', { method: 'POST', body: JSON.stringify({ pin, action: 'check' }) }); Board.pin = pin; input.value = ''; msg.className = 'add-msg ok'; msg.textContent = 'Unlocked. Remove a name to let that student play again, or clear the whole board for a new class.'; renderBoards(); }
+  catch (e) { msg.className = 'add-msg bad'; msg.textContent = e.status === 401 ? 'Wrong PIN. Try again.' : 'Could not connect. Check the internet connection.'; }
+}
+async function removeScore(id) {
+  if (!Board.pin) return;
+  try { await api('/api/teacher', { method: 'POST', body: JSON.stringify({ pin: Board.pin, action: 'remove', id: Number(id) }) }); }
+  catch (e) { $('#pinMsg').className = 'add-msg bad'; $('#pinMsg').textContent = 'Could not remove that score.'; }
+  refreshBoard();
+}
+let clearArmed = null;
+async function clearBoard() {
+  const b = $('#boardClear'); if (!Board.pin) return;
+  if (!clearArmed) { b.textContent = 'Tap again to clear ALL scores'; clearArmed = setTimeout(() => { clearArmed = null; b.textContent = 'Clear leaderboard'; }, 3000); return; }
+  clearTimeout(clearArmed); clearArmed = null; b.textContent = 'Clear leaderboard';
+  try { await api('/api/teacher', { method: 'POST', body: JSON.stringify({ pin: Board.pin, action: 'clear' }) }); $('#pinMsg').className = 'add-msg ok'; $('#pinMsg').textContent = 'The board is clear. Ready for a new class!'; }
+  catch (e) { $('#pinMsg').className = 'add-msg bad'; $('#pinMsg').textContent = 'Could not clear the board.'; }
+  refreshBoard();
+}
+function openBoard() { renderBoards(); refreshBoard(); $('#boardModal').hidden = false; $('#boardClose').focus(); }
+function closeBoard() { $('#boardModal').hidden = true; }
+
+/* projector view: ?board */
+function renderBigBoard() {
+  document.body.classList.add('bigboard');
+  $('#endBtn').hidden = true;
+  view.innerHTML = '';
+  view.append(el('section', { class: 'card stack' }, el('div', { class: 'eyebrow' }, 'Grade 8 ICT · Midterm Quest'), el('h1', {}, '🏆 Class leaderboard'), el('div', { 'data-board': '' })));
+  renderBoards();
+}
+
+/* ---------------- wiring ---------------- */
+$('#boardBtn').onclick = openBoard;
+$('#boardClose').onclick = closeBoard;
+$('#boardModal').addEventListener('click', e => { if (e.target.id === 'boardModal') closeBoard(); });
+$('#pinBtn').onclick = unlockTeacher;
+$('#pinInput').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); unlockTeacher(); } });
+$('#boardClear').onclick = clearBoard;
+document.addEventListener('click', e => { const b = e.target.closest('.rm'); if (b) removeScore(b.dataset.id); });
+$('#endBtn').onclick = () => { $('#endModal').hidden = false; $('#endCancel').focus(); };
+$('#endCancel').onclick = () => { $('#endModal').hidden = true; };
+$('#endOk').onclick = () => { $('#endModal').hidden = true; finish(); };
+$('#endModal').addEventListener('click', e => { if (e.target.id === 'endModal') $('#endModal').hidden = true; });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { $('#endModal').hidden = true; closeBoard(); } });
+$('#soundBtn').onclick = () => { soundOn = !soundOn; try { localStorage.setItem('mqSound', soundOn ? 'on' : 'off'); } catch (e) { } hud(); sfx('tap'); };
+setInterval(() => { if (document.hidden) return; if (S.screen === 'results' || !$('#boardModal').hidden || document.body.classList.contains('bigboard')) refreshBoard(); }, 6000);
+
+if (new URLSearchParams(location.search).has('board')) { renderBigBoard(); refreshBoard(); }
+else {
+  render(); refreshBoard();
+  if (S.screen === 'results' && S.saveStatus !== 'saved' && S.saveStatus !== 'taken') saveRun();
+}
+</script>
+</body>
+</html>
